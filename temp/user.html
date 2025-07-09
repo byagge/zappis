@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Салон красоты "Элегант" - Booking</title>
+  <!-- Подключаем Tailwind CSS через CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Подключаем Alpine.js через CDN -->
+  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <!-- Подключаем Lucide для иконок -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    [x-cloak] { display: none !important; }
+    /* Кастомный скроллбар для категорий */
+    .categories-scroll {
+      -ms-overflow-style: none;  /* IE и Edge */
+      scrollbar-width: thin;  /* Firefox - всегда тонкий */
+      scrollbar-color: transparent transparent; /* Firefox - изначально прозрачный */
+      padding-bottom: 4px;
+      --scrollbar-thumb-opacity: 0;
+    }
+    .categories-scroll::-webkit-scrollbar {
+      height: 8px;
+      background: transparent;
+    }
+    .categories-scroll::-webkit-scrollbar-track {
+      background: transparent;
+      border-radius: 4px;
+      transition: background 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .categories-scroll::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, calc(0.3 * var(--scrollbar-thumb-opacity)));
+      border-radius: 4px;
+      transition: opacity 0.6s, background 1s cubic-bezier(0.4, 0, 0.2, 1);
+      opacity: var(--scrollbar-thumb-opacity);
+    }
+    
+    /* При наведении скроллбар становится видимым */
+    .categories-scroll:hover::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.05);
+    }
+    .categories-scroll:hover::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, calc(0.3 * var(--scrollbar-thumb-opacity)));
+    }
+    .categories-scroll:hover::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 0, 0, calc(0.5 * var(--scrollbar-thumb-opacity)));
+    }
+    .categories-scroll:hover {
+      scrollbar-color: rgba(0, 0, 0, 0.3) rgba(0, 0, 0, 0.05);
+      --scrollbar-thumb-opacity: 1;
+    }
+    
+    /* Дополнительная анимация для контейнера */
+    .categories-scroll {
+      transition: padding-bottom 0.3s ease;
+    }
+    .categories-scroll:hover {
+      padding-bottom: 4px;
+    }
+
+    /* Скрыть скроллбар на мобильных устройствах */
+    @media (max-width: 767px) {
+      .categories-scroll {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      .categories-scroll::-webkit-scrollbar {
+        display: none;
+      }
+      .categories-scroll {
+        padding-bottom: 0;
+      }
+    }
+  </style>
+</head>
+<body class="font-sans">
+  <div x-data="appData()" x-init="lucide.createIcons()" x-effect="lucide.createIcons()">
+    <!-- Главный экран -->
+    <div x-show="step === 'main'" x-cloak class="min-h-screen bg-gray-50 flex justify-center items-center">
+      <div class="w-full max-w-md bg-white p-4 sm:p-8 min-h-screen sm:min-h-screen flex flex-col">
+        <!-- User icon top right -->
+        <div class="absolute top-6 right-6 z-10">
+          <div class="w-8 h-8 bg-gray-100 flex items-center justify-center">
+            <i class="w-5 h-5 text-gray-400" data-lucide="user"></i>
+          </div>
+        </div>
+        <div class="pt-8 pb-2 px-2 sm:px-6 text-left">
+          <h1 class="text-lg sm:text-2xl font-bold text-gray-900 mb-6 sm:mb-8 flex items-center gap-2 cursor-pointer select-none truncate max-w-full sm:max-w-2xl"
+              @click="showModal = true">
+            Салон красоты "Элегант"
+            <i class="w-5 h-5 text-gray-400" data-lucide="chevron-down"></i>
+          </h1>
+        </div>
+        <div class="flex-1 flex flex-col justify-start gap-1 sm:gap-2 px-2 sm:px-6">
+          <button 
+            @click="step = 'services'"
+            class="w-full flex items-center justify-between px-0 py-2 sm:py-3 bg-transparent rounded-xl hover:bg-gray-50 transition-colors group"
+          >
+            <div class="flex items-center gap-3 sm:gap-4">
+              <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 rounded-full flex items-center justify-center">
+                <i class="w-5 h-5 sm:w-6 sm:h-6 text-gray-500" data-lucide="list"></i>
+              </div>
+              <span class="text-base sm:text-lg text-gray-900 font-medium">Выбрать услуги</span>
+            </div>
+            <i class="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-gray-600" data-lucide="chevron-right"></i>
+          </button>
+          <button 
+            @click="selectedServices.length > 0 && (step = 'date')"
+            class="w-full flex items-center justify-between px-0 py-2 sm:py-3 rounded-xl transition-colors group"
+            :class="selectedServices.length > 0 ? 'bg-transparent hover:bg-gray-50' : 'bg-transparent opacity-50 cursor-not-allowed'"
+            :disabled="selectedServices.length === 0"
+          >
+            <div class="flex items-center gap-3 sm:gap-4">
+              <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 rounded-full flex items-center justify-center">
+                <i class="w-5 h-5 sm:w-6 sm:h-6 text-gray-500" data-lucide="calendar"></i>
+              </div>
+              <span class="text-base sm:text-lg text-gray-900 font-medium">Выбрать дату и время</span>
+            </div>
+            <i class="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-gray-600" data-lucide="chevron-right"></i>
+          </button>
+          <button 
+            @click="selectedServices.length > 0 && (step = 'specialist')"
+            class="w-full flex items-center justify-between px-0 py-2 sm:py-3 rounded-xl transition-colors group"
+            :class="selectedServices.length > 0 ? 'bg-transparent hover:bg-gray-50' : 'bg-transparent opacity-50 cursor-not-allowed'"
+            :disabled="selectedServices.length === 0"
+          >
+            <div class="flex items-center gap-3 sm:gap-4">
+              <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 rounded-full flex items-center justify-center">
+                <i class="w-5 h-5 sm:w-6 sm:h-6 text-gray-500" data-lucide="users"></i>
+              </div>
+              <span class="text-base sm:text-lg text-gray-900 font-medium">Выбрать специалиста</span>
+            </div>
+            <i class="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-gray-600" data-lucide="chevron-right"></i>
+          </button>
+        </div>
+        <div class="mt-auto pt-8 pb-6 text-center text-base text-gray-500 border-t bg-white">
+          Работает на <span class="font-semibold text-gray-700">zappis</span>
+        </div>
+
+        <!-- Модальное окно филиалов -->
+        <div x-show="showModal" x-cloak class="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+          <div class="absolute inset-0 bg-black bg-opacity-60"></div>
+          <div class="relative bg-white rounded-t-2xl sm:rounded-2xl w-full max-w-md mx-auto flex flex-col items-center m-0 sm:m-2 pb-6 pt-4 px-4 sm:pb-8 sm:pt-8 sm:px-8 shadow-none sm:shadow-lg transition-all"
+            :class="{'rounded-t-2xl rounded-b-none': window.innerWidth < 640, 'rounded-2xl': window.innerWidth >= 640}">
+            <button @click="showModal = false" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 focus:outline-none">
+              <svg xmlns='http://www.w3.org/2000/svg' class='h-7 w-7 sm:h-6 sm:w-6' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 18L18 6M6 6l12 12'/></svg>
+            </button>
+            <div class="mb-6 mt-2 text-center w-full">
+              <div class="text-2xl sm:text-2xl font-bold text-gray-900 mb-6 sm:mb-4">Archa beauty house</div>
+              <button class="w-full bg-white border border-black rounded-2xl py-4 sm:py-3 mb-4 sm:mb-3 text-lg sm:text-lg font-medium text-black transition hover:bg-gray-100" @click="showModal = false; step = 'about'">О филиале</button>
+              <button class="w-full bg-white border border-black rounded-2xl py-4 sm:py-3 text-lg sm:text-lg font-medium text-black transition hover:bg-gray-100" @click="showModal = false; step = 'branches'">Все филиалы</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Экран выбора услуг -->
+    <div x-show="step === 'services'" x-cloak class="min-h-screen bg-gray-50 flex justify-center items-center">
+      <div class="w-full max-w-md bg-white p-4 sm:p-8 min-h-screen sm:min-h-screen flex flex-col">
+        <div class="flex items-center gap-3 mb-8">
+          <button @click="step = 'main'">
+            <i class="w-6 h-6 text-gray-600" data-lucide="chevron-left"></i>
+          </button>
+          <h1 class="text-2xl font-bold">Салон красоты "Элегант"</h1>
+        </div>
+        <div class="p-4">
+          <h2 class="text-xl font-semibold mb-4">Выбрать услуги</h2>
+          <div class="flex gap-2 mb-6 overflow-x-auto categories-scroll">
+            <button 
+              @click="selectedCategory = 'all'"
+              class="px-4 py-2 rounded-full text-sm whitespace-nowrap transition-colors"
+              :class="selectedCategory === 'all' ? 'bg-black text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
+            >
+              Все
+            </button>
+            <button 
+              @click="selectedCategory = 'hair'"
+              class="px-4 py-2 rounded-full text-sm whitespace-nowrap transition-colors"
+              :class="selectedCategory === 'hair' ? 'bg-black text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
+            >
+              Волосы
+            </button>
+            <button 
+              @click="selectedCategory = 'nails'"
+              class="px-4 py-2 rounded-full text-sm whitespace-nowrap transition-colors"
+              :class="selectedCategory === 'nails' ? 'bg-black text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
+            >
+              Ногтевой сервис
+            </button>
+            <button 
+              @click="selectedCategory = 'massage'"
+              class="px-4 py-2 rounded-full text-sm whitespace-nowrap transition-colors"
+              :class="selectedCategory === 'massage' ? 'bg-black text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
+            >
+              Массаж
+            </button>
+            <button 
+              @click="selectedCategory = 'makeup'"
+              class="px-4 py-2 rounded-full text-sm whitespace-nowrap transition-colors"
+              :class="selectedCategory === 'makeup' ? 'bg-black text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
+            >
+              Перманентный макияж
+            </button>
+            <button 
+              @click="selectedCategory = 'cosmetology'"
+              class="px-4 py-2 rounded-full text-sm whitespace-nowrap transition-colors"
+              :class="selectedCategory === 'cosmetology' ? 'bg-black text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
+            >
+              Косметология
+            </button>
+          </div>
+          <div class="mb-4">
+            <input 
+              type="text" 
+              placeholder="Найти" 
+              x-model="searchQuery"
+              class="w-full p-3 border border-gray-200 rounded-lg" 
+            />
+          </div>
+          <h3 class="text-lg font-semibold mb-4" x-text="getCategoryTitle()"></h3>
+          <div class="space-y-4">
+            <template x-for="service in filteredServices" :key="service.id">
+              <div class="border-b border-gray-100 pb-4">
+                <div class="flex items-start justify-between">
+                  <div class="flex-1">
+                    <h4 class="font-medium text-gray-800" x-text="service.name"></h4>
+                    <p class="text-sm text-gray-500" x-text="service.duration"></p>
+                    <p class="text-sm font-medium text-gray-700" x-text="service.price"></p>
+                  </div>
+                  <button 
+                    @click="toggleService(service.id)"
+                    class="w-6 h-6 rounded border-2 flex items-center justify-center"
+                    :class="selectedServices.includes(service.id) ? 'bg-black border-black' : 'border-gray-300'"
+                  >
+                    <div x-show="selectedServices.includes(service.id)" class="w-2 h-2 bg-white rounded-sm"></div>
+                  </button>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+        <div x-show="selectedServices.length > 0" class="fixed bottom-0 left-0 right-0 bg-white border-t p-4">
+          <div class="max-w-md mx-auto">
+            <div class="flex justify-between items-center mb-3">
+              <span class="text-sm text-gray-600">
+                <span x-text="selectedServices.length"></span> услуг в <span x-text="getTotalDuration()"></span>
+              </span>
+              <span class="font-semibold">
+                <span x-text="getTotalPrice()"></span> – <span x-text="getTotalPrice() + 2700"></span> сом
+              </span>
+            </div>
+            <button @click="step = 'specialist'" class="w-full bg-black text-white py-3 rounded-lg font-medium">
+              Выбрать специалиста
+            </button>
+          </div>
+        </div>
+        <div class="mt-auto p-6 text-center text-xs text-gray-400 border-t bg-white">
+          Работает на <span class="font-medium">zappis</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Экран выбора специалиста -->
+    <div x-show="step === 'specialist'" x-cloak class="min-h-screen bg-gray-50 flex justify-center items-center">
+      <div class="w-full max-w-md bg-white p-4 sm:p-8 min-h-screen sm:min-h-screen flex flex-col">
+        <div class="flex items-center gap-3 mb-8">
+          <button @click="step = 'services'">
+            <i class="w-6 h-6 text-gray-600" data-lucide="chevron-left"></i>
+          </button>
+          <h1 class="text-2xl font-bold">Выбрать специалиста</h1>
+        </div>
+        <div class="space-y-6">
+          <!-- Любой специалист -->
+          <div class="flex items-center gap-4 p-4 rounded-xl bg-gray-50">
+            <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
+              <i class="w-6 h-6 text-gray-500" data-lucide="users"></i>
+            </div>
+            <div class="flex-1">
+              <div class="font-semibold text-lg">Любой специалист</div>
+            </div>
+            <input type="radio" name="specialist" class="w-5 h-5 accent-black" @click="selectedSpecialist = null" :checked="!selectedSpecialist">
+          </div>
+          <!-- Список специалистов -->
+          <template x-for="specialist in specialists" :key="specialist.id">
+            <div class="flex items-center gap-4 p-4 rounded-xl border border-gray-200">
+                  <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                <span class="text-green-600 font-semibold text-lg" x-text="specialist.name[0]"></span>
+              </div>
+              <div class="flex-1">
+                <div class="font-semibold text-lg" x-text="specialist.name"></div>
+                <div class="text-gray-500 text-sm" x-text="specialist.role"></div>
+                <div class="text-xs text-gray-400 mt-1">Ближайшее время для записи <span class="font-semibold text-gray-600">сегодня:</span></div>
+                <div class="flex gap-2 flex-wrap mt-2">
+                  <template x-for="time in specialist.availableTimes" :key="time">
+                    <span class="px-3 py-1 bg-gray-100 rounded-full text-sm font-medium text-gray-700" x-text="time"></span>
+                  </template>
+                </div>
+              </div>
+              <input type="radio" name="specialist" class="w-5 h-5 accent-black" @click="selectedSpecialist = specialist" :checked="selectedSpecialist && selectedSpecialist.id === specialist.id">
+            </div>
+          </template>
+        </div>
+        <div x-show="selectedSpecialist !== undefined" class="mt-8">
+          <button @click="step = 'date'" class="w-full bg-black text-white py-3 rounded-xl font-medium text-lg transition hover:bg-gray-900">
+              Выбрать дату и время
+            </button>
+          </div>
+        <div class="mt-auto p-6 text-center text-xs text-gray-400 border-t bg-white">
+          Работает на <span class="font-medium">zappis</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Экран выбора даты и времени -->
+    <div x-show="step === 'date'" x-cloak class="min-h-screen bg-gray-50 flex justify-center items-center">
+      <div class="w-full max-w-md bg-white p-4 sm:p-8 min-h-screen sm:min-h-screen flex flex-col">
+        <div class="flex items-center gap-3 mb-8">
+          <button @click="step = 'specialist'">
+            <i class="w-6 h-6 text-gray-600" data-lucide="chevron-left"></i>
+          </button>
+          <h1 class="text-2xl font-bold">Салон красоты "Элегант"</h1>
+        </div>
+        <div class="p-4">
+          <div class="flex items-center justify-between mb-4">
+            <div class="relative">
+              <button @click="showMonthSelect = !showMonthSelect" class="flex items-center gap-2 px-3 py-2 border rounded-lg">
+                <span x-text="months[currentMonth] + ' ' + currentYear"></span>
+                <i class="w-4 h-4" data-lucide="chevron-down"></i>
+              </button>
+              <div x-show="showMonthSelect" @click.away="showMonthSelect = false" class="absolute left-0 mt-2 w-40 bg-white border border-gray-200 z-10 shadow">
+                <template x-for="(month, idx) in months" :key="month">
+                  <button @click="currentMonth = idx; showMonthSelect = false" class="w-full text-left px-4 py-2 hover:bg-gray-100" :class="{'bg-gray-100': idx === currentMonth}">
+                    <span x-text="month + ' ' + currentYear"></span>
+            </button>
+                </template>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <button @click="prevMonth"><i class="w-5 h-5 text-gray-400" data-lucide="chevron-left"></i></button>
+              <button @click="nextMonth"><i class="w-5 h-5 text-gray-400" data-lucide="chevron-right"></i></button>
+            </div>
+          </div>
+          <div class="grid grid-cols-7 gap-2 mb-4">
+            <template x-for="day in ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']" :key="day">
+              <div class="text-center text-xs text-gray-400 font-medium select-none" x-text="day"></div>
+            </template>
+          </div>
+          <div class="grid grid-cols-7 gap-2 mb-6">
+            <template x-for="week in generateCalendar()" :key="week[0].toString()">
+              <template x-for="date in week" :key="date.toString()">
+                <button 
+                  @click="!isPast(date) && isCurrentMonth(date) && (selectedDate = date)"
+                  :disabled="isPast(date) || !isCurrentMonth(date)"
+                  class="w-10 h-10 flex items-center justify-center text-sm font-medium transition-colors focus:outline-none"
+                  :class="{
+                    'bg-black text-white': isSelectedDay(date),
+                    'border border-black': isSelectedDay(date),
+                    'bg-blue-50 text-blue-600': isToday(date) && !isSelectedDay(date),
+                    'text-gray-300': !isCurrentMonth(date) || isPast(date),
+                    'hover:bg-gray-100': !isPast(date) && isCurrentMonth(date) && !isSelectedDay(date),
+                    'text-gray-700': !isPast(date) && isCurrentMonth(date) && !isSelectedDay(date)
+                  }"
+                >
+                  <span x-text="date.getDate()"></span>
+                </button>
+              </template>
+            </template>
+          </div>
+          <div x-show="!selectedDate" class="text-center py-8">
+            <h3 class="text-lg font-semibold mb-2">В этот день нет свободного времени</h3>
+            <p class="text-gray-600 mb-4">Ближайшая доступная дата:<br />суббота, 28 июня</p>
+            <button @click="selectedDate = new Date(new Date().getFullYear(), 5, 28)" class="bg-black text-white px-6 py-2 rounded-lg">
+              Перейти к ближайшей дате
+            </button>
+          </div>
+          <div x-show="selectedDate">
+            <div class="mb-4">
+              <h3 class="font-semibold mb-2">Утро</h3>
+              <div class="grid grid-cols-3 gap-2">
+                <template x-for="time in ['10:00', '10:30', '11:00', '11:30']" :key="time">
+                  <button 
+                    @click="selectedTime = time"
+                    class="p-2 rounded text-sm"
+                    :class="selectedTime === time ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600'"
+                    x-text="time"
+                  ></button>
+                </template>
+              </div>
+            </div>
+            <div class="mb-4">
+              <h3 class="font-semibold mb-2">День</h3>
+              <div class="grid grid-cols-3 gap-2">
+                <template x-for="time in ['12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30']" :key="time">
+                  <button 
+                    @click="selectedTime = time"
+                    class="p-2 rounded text-sm"
+                    :class="selectedTime === time ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600'"
+                    x-text="time"
+                  ></button>
+                </template>
+              </div>
+            </div>
+            <div class="mb-6">
+              <h3 class="font-semibold mb-2">Вечер</h3>
+              <div class="grid grid-cols-3 gap-2">
+                <template x-for="time in ['18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00']" :key="time">
+                  <button 
+                    @click="selectedTime = time"
+                    class="p-2 rounded text-sm"
+                    :class="selectedTime === time ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600'"
+                    x-text="time"
+                  ></button>
+                </template>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div x-show="selectedDate && selectedTime" class="fixed bottom-0 left-0 right-0 bg-white border-t p-4">
+          <div class="max-w-md mx-auto">
+            <button @click="step = 'booking'" class="w-full bg-black text-white py-3 rounded-lg font-medium">
+              Продолжить
+            </button>
+          </div>
+        </div>
+        <div class="mt-auto p-6 text-center text-xs text-gray-400 border-t bg-white">
+          Работает на <span class="font-medium">zappis</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Экран бронирования -->
+    <div x-show="step === 'booking' && !showSuccess" x-cloak class="min-h-screen bg-gray-50 flex justify-center items-center">
+      <div class="w-full max-w-md bg-white p-0 min-h-screen sm:min-h-screen flex flex-col">
+        <div class="flex items-center gap-3 px-4 pt-6 pb-2 sm:px-6">
+          <button @click="step = 'date'">
+            <i class="w-6 h-6 text-gray-600" data-lucide="chevron-left"></i>
+          </button>
+          <h1 class="text-lg sm:text-xl font-bold">Салон красоты "Элегант"</h1>
+        </div>
+        <div class="flex-1 flex flex-col gap-4 px-2 sm:px-4 pb-4">
+          <div class="bg-white border border-gray-100 p-4 flex flex-col gap-4 rounded-xl shadow-sm">
+            <h2 class="text-2xl font-bold mb-2">Детали записи</h2>
+            <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-3">
+                <template x-if="!selectedSpecialist">
+                  <div class="w-10 h-10 bg-gray-100 flex items-center justify-center"><i class="w-5 h-5 text-gray-400" data-lucide="users"></i></div>
+                </template>
+                <template x-if="selectedSpecialist">
+                  <div class="w-10 h-10 bg-green-100 flex items-center justify-center text-base font-semibold text-green-600" x-text="selectedSpecialist ? selectedSpecialist.name[0] : ''"></div>
+                </template>
+                <div>
+                  <div class="font-semibold text-base" x-text="selectedSpecialist ? selectedSpecialist.name : 'Любой специалист'"></div>
+                  <div class="text-xs text-gray-500" x-text="selectedSpecialist ? selectedSpecialist.role : ''"></div>
+              </div>
+              </div>
+              <button @click="step = 'specialist'" class="p-1"><i class="w-4 h-4 text-gray-400 hover:text-black transition" data-lucide="edit"></i></button>
+            </div>
+            <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gray-100 flex items-center justify-center"><i class="w-5 h-5 text-gray-400" data-lucide="calendar"></i></div>
+                <div>
+                  <div class="font-medium text-sm" x-text="selectedDate ? formatDate(selectedDate) : ''"></div>
+                  <div class="text-xs text-gray-500" x-text="selectedTime ? `${selectedTime} — ${calculateEndTime(selectedTime)}` : ''"></div>
+                </div>
+              </div>
+              <button @click="step = 'date'" class="p-1"><i class="w-4 h-4 text-gray-400 hover:text-black transition" data-lucide="edit"></i></button>
+            </div>
+            <div class="flex items-center justify-between gap-2">
+              <div>
+                <div class="font-semibold text-base">Услуги <span class="text-xs font-normal text-gray-500" x-text="getTotalDuration()"></span></div>
+              <template x-for="serviceId in selectedServices" :key="serviceId">
+                  <div class="flex justify-between text-sm mt-1">
+                  <span x-text="services.find(s => s.id === serviceId).name"></span>
+                  <span class="font-medium" x-text="services.find(s => s.id === serviceId).price"></span>
+                </div>
+              </template>
+            </div>
+              <button @click="step = 'services'" class="p-1 self-start"><i class="w-4 h-4 text-gray-400 hover:text-black transition" data-lucide="edit"></i></button>
+            </div>
+            <div class="flex justify-between font-semibold border-t pt-2 mt-2">
+                <span>Итого</span>
+                <span x-text="getTotalPrice() + ' сом'"></span>
+            </div>
+          </div>
+
+          <div class="bg-gray-50 border border-gray-100 p-4 rounded-xl">
+            <h3 class="font-semibold mb-3">Ваши данные</h3>
+            <div class="mb-2">
+              <label class="block text-xs text-gray-600 mb-1">Имя *</label>
+              <input type="text" placeholder="Введите имя" x-model="customerData.name" class="w-full p-2 border border-gray-200 rounded-lg text-sm" :class="formErrors.name ? 'border-red-400 bg-red-50' : ''" />
+              <template x-if="formErrors.name"><div class="text-xs text-red-500 mt-1" x-text="formErrors.name"></div></template>
+            </div>
+            <div class="mb-2">
+              <label class="block text-xs text-gray-600 mb-1">Телефон *</label>
+              <input type="tel" placeholder="Номер с кодом страны" x-model="customerData.phone" class="w-full p-2 border border-gray-200 rounded-lg text-sm" :class="formErrors.phone ? 'border-red-400 bg-red-50' : ''" />
+              <template x-if="formErrors.phone"><div class="text-xs text-red-500 mt-1" x-text="formErrors.phone"></div></template>
+            </div>
+            <div class="mb-2">
+              <label class="block text-xs text-gray-600 mb-1">E-mail</label>
+              <input type="email" placeholder="Введите e-mail" x-model="customerData.email" class="w-full p-2 border border-gray-200 rounded-lg text-sm" :class="formErrors.email ? 'border-red-400 bg-red-50' : ''" />
+              <template x-if="formErrors.email"><div class="text-xs text-red-500 mt-1" x-text="formErrors.email"></div></template>
+            </div>
+            <div class="mb-2">
+              <label class="block text-xs text-gray-600 mb-1">Комментарий</label>
+              <textarea placeholder="Комментарий к записи" x-model="customerData.comment" class="w-full p-2 border border-gray-200 rounded-lg text-sm h-16 resize-none"></textarea>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-2 mt-2">
+            <div class="flex justify-between items-center px-2">
+              <span class="text-sm text-gray-600">Итого</span>
+              <span class="font-semibold" x-text="getTotalPrice() + ' сом'"></span>
+            </div>
+            <button @click="if(validateForm()){showSuccess = true;}" class="w-full bg-black text-white py-3 rounded-lg font-medium text-base mt-1">
+              Записаться
+            </button>
+            <div class="text-xs text-gray-500 text-center mt-2">
+              Нажимая «Записаться», вы соглашаетесь с обработкой персональных данных и принимаете <span class="text-blue-600">политику конфиденциальности</span> и <span class="text-blue-600">пользовательское соглашение</span>.
+            </div>
+          </div>
+        </div>
+        <div class="mt-auto p-6 text-center text-xs text-gray-400 border-t bg-white">
+          Работает на <span class="font-medium">zappis</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Экран успеха -->
+    <div x-show="showSuccess" x-cloak class="min-h-screen bg-gray-50 flex justify-center items-center">
+      <div class="w-full max-w-md bg-white p-0 min-h-screen sm:min-h-screen flex flex-col items-center justify-center">
+        <div class="flex-1 flex flex-col items-center justify-center px-4 sm:px-6">
+          <i class="w-16 h-16 text-green-500 mb-6" data-lucide="check-circle"></i>
+          <div class="text-xl sm:text-2xl font-bold mb-2 text-center">Запись успешно создана!</div>
+          <div class="text-gray-600 text-center mb-6 text-sm sm:text-base">Спасибо за бронирование.<br>Мы свяжемся с вами для подтверждения.</div>
+          <button @click="showSuccess = false; step = 'main'" class="w-full bg-black text-white py-3 rounded-lg font-medium">На главную</button>
+        </div>
+        <div class="mt-auto p-6 text-center text-xs text-gray-400 border-t bg-white w-full">
+          Работает на <span class="font-semibold text-gray-700">zappis</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Экран "О филиале" -->
+    <div x-show="step === 'about'" x-cloak class="min-h-screen bg-gray-50 flex justify-center items-center">
+      <div class="w-full max-w-md bg-white min-h-screen flex flex-col relative">
+        <button @click="step = 'main'" class="absolute top-4 left-4 z-10 p-2 rounded-full hover:bg-gray-100">
+          <svg xmlns='http://www.w3.org/2000/svg' class='h-6 w-6 text-gray-700' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M15 19l-7-7 7-7'/></svg>
+        </button>
+        <div class="flex-1 flex flex-col px-4 pt-12 pb-4">
+          <div class="mb-2 mt-2">
+            <div class="text-2xl font-bold text-gray-900 mb-2">Archa beauty house</div>
+            <div class="flex items-center gap-2 mb-2">
+              <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.18c.969 0 1.371 1.24.588 1.81l-3.388 2.46a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.388-2.46a1 1 0 00-1.175 0l-3.388 2.46c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.045 9.394c-.783-.57-.38-1.81.588-1.81h4.18a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+              <span class="text-base font-medium">1 отзыв</span>
+            </div>
+            <div class="text-gray-400 text-base mb-4">Контакты</div>
+            <div class="flex flex-col gap-2 mb-6">
+              <div class="flex items-center gap-2 text-gray-700 text-base">
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M22 16.92V19a2 2 0 0 1-2.18 2A19.72 19.72 0 0 1 3 5.18 2 2 0 0 1 5 3h2.09a2 2 0 0 1 2 1.72c.13 1.05.37 2.07.72 3.06a2 2 0 0 1-.45 2.11l-.27.27a16 16 0 0 0 6.29 6.29l.27-.27a2 2 0 0 1 2.11-.45c.99.35 2.01.59 3.06.72A2 2 0 0 1 22 16.92z"/></svg>
+                <a href="tel:+996700123456" class="hover:underline">+996 700 123 456</a>
+              </div>
+              <div class="flex items-center gap-2 text-gray-700 text-base">
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span>г. Бишкек, ул. Исанова, 42</span>
+              </div>
+              <div class="flex items-center gap-2 text-gray-700 text-base">
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4h16v16H4V4zm2 2v12h12V6H6zm2 2h8v8H8z"/></svg>
+                <a href="mailto:info@archa-beauty.kg" class="hover:underline">info@archa-beauty.kg</a>
+              </div>
+            </div>
+          </div>
+          <div class="mb-6">
+            <div class="text-lg font-semibold mb-2">Расположение</div>
+            <div class="w-full h-40 rounded-2xl overflow-hidden flex items-center justify-center mb-2">
+              <iframe
+                src="https://www.google.com/maps?q=42.8746,74.5698&z=15&output=embed"
+                width="100%"
+                height="160"
+                style="border:0; border-radius: 1rem; min-width:100%; min-height:100%;"
+                allowfullscreen=""
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                title="Archa beauty house location"
+              ></iframe>
+            </div>
+          </div>
+          <div class="mb-6">
+            <div class="text-lg font-semibold mb-2">Отзывы</div>
+            <div class="text-sm text-gray-500 mb-1">1 отзыв</div>
+            <div class="bg-gray-50 rounded-xl p-4 flex flex-col items-center mb-4">
+              <div class="text-gray-400 mb-2">Оцените и оставьте отзыв</div>
+              <div class="flex gap-1 mb-2">
+                <template x-for="i in 5" :key="i">
+                  <svg class="w-6 h-6 text-gray-300" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.18c.969 0 1.371 1.24.588 1.81l-3.388 2.46a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.388-2.46a1 1 0 00-1.175 0l-3.388 2.46c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.045 9.394c-.783-.57-.38-1.81.588-1.81h4.18a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+                </template>
+              </div>
+            </div>
+            <div class="flex gap-3 items-start mb-2">
+              <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center font-bold text-green-600 text-lg">A</div>
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="font-semibold">Айсыырга</span>
+                  <div class="flex items-center gap-1 text-yellow-400 text-xs">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.18c.969 0 1.371 1.24.588 1.81l-3.388 2.46a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.388-2.46a1 1 0 00-1.175 0l-3.388 2.46c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.045 9.394c-.783-.57-.38-1.81.588-1.81h4.18a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.18c.969 0 1.371 1.24.588 1.81l-3.388 2.46a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.388-2.46a1 1 0 00-1.175 0l-3.388 2.46c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.045 9.394c-.783-.57-.38-1.81.588-1.81h4.18a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.18c.969 0 1.371 1.24.588 1.81l-3.388 2.46a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.388-2.46a1 1 0 00-1.175 0l-3.388 2.46c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.045 9.394c-.783-.57-.38-1.81.588-1.81h4.18a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.18c.969 0 1.371 1.24.588 1.81l-3.388 2.46a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.388-2.46a1 1 0 00-1.175 0l-3.388 2.46c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.045 9.394c-.783-.57-.38-1.81.588-1.81h4.18a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.18c.969 0 1.371 1.24.588 1.81l-3.388 2.46a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.388-2.46a1 1 0 00-1.175 0l-3.388 2.46c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.045 9.394c-.783-.57-.38-1.81.588-1.81h4.18a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+                  </div>
+                  <span class="text-xs text-gray-400">8 апреля 2025</span>
+                </div>
+                <div class="text-base mb-1">Постоянно хожу к Эльзада эже каждый раз все идеально и быстро делает 🥰🍓😍👸🏼</div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-auto pt-4 pb-6">
+            <button @click="step = 'main'" class="w-full bg-black text-white py-3 rounded-xl font-medium text-lg">Записаться</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Экран выбора филиала -->
+    <div x-show="step === 'branches'" x-cloak class="min-h-screen bg-gray-50 flex flex-col">
+      <div class="w-full max-w-md mx-auto bg-white min-h-screen flex flex-col relative">
+        <button @click="step = 'main'" class="absolute top-4 left-4 z-10 p-2 rounded-full hover:bg-gray-100">
+          <svg xmlns='http://www.w3.org/2000/svg' class='h-6 w-6 text-gray-700' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M15 19l-7-7 7-7'/></svg>
+        </button>
+        <div class="flex-1 flex flex-col px-4 pt-12 pb-4">
+          <div class="mb-4 mt-2">
+            <div class="text-xl font-medium text-gray-900 mb-4">Выберите филиал</div>
+            <div class="w-full flex items-center justify-center mb-4">
+              <button class="w-full flex items-center justify-center gap-2 bg-gray-100 rounded-full py-2 text-base font-medium text-gray-900">
+                <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 12.414a4 4 0 1 0-1.414 1.414l4.243 4.243a1 1 0 0 0 1.414-1.414z"/><circle cx="10.5" cy="10.5" r="7.5"/></svg>
+                Ош
+              </button>
+            </div>
+            <div class="flex border-b mb-2">
+              <button class="flex-1 text-center py-2 font-medium border-b-2 border-black text-black">Список</button>
+              <button class="flex-1 text-center py-2 font-medium text-gray-400">На карте</button>
+            </div>
+            <div class="bg-white rounded-2xl shadow-sm p-0 overflow-hidden mb-4">
+              <div class="w-full h-40 rounded-t-2xl overflow-hidden flex items-center justify-center">
+                <iframe
+                  src="https://www.google.com/maps?q=40.5283,72.7985&z=15&output=embed"
+                  width="100%"
+                  height="160"
+                  style="border:0; border-radius: 1rem 1rem 0 0; min-width:100%; min-height:100%;"
+                  allowfullscreen=""
+                  loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"
+                  title="Archa beauty house Osh location"
+                ></iframe>
+              </div>
+              <div class="flex items-center justify-between px-4 py-3">
+                <span class="text-base font-medium">Archa beauty house</span>
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 w-full py-8 flex flex-col items-center justify-center mt-auto">
+          <div class="flex items-center gap-2 text-gray-400 text-base">
+            Работает на
+            <img src="https://static.alteg.io/static/img/logo-gray.svg" alt="altegio" class="h-6 w-auto opacity-80" style="filter: grayscale(1);">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Логика Alpine.js -->
+  <script>
+    function appData() {
+      return {
+        step: 'main',
+        selectedServices: [],
+        selectedSpecialist: null,
+        selectedDate: null,
+        selectedTime: null,
+        customerData: {
+          name: '',
+          phone: '',
+          email: '',
+          comment: ''
+        },
+        services: [
+          // Волосы
+          { id: 1, name: 'Окрашивание в один тон', duration: '2 ч', price: '1 000 – 3 000 сом', category: 'hair' },
+          { id: 2, name: 'Укладка без мытья', duration: '35 мин', price: '400 сом', category: 'hair' },
+          { id: 3, name: 'Челка', duration: '20 мин', price: '200 сом', category: 'hair' },
+          { id: 4, name: 'Пучок', duration: '1 ч', price: '1 000 сом', category: 'hair' },
+          { id: 5, name: 'Голливудская волна', duration: '2 ч 30 мин', price: '1 000 – 1 500 сом', category: 'hair' },
+          { id: 6, name: 'Стрижка женская', duration: '1 ч', price: '800 сом', category: 'hair' },
+          { id: 7, name: 'Стрижка мужская', duration: '45 мин', price: '600 сом', category: 'hair' },
+          { id: 8, name: 'Окрашивание в два тона', duration: '3 ч', price: '2 500 – 4 000 сом', category: 'hair' },
+          { id: 9, name: 'Мелирование', duration: '3 ч 30 мин', price: '3 000 – 5 000 сом', category: 'hair' },
+          { id: 10, name: 'Колорирование', duration: '4 ч', price: '4 000 – 6 000 сом', category: 'hair' },
+          
+          // Ногтевой сервис
+          { id: 11, name: 'Маникюр классический', duration: '45 мин', price: '500 сом', category: 'nails' },
+          { id: 12, name: 'Маникюр аппаратный', duration: '1 ч', price: '700 сом', category: 'nails' },
+          { id: 13, name: 'Педикюр классический', duration: '1 ч 15 мин', price: '800 сом', category: 'nails' },
+          { id: 14, name: 'Педикюр аппаратный', duration: '1 ч 30 мин', price: '1 000 сом', category: 'nails' },
+          { id: 15, name: 'Покрытие гель-лак', duration: '1 ч', price: '800 сом', category: 'nails' },
+          { id: 16, name: 'Наращивание ногтей', duration: '2 ч', price: '2 000 сом', category: 'nails' },
+          { id: 17, name: 'Коррекция нарощенных ногтей', duration: '1 ч 30 мин', price: '1 500 сом', category: 'nails' },
+          { id: 18, name: 'Дизайн ногтей', duration: '30 мин', price: '300 сом', category: 'nails' },
+          
+          // Массаж
+          { id: 19, name: 'Массаж спины', duration: '30 мин', price: '1 500 сом', category: 'massage' },
+          { id: 20, name: 'Массаж всего тела', duration: '1 ч', price: '2 500 сом', category: 'massage' },
+          { id: 21, name: 'Массаж ног', duration: '45 мин', price: '1 800 сом', category: 'massage' },
+          { id: 22, name: 'Массаж головы', duration: '20 мин', price: '800 сом', category: 'massage' },
+          { id: 23, name: 'Антицеллюлитный массаж', duration: '1 ч', price: '2 000 сом', category: 'massage' },
+          { id: 24, name: 'Расслабляющий массаж', duration: '1 ч 30 мин', price: '3 000 сом', category: 'massage' },
+          
+          // Перманентный макияж
+          { id: 25, name: 'Перманент бровей', duration: '2 ч', price: '8 000 сом', category: 'makeup' },
+          { id: 26, name: 'Перманент губ', duration: '2 ч 30 мин', price: '10 000 сом', category: 'makeup' },
+          { id: 27, name: 'Перманент стрелок', duration: '1 ч 30 мин', price: '6 000 сом', category: 'makeup' },
+          { id: 28, name: 'Коррекция перманента', duration: '1 ч', price: '3 000 сом', category: 'makeup' },
+          { id: 29, name: 'Татуаж родинок', duration: '30 мин', price: '2 000 сом', category: 'makeup' },
+          
+          // Косметология
+          { id: 30, name: 'Чистка лица', duration: '1 ч', price: '2 500 сом', category: 'cosmetology' },
+          { id: 31, name: 'Пилинг лица', duration: '45 мин', price: '2 000 сом', category: 'cosmetology' },
+          { id: 32, name: 'Маска для лица', duration: '30 мин', price: '1 500 сом', category: 'cosmetology' },
+          { id: 33, name: 'Массаж лица', duration: '30 мин', price: '1 200 сом', category: 'cosmetology' },
+          { id: 34, name: 'Уход за кожей', duration: '1 ч 30 мин', price: '3 500 сом', category: 'cosmetology' },
+          { id: 35, name: 'Удаление родинок', duration: '30 мин', price: '1 500 сом', category: 'cosmetology' }
+        ],
+        specialists: [
+          { id: 1, name: 'Тансулуу', role: 'Парикмахер', price: '200 сом', availableTimes: ['10:00', '10:30', '11:00', '11:30', '12:00'] }
+        ],
+        months: [
+          'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+          'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+        ],
+        days: ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота'],
+        searchQuery: '',
+        selectedCategory: 'all',
+        currentMonth: new Date().getMonth(),
+        currentYear: new Date().getFullYear(),
+        showMonthSelect: false,
+        formErrors: {},
+        showSuccess: false,
+        showModal: false,
+        
+        // Методы
+        toggleService(id) {
+          if (this.selectedServices.includes(id)) {
+            this.selectedServices = this.selectedServices.filter(s => s !== id);
+          } else {
+            this.selectedServices = [...this.selectedServices, id];
+          }
+        },
+        getTotalPrice() {
+          let min = 0, max = 0, hasRange = false;
+          this.selectedServices.forEach(id => {
+            const service = this.services.find(s => s.id === id);
+            if (service) {
+              const prices = service.price.split('–').map(p => parseInt(p.replace(/\D/g, '')));
+              if (prices.length === 2) {
+                hasRange = true;
+                min += prices[0];
+                max += prices[1];
+              } else {
+                min += prices[0];
+                max += prices[0];
+              }
+            }
+          });
+          if (hasRange && min !== max) {
+            return `${min.toLocaleString()} – ${max.toLocaleString()}`;
+          } else {
+            return `${min.toLocaleString()}`;
+          }
+        },
+        getTotalDuration() {
+          let totalMinutes = 0;
+          this.selectedServices.forEach(id => {
+            const service = this.services.find(s => s.id === id);
+            if (service) {
+              const duration = service.duration;
+              if (duration.includes('ч')) {
+                const hours = parseInt(duration.match(/(\d+)\s*ч/)?.[1] || 0);
+                totalMinutes += hours * 60;
+              }
+              if (duration.includes('мин')) {
+                const minutes = parseInt(duration.match(/(\d+)\s*мин/)?.[1] || 0);
+                totalMinutes += minutes;
+              }
+            }
+          });
+          const hours = Math.floor(totalMinutes / 60);
+          const minutes = totalMinutes % 60;
+          if (hours > 0 && minutes > 0) {
+            return `${hours} ч. ${minutes} мин.`;
+          } else if (hours > 0) {
+            return `${hours} ч.`;
+          } else {
+            return `${minutes} мин.`;
+          }
+        },
+        generateCalendar() {
+          const firstDay = new Date(this.currentYear, this.currentMonth, 1);
+          const lastDay = new Date(this.currentYear, this.currentMonth + 1, 0);
+          const startDate = new Date(firstDay);
+          startDate.setDate(startDate.getDate() - (firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1));
+          const calendar = [];
+          const current = new Date(startDate);
+          for (let week = 0; week < 6; week++) {
+            const weekDays = [];
+            for (let day = 0; day < 7; day++) {
+              weekDays.push(new Date(current));
+              current.setDate(current.getDate() + 1);
+            }
+            calendar.push(weekDays);
+          }
+          return calendar;
+        },
+        prevMonth() {
+          if (this.currentMonth === 0) {
+            this.currentMonth = 11;
+            this.currentYear--;
+          } else {
+            this.currentMonth--;
+          }
+        },
+        nextMonth() {
+          if (this.currentMonth === 11) {
+            this.currentMonth = 0;
+            this.currentYear++;
+          } else {
+            this.currentMonth++;
+          }
+        },
+        formatDate(date) {
+          return `${this.days[date.getDay()]}, ${date.getDate()} ${this.months[date.getMonth()]}`;
+        },
+        calculateEndTime(startTime) {
+          // Суммируем длительности всех выбранных услуг
+          let totalMinutes = 0;
+          this.selectedServices.forEach(id => {
+            const service = this.services.find(s => s.id === id);
+            if (service) {
+              const duration = service.duration;
+              if (duration.includes('ч')) {
+                const hours = parseInt(duration.match(/(\d+)\s*ч/)?.[1] || 0);
+                totalMinutes += hours * 60;
+              }
+              if (duration.includes('мин')) {
+                const minutes = parseInt(duration.match(/(\d+)\s*мин/)?.[1] || 0);
+                totalMinutes += minutes;
+              }
+            }
+          });
+          const [startHours, startMinutes] = startTime.split(':').map(Number);
+          const start = new Date(2000, 0, 1, startHours, startMinutes);
+          const end = new Date(start.getTime() + totalMinutes * 60000);
+          const pad = n => n.toString().padStart(2, '0');
+          return `${pad(end.getHours())}:${pad(end.getMinutes())}`;
+        },
+        isToday(date) {
+          const today = new Date();
+          return date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
+        },
+        isSelectedDay(date) {
+          return this.selectedDate && date.getDate() === this.selectedDate.getDate() && date.getMonth() === this.selectedDate.getMonth() && date.getFullYear() === this.selectedDate.getFullYear();
+        },
+        isPast(date) {
+          const today = new Date();
+          today.setHours(0,0,0,0);
+          return date < today;
+        },
+        isCurrentMonth(date) {
+          return date.getMonth() === this.currentMonth && date.getFullYear() === this.currentYear;
+        },
+        filteredServices() {
+          let filtered = this.services;
+          
+          // Фильтрация по категории
+          if (this.selectedCategory !== 'all') {
+            filtered = filtered.filter(service => service.category === this.selectedCategory);
+          }
+          
+          // Фильтрация по поисковому запросу
+          if (this.searchQuery.trim() !== '') {
+            filtered = filtered.filter(service => 
+              service.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+            );
+          }
+          
+          return filtered;
+        },
+        getCategoryTitle() {
+          const categoryTitles = {
+            'all': 'Все услуги',
+            'hair': 'Волосы',
+            'nails': 'Ногтевой сервис',
+            'massage': 'Массаж',
+            'makeup': 'Перманентный макияж',
+            'cosmetology': 'Косметология'
+          };
+          return categoryTitles[this.selectedCategory] || 'Все услуги';
+        },
+        validateForm() {
+          this.formErrors = {};
+          if (!this.customerData.name || this.customerData.name.trim().length < 2) {
+            this.formErrors.name = 'Введите имя (минимум 2 символа)';
+          }
+          if (!this.customerData.phone || !/^\d{10,}$/.test(this.customerData.phone.replace(/\D/g, ''))) {
+            this.formErrors.phone = 'Введите корректный номер телефона (минимум 10 цифр)';
+          }
+          if (this.customerData.email && !/^\S+@\S+\.\S+$/.test(this.customerData.email)) {
+            this.formErrors.email = 'Введите корректный e-mail';
+          }
+          return Object.keys(this.formErrors).length === 0;
+        }
+      };
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Выполнение задач — Справочный центр Zappis</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .side-link.active {
+            background: linear-gradient(90deg, #3B82F6 0 6px, #e0e7ef 6px 100%);
+            color: #2563eb;
+            font-weight: 700;
+        }
+        .side-link {
+            transition: background 0.2s, color 0.2s;
+        }
+        .side-link:hover {
+            background: #f3f4f6;
+            color: #2563eb;
+        }
+        @media (max-width: 768px) {
+            .sidebar-nav { display: none; }
+            .sidebar-mobile { display: block; }
+        }
+        @media (min-width: 769px) {
+            .sidebar-nav { display: block; }
+            .sidebar-mobile { display: none; }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-white to-gray-50" style="font-family: system-ui, -apple-system, sans-serif;">
+    <header class="bg-white border-b border-gray-200 py-5 px-4 sm:px-8 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <a href="/support/" class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow hover:bg-blue-700 transition">
+                <i data-lucide="arrow-left" class="w-6 h-6 text-white"></i>
+            </a>
+            <span class="text-xl font-bold text-gray-900 tracking-tight">Справочный центр</span>
+        </div>
+        <a href="/support/" class="text-blue-600 hover:underline font-medium">Все темы</a>
+    </header>
+    <main class="max-w-6xl mx-auto p-6 pt-10 flex gap-8">
+                        <!-- Sidebar Navigation (Desktop) -->
+        <aside class="w-72 shrink-0 sidebar-nav">
+            <nav class="bg-white rounded-2xl border border-gray-200 shadow p-4 sticky top-24 max-h-[80vh] overflow-y-auto">
+                <h2 class="text-lg font-bold text-gray-800 mb-4">Разделы справки</h2>
+                <ul class="space-y-1">
+                    <li><a href="/support/getting-started/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="info" class="w-5 h-5 mr-2"></i> Начало работы с записью</a></li>
+                    <li><a href="/support/getting-started-profile/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="user" class="w-5 h-5 mr-2"></i> Личный кабинет</a></li>
+                    <li><a href="/support/notifications/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="bell" class="w-5 h-5 mr-2"></i> Уведомления</a></li>
+                    <li><a href="/support/schedules/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="calendar" class="w-5 h-5 mr-2"></i> Расписания</a></li>
+                    <li><a href="/support/clients/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="users" class="w-5 h-5 mr-2"></i> Клиенты</a></li>
+                    <li><a href="/support/services/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="scissors" class="w-5 h-5 mr-2"></i> Услуги</a></li>
+                    <li><a href="/support/employees/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="badge" class="w-5 h-5 mr-2"></i> Сотрудники</a></li>
+                    <li><a href="/support/analytics/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="bar-chart-3" class="w-5 h-5 mr-2"></i> Аналитика</a></li>
+                    <li><a href="/support/settings/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="settings" class="w-5 h-5 mr-2"></i> Настройки</a></li>
+                    <li><a href="/support/privacy/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="shield" class="w-5 h-5 mr-2"></i> Конфиденциальность</a></li>
+                    <li><a href="/support/web/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="globe" class="w-5 h-5 mr-2"></i> Онлайн-запись</a></li>
+                    <li><a href="/support/ai/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="bot" class="w-5 h-5 mr-2"></i> AI-функции</a></li>
+                </ul>
+            </nav>
+        </aside>
+                        <!-- Sidebar Navigation (Mobile) -->
+        <aside class="sidebar-mobile w-full mb-8">
+            <nav class="bg-white rounded-2xl border border-gray-200 shadow p-4 flex overflow-x-auto gap-2">
+                <a href="/support/getting-started/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="info" class="w-5 h-5 mr-1"></i> Запись</a>
+                <a href="/support/getting-started-profile/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="user" class="w-5 h-5 mr-1"></i> Личный кабинет</a>
+                <a href="/support/notifications/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bell" class="w-5 h-5 mr-1"></i> Уведомления</a>
+                <a href="/support/schedules/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="calendar" class="w-5 h-5 mr-1"></i> Расписания</a>
+                <a href="/support/clients/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="users" class="w-5 h-5 mr-1"></i> Клиенты</a>
+                <a href="/support/services/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="scissors" class="w-5 h-5 mr-1"></i> Услуги</a>
+                <a href="/support/employees/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="badge" class="w-5 h-5 mr-1"></i> Сотрудники</a>
+                <a href="/support/analytics/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bar-chart-3" class="w-5 h-5 mr-1"></i> Аналитика</a>
+                <a href="/support/settings/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="settings" class="w-5 h-5 mr-1"></i> Настройки</a>
+                <a href="/support/privacy/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="shield" class="w-5 h-5 mr-1"></i> Конфиденциальность</a>
+                <a href="/support/web/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="globe" class="w-5 h-5 mr-1"></i> Онлайн-запись</a>
+                <a href="/support/ai/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bot" class="w-5 h-5 mr-1"></i> AI</a>
+            </nav>
+        </aside>
+        <!-- Main Content -->
+        <section class="flex-1 min-w-0">
+            <div class="flex items-center mb-8">
+                <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center mr-5">
+                    <i data-lucide="check-square" class="w-8 h-8 text-green-600"></i>
+                </div>
+                <h1 class="text-4xl font-extrabold text-gray-900">Выполнение задач и напоминания</h1>
+            </div>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Задачи и напоминания в Zappis</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Постановка задач для сотрудников и себя</li>
+                    <li>Автоматические напоминания о важных событиях</li>
+                    <li>Контроль выполнения задач и дедлайнов</li>
+                    <li>Интеграция с расписаниями и уведомлениями</li>
+                </ul>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Как создавать и контролировать задачи</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Создание задач с описанием, сроком и ответственным</li>
+                    <li>Назначение задач сотрудникам или группам</li>
+                    <li>Отслеживание статуса выполнения</li>
+                    <li>Получение напоминаний и уведомлений</li>
+                </ul>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Автоматизация и интеграция</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Автоматические задачи по расписанию (например, закрытие смены)</li>
+                    <li>Интеграция с уведомлениями и календарями</li>
+                    <li>Шаблоны типовых задач</li>
+                </ul>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Часто задаваемые вопросы</h2>
+                <div class="mb-3">
+                    <b>Как создать задачу?</b>
+                    <div class="text-gray-700">В разделе "Задачи" нажмите "Добавить задачу", заполните детали и выберите ответственного.</div>
+                </div>
+                <div class="mb-3">
+                    <b>Можно ли назначить задачу нескольким сотрудникам?</b>
+                    <div class="text-gray-700">Да, задача может быть назначена группе или нескольким сотрудникам.</div>
+                </div>
+                <div class="mb-3">
+                    <b>Как узнать о просроченных задачах?</b>
+                    <div class="text-gray-700">В списке задач отображаются статусы и дедлайны, а также приходят напоминания.</div>
+                </div>
+                <div class="mb-3">
+                    <b>Можно ли автоматизировать задачи?</b>
+                    <div class="text-gray-700">Да, используйте шаблоны и автоматические задачи по расписанию.</div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Советы по эффективному управлению задачами</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Регулярно проверяйте список задач и статусы</li>
+                    <li>Используйте напоминания для важных дел</li>
+                    <li>Делегируйте задачи сотрудникам</li>
+                    <li>Автоматизируйте рутинные процессы</li>
+                </ul>
+            </section>
+            <div class="flex justify-between mt-12">
+                <a href="/support/web/" class="text-blue-600 hover:underline flex items-center"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> К работе в Интернете</a>
+                <a href="#" class="text-blue-600 hover:underline flex items-center">Следующая тема <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i></a>
+            </div>
+        </section>
+    </main>
+    <script>document.addEventListener('DOMContentLoaded', function() { lucide.createIcons(); });</script>
+</body>
+</html> 

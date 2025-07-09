@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Условия пользования | Resso</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; }
+        .resso-scrollbar::-webkit-scrollbar { width: 8px; background: #f5f5f5; }
+        .resso-scrollbar::-webkit-scrollbar-thumb { background: #e0e0e0; border-radius: 4px; }
+        .tab-active { border-bottom: 2.5px solid #6366f1; color: #4338ca; background: #f8fafc; }
+        .tab-link { transition: color 0.2s; }
+        .tab-link:hover { color: #6366f1; }
+        .privacy-banner { max-width: 420px; width: 100%; margin: 0 auto; display: block; }
+        @media (min-width: 1024px) {
+            aside.fixed {
+                position: fixed !important;
+                top: 136px !important;
+                height: calc(100vh - 136px) !important;
+                z-index: 40;
+            }
+            main .flex-1 {
+                margin-left: 20rem;
+            }
+            /* nav.fixed больше не нужен, так как теперь фиксирован внешний div */
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    <!-- Resso Header -->
+    <header class="bg-white border-b border-slate-200 px-8 py-5 flex items-center justify-between sticky top-0 z-30">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-lg flex items-center justify-center">
+                <span class="text-white font-bold text-xl">R</span>
+            </div>
+            <span class="text-2xl font-semibold text-slate-900">Resso</span>
+        </div>
+        <nav class="hidden md:flex items-center space-x-6">
+            <a href="index.html" class="text-slate-600 hover:text-indigo-600 transition-colors">Главная</a>
+            <a href="settings.html" class="text-slate-600 hover:text-indigo-600 transition-colors">Настройки</a>
+            <a href="#" class="text-indigo-700 font-semibold">Справочный центр</a>
+        </nav>
+        <div class="flex items-center space-x-4">
+            <div class="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-semibold">M</div>
+        </div>
+    </header>
+    <!-- Вкладки -->
+    <div class="fixed top-[72px] left-0 right-0 w-full bg-white border-b border-slate-100 z-30">
+      <nav class="max-w-7xl flex space-x-2 px-8 mx-auto" style="min-width:0;">
+        <a href="#" class="px-4 py-3 tab-link text-slate-600 font-medium">Обзор</a>
+        <a href="privacy.html" class="px-4 py-3 tab-link text-slate-600 font-medium">Политика конфиденциальности</a>
+        <a href="terms.html" class="px-4 py-3 tab-link tab-active font-semibold">Условия использования</a>
+        <a href="technologies.html" class="px-4 py-3 tab-link text-slate-600 font-medium">Технологии</a>
+        <a href="cookies.html" class="px-4 py-3 tab-link text-slate-600 font-medium">Cookies</a>
+        <a href="#" class="px-4 py-3 tab-link text-slate-600 font-medium">FAQ</a>
+      </nav>
+    </div>
+    <main class="max-w-7xl mx-auto flex pt-10 pb-20 px-8">
+        <!-- Sidebar -->
+        <aside class="w-80 pr-8 border-r border-slate-100 resso-scrollbar overflow-y-auto h-[calc(100vh-136px)] fixed z-40 hidden lg:block" style="top:136px; height:calc(100vh - 136px);">
+            <nav class="space-y-1 text-slate-700 text-base" id="terms-menu">
+                <a href="#intro" class="block py-2 px-2 rounded hover:bg-indigo-50 font-medium text-indigo-700">Введение</a>
+                <a href="#general" class="block py-2 px-2 rounded hover:bg-indigo-50">Общие положения</a>
+                <a href="#account" class="block py-2 px-2 rounded hover:bg-indigo-50">Регистрация и аккаунт</a>
+                <a href="#user-rights" class="block py-2 px-2 rounded hover:bg-indigo-50">Права и обязанности пользователя</a>
+                <a href="#service-rights" class="block py-2 px-2 rounded hover:bg-indigo-50">Права и обязанности сервиса</a>
+                <a href="#restrictions" class="block py-2 px-2 rounded hover:bg-indigo-50">Ограничения</a>
+                <a href="#liability" class="block py-2 px-2 rounded hover:bg-indigo-50">Ответственность</a>
+                <a href="#changes" class="block py-2 px-2 rounded hover:bg-indigo-50">Изменения условий</a>
+                <a href="#contacts" class="block py-2 px-2 rounded hover:bg-indigo-50">Контакты</a>
+            </nav>
+        </aside>
+        <!-- Main Content -->
+        <section class="flex-1 pl-0 lg:pl-12">
+            <div class="flex flex-col items-center mb-10 pt-24">
+                <!-- Баннер условий пользования -->
+                <img src="https://www.gstatic.com/identity/boq/policies/privacy/pp_2024/01-introduction-lightmode.svg" alt="Terms Banner" class="privacy-banner mb-6" loading="lazy"/>
+                <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-2 tracking-tight uppercase" id="intro">Условия использования Resso</h1>
+                <p class="text-lg text-slate-700 text-center max-w-2xl">Пожалуйста, внимательно ознакомьтесь с настоящими условиями использования перед началом работы с сервисом Resso. Используя наш сервис, вы соглашаетесь соблюдать данные условия. Если вы не согласны с какими-либо положениями, пожалуйста, не используйте сервис.</p>
+            </div>
+            <div class="space-y-12 bg-white rounded-2xl p-8 md:p-12 border border-slate-100">
+                <section id="general">
+                    <h2 class="text-xl font-semibold text-slate-900 mb-3">Общие положения</h2>
+                    <ul class="list-disc pl-6 text-slate-700 space-y-1 mb-3">
+                        <li>Настоящие условия регулируют отношения между пользователем и сервисом Resso по вопросам использования функционала, сервисов и контента платформы.</li>
+                        <li>Resso предоставляет доступ к сервису на условиях, изложенных в настоящем документе, а также в иных политиках и правилах, опубликованных на сайте.</li>
+                        <li>Использование сервиса возможно только при полном и безоговорочном согласии пользователя с условиями.</li>
+                    </ul>
+                </section>
+                <section id="account">
+                    <h2 class="text-xl font-semibold text-slate-900 mb-3">Регистрация и аккаунт</h2>
+                    <ul class="list-disc pl-6 text-slate-700 space-y-1 mb-3">
+                        <li>Для доступа к отдельным функциям сервиса требуется регистрация и создание аккаунта.</li>
+                        <li>Пользователь обязуется предоставлять достоверную и актуальную информацию при регистрации и поддерживать её в актуальном состоянии.</li>
+                        <li>Пользователь несёт ответственность за сохранность своих учетных данных и не должен передавать их третьим лицам.</li>
+                        <li>Все действия, совершённые с использованием аккаунта пользователя, считаются совершёнными самим пользователем.</li>
+                        <li>В случае подозрения на несанкционированный доступ пользователь обязан немедленно уведомить службу поддержки Resso.</li>
+                    </ul>
+                </section>
+                <section id="user-rights">
+                    <h2 class="text-xl font-semibold text-slate-900 mb-3">Права и обязанности пользователя</h2>
+                    <ul class="list-disc pl-6 text-slate-700 space-y-1 mb-3">
+                        <li>Пользователь вправе использовать сервис в рамках его функционала и в соответствии с настоящими условиями.</li>
+                        <li>Пользователь обязуется не использовать сервис для противоправных целей, не нарушать права третьих лиц и не размещать запрещённый контент.</li>
+                        <li>Пользователь несёт ответственность за все действия, совершённые с его аккаунта.</li>
+                        <li>Пользователь обязуется соблюдать авторские и иные права на контент, размещённый в сервисе.</li>
+                    </ul>
+                </section>
+                <section id="service-rights">
+                    <h2 class="text-xl font-semibold text-slate-900 mb-3">Права и обязанности сервиса</h2>
+                    <ul class="list-disc pl-6 text-slate-700 space-y-1 mb-3">
+                        <li>Resso вправе в любой момент изменять функционал, интерфейс, правила и условия предоставления сервиса.</li>
+                        <li>Resso вправе временно или навсегда ограничить доступ пользователя к сервису при нарушении условий или законодательства.</li>
+                        <li>Resso обязуется обеспечивать работоспособность сервиса, но не гарантирует его бесперебойную и безошибочную работу.</li>
+                        <li>Resso вправе удалять или блокировать любой контент, нарушающий условия или права третьих лиц.</li>
+                    </ul>
+                </section>
+                <section id="restrictions">
+                    <h2 class="text-xl font-semibold text-slate-900 mb-3">Ограничения</h2>
+                    <ul class="list-disc pl-6 text-slate-700 space-y-1 mb-3">
+                        <li>Запрещается использовать сервис для рассылки спама, мошенничества, распространения вредоносного ПО, нарушения авторских прав и иных противоправных действий.</li>
+                        <li>Запрещается пытаться получить несанкционированный доступ к сервису, данным других пользователей или инфраструктуре Resso.</li>
+                        <li>Запрещается использовать автоматизированные скрипты, ботов и иные средства для сбора информации или вмешательства в работу сервиса.</li>
+                    </ul>
+                </section>
+                <section id="liability">
+                    <h2 class="text-xl font-semibold text-slate-900 mb-3">Ответственность</h2>
+                    <ul class="list-disc pl-6 text-slate-700 space-y-1 mb-3">
+                        <li>Пользователь несёт ответственность за все действия, совершённые с его аккаунта, а также за соблюдение законодательства при использовании сервиса.</li>
+                        <li>Resso не несёт ответственности за временные сбои, потерю данных, вред, причинённый действиями третьих лиц, а также за контент, размещённый пользователями.</li>
+                        <li>В случае нарушения условий Resso вправе ограничить или заблокировать доступ пользователя без предварительного уведомления.</li>
+                    </ul>
+                </section>
+                <section id="changes">
+                    <h2 class="text-xl font-semibold text-slate-900 mb-3">Изменения условий</h2>
+                    <p class="text-slate-700 mb-2">Resso оставляет за собой право вносить изменения в настоящие условия в любое время. Актуальная версия всегда доступна на сайте. Продолжая использовать сервис после изменений, пользователь соглашается с новыми условиями.</p>
+                </section>
+                <section id="contacts">
+                    <h2 class="text-xl font-semibold text-slate-900 mb-3">Контакты</h2>
+                    <p class="text-slate-700 mb-2">По всем вопросам, связанным с использованием сервиса, обращайтесь в службу поддержки:</p>
+                    <ul class="list-none pl-0 text-slate-700 space-y-1 mb-3">
+                        <li><b>Email:</b> <a href="mailto:support@resso.com" class="text-indigo-600 underline">support@resso.com</a></li>
+                    </ul>
+                </section>
+            </div>
+        </section>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            // Плавная прокрутка для меню
+            document.querySelectorAll('#terms-menu a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    const href = this.getAttribute('href');
+                    if (href && href.startsWith('#')) {
+                        e.preventDefault();
+                        const target = document.querySelector(href);
+                        if (target) {
+                            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

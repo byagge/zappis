@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zappis — Клиенты</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { background: #f3f4f6; }
+        .bottom-nav { box-shadow: 0 -2px 16px 0 rgba(0,0,0,0.06); }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-gray-50" style="font-family: system-ui, -apple-system, sans-serif;">
+<div x-data="mobileClients()" class="flex-1 flex flex-col">
+    <!-- Header -->
+    <header class="bg-white shadow-sm px-4 py-3 flex items-center justify-between sticky top-0 z-20">
+        <span class="font-semibold text-gray-900 text-lg">Клиенты</span>
+        <span class="w-6 h-6"></span>
+    </header>
+
+    <!-- Search -->
+    <div class="px-4 py-2 bg-white sticky top-[56px] z-10">
+        <input type="text" x-model="search" placeholder="Поиск по имени или телефону..." class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-200 outline-none text-base bg-gray-50" />
+    </div>
+
+    <!-- Client List -->
+    <main class="flex-1 overflow-y-auto scrollbar-hide pb-20">
+        <template x-if="filteredClients.length === 0">
+            <div class="flex flex-col items-center justify-center h-64 text-gray-400">
+                <i data-lucide="users" class="w-16 h-16 mb-4"></i>
+                <div class="text-xl font-semibold mb-2">Нет клиентов</div>
+                <div class="mb-4">Добавьте первого клиента с ПК</div>
+            </div>
+        </template>
+        <div class="space-y-2 px-2 pt-2">
+            <template x-for="client in filteredClients" :key="client.id">
+                <div @click="viewClient(client)" class="bg-white rounded-xl p-4 flex items-center space-x-4 shadow hover:bg-blue-50 active:bg-blue-100 transition cursor-pointer">
+                    <div class="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white text-xl font-bold">
+                        <span x-text="getInitials(client.name)"></span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="font-semibold text-gray-900 text-base truncate" x-text="client.name"></div>
+                        <div class="text-sm text-gray-500 truncate" x-text="client.phone"></div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+                </div>
+            </template>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav fixed bottom-0 left-0 right-0 bg-white flex justify-around items-center h-16 border-t border-gray-200 z-30">
+        <a href="/dashboard/" class="flex flex-col items-center text-xs text-gray-500 hover:text-blue-600">
+            <i data-lucide="home" class="w-6 h-6 mb-1"></i>
+            Главная
+        </a>
+        <a href="/employees/" class="flex flex-col items-center text-xs text-gray-500 hover:text-blue-600">
+            <i data-lucide="users" class="w-6 h-6 mb-1"></i>
+            Сотрудники
+        </a>
+        <a href="/clients/" class="flex flex-col items-center text-xs text-blue-600">
+            <i data-lucide="user-plus" class="w-6 h-6 mb-1"></i>
+            Клиенты
+        </a>
+        <a href="/schedules/" class="flex flex-col items-center text-xs text-gray-500 hover:text-blue-600">
+            <i data-lucide="calendar" class="w-6 h-6 mb-1"></i>
+            Записи
+        </a>
+        <a href="/settings/" class="flex flex-col items-center text-xs text-gray-500 hover:text-blue-600">
+            <i data-lucide="settings" class="w-6 h-6 mb-1"></i>
+            Настройки
+        </a>
+    </nav>
+
+    <!-- Client Profile Modal -->
+    <div x-show="showProfile" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+        <div class="bg-white rounded-2xl w-full max-w-md mx-2 p-6 relative max-h-[90vh] overflow-y-auto">
+            <button @click="showProfile = false" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <div class="flex flex-col items-center mb-4">
+                <div class="w-20 h-20 rounded-full bg-blue-600 flex items-center justify-center text-white text-3xl font-bold mb-2">
+                    <span x-text="getInitials(profileClient.name)"></span>
+                </div>
+                <div class="font-bold text-xl mb-1" x-text="profileClient.name"></div>
+                <div class="text-gray-500 mb-1" x-text="profileClient.phone"></div>
+                <div class="text-gray-500 mb-1" x-text="profileClient.email"></div>
+                <span :class="getStatusClass(profileClient.status)" class="px-3 py-1 text-sm rounded-full mt-2" x-text="getStatusText(profileClient.status)"></span>
+            </div>
+            
+            <!-- Client Statistics -->
+            <div class="space-y-3 mb-4">
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-gray-500">Следующий визит</span>
+                    <span class="text-blue-600 font-medium" x-text="formatDate(profileClient.next_visit)"></span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-gray-500">Всего визитов</span>
+                    <span class="text-gray-900" x-text="profileClient.total_visits || 0"></span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-gray-500">Средний чек</span>
+                    <span class="text-gray-900" x-text="formatPrice(profileClient.average_check)"></span>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-gray-500">Сумма покупок</span>
+                    <span class="text-gray-900" x-text="formatPrice(profileClient.total_spent)"></span>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="flex space-x-2">
+                <button @click="quickCall(profileClient)" class="flex-1 px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors flex items-center justify-center">
+                    <i data-lucide="phone" class="w-4 h-4 mr-1"></i>
+                    Позвонить
+                </button>
+                <button @click="scheduleAppointment(profileClient)" class="flex-1 px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors flex items-center justify-center">
+                    <i data-lucide="calendar" class="w-4 h-4 mr-1"></i>
+                    Записать
+                </button>
+            </div>
+            
+            <button @click="showProfile = false" class="w-full py-2 bg-gray-100 text-gray-700 rounded-lg font-semibold mt-4">Закрыть</button>
+        </div>
+    </div>
+</div>
+<script>
+function mobileClients() {
+    return {
+        clients: [],
+        search: '',
+        showProfile: false,
+        profileClient: {},
+        async init() {
+            await this.loadClients();
+            lucide.createIcons();
+        },
+        async loadClients() {
+            try {
+                const res = await fetch('/clients/api/clients/');
+                const data = await res.json();
+                this.clients = Array.isArray(data) ? data : (data.results || data.clients || []);
+            } catch (e) { this.clients = []; }
+        },
+        get filteredClients() {
+            if (!this.search) return this.clients;
+            const s = this.search.toLowerCase();
+            return this.clients.filter(c => (c.name && c.name.toLowerCase().includes(s)) || (c.phone && c.phone.includes(this.search)));
+        },
+        getInitials(name) {
+            if (!name) return '';
+            return name.split(' ').map(w => w[0]).join('').toUpperCase();
+        },
+        viewClient(client) {
+            this.profileClient = client;
+            this.showProfile = true;
+        },
+        getStatusClass(status) {
+            const classes = {
+                'new': 'bg-blue-100 text-blue-800',
+                'vip': 'bg-green-100 text-green-800',
+                'regular': 'bg-yellow-100 text-yellow-800',
+                'inactive': 'bg-gray-100 text-gray-800'
+            };
+            return classes[status] || classes['new'];
+        },
+        getStatusText(status) {
+            const texts = {
+                'new': 'Новый',
+                'vip': 'VIP',
+                'regular': 'Постоянный',
+                'inactive': 'Неактивный'
+            };
+            return texts[status] || 'Новый';
+        },
+        formatDate(dateString) {
+            if (!dateString) return 'Не указано';
+            const date = new Date(dateString);
+            const now = new Date();
+
+            // Сравниваем только даты, без времени
+            const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            const nowOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+            const diffTime = dateOnly - nowOnly;
+            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+            // Для будущих дат
+            if (diffDays > 0) {
+                if (diffDays === 1) return 'Завтра';
+                if (diffDays <= 7) return `Через ${diffDays} дней`;
+                if (diffDays <= 30) return `Через ${Math.floor(diffDays / 7)} недель`;
+                return date.toLocaleDateString('ru-RU');
+            }
+
+            // Для прошлых дат
+            const absDiffDays = Math.abs(diffDays);
+            if (absDiffDays === 0) return 'Сегодня';
+            if (absDiffDays === 1) return 'Вчера';
+            if (absDiffDays <= 7) return `${absDiffDays} дней назад`;
+            if (absDiffDays <= 30) return `${Math.floor(absDiffDays / 7)} недель назад`;
+            return date.toLocaleDateString('ru-RU');
+        },
+        formatPrice(price) {
+            if (!price) return '₽ 0';
+            return `₽ ${parseInt(price).toLocaleString('ru-RU')}`;
+        },
+        quickCall(client) {
+            const phoneNumber = client.phone;
+            
+            // Пытаемся сделать звонок напрямую
+            if ('navigator' in window && 'share' in navigator) {
+                // Для мобильных устройств с поддержкой Web Share API
+                navigator.share({
+                    title: `Звонок клиенту ${client.name}`,
+                    text: `Позвонить клиенту ${client.name}`,
+                    url: `tel:${phoneNumber}`
+                }).catch(() => {
+                    // Fallback - открываем tel: ссылку
+                    window.open(`tel:${phoneNumber}`, '_blank');
+                });
+            } else {
+                // Для десктопных браузеров - копируем номер
+                navigator.clipboard.writeText(phoneNumber).then(() => {
+                    alert(`Номер ${client.name} скопирован в буфер обмена`);
+                }).catch(() => {
+                    // Fallback - показываем номер
+                    alert(`Номер ${client.name}: ${phoneNumber}`);
+                });
+            }
+        },
+        scheduleAppointment(client) {
+            // Редирект на страницу записи с данными клиента
+            const params = new URLSearchParams({
+                client_id: client.id,
+                client_name: client.name,
+                client_phone: client.phone
+            });
+            window.location.href = `/schedules/?${params.toString()}`;
+        }
+    }
+}
+document.addEventListener('alpine:init', () => {
+    Alpine.data('mobileClients', mobileClients);
+});
+document.addEventListener('DOMContentLoaded', () => {
+    lucide.createIcons();
+});
+</script>
+</body>
+</html> 

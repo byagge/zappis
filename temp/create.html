@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resso - Создайте свой сайт</title>
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Alpine.js -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .sidebar {
+            width: 280px;
+            transition: all 0.3s ease;
+        }
+        .sidebar.collapsed {
+            width: 80px;
+        }
+        .main-content {
+            transition: all 0.3s ease;
+            margin-left: 280px;
+        }
+        .main-content.expanded {
+            margin-left: 80px;
+        }
+        .header-content {
+            transition: all 0.3s ease;
+            margin-left: 280px;
+        }
+        .header-content.expanded {
+            margin-left: 80px;
+        }
+    </style>
+</head>
+<body class="h-screen bg-gray-50 flex" style="font-family: system-ui, -apple-system, sans-serif;">
+    <div x-data="createPage()">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white border-r border-gray-200 p-4 space-y-6 fixed left-0 top-16 bottom-0 overflow-y-auto no-scrollbar z-40">
+            <!-- Навигация -->
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-sm font-medium text-gray-900">Навигация</h3>
+                </div>
+                <div class="space-y-1">
+                    <a href="index.html" class="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+                        <i data-lucide="home" class="w-4 h-4 flex-shrink-0"></i>
+                        <span>Главная</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-2 px-3 py-2 bg-blue-50 text-blue-600 rounded-lg">
+                        <i data-lucide="plus-circle" class="w-4 h-4 flex-shrink-0"></i>
+                        <span>Создать сайт</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+                        <i data-lucide="layout" class="w-4 h-4 flex-shrink-0"></i>
+                        <span>Шаблоны</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+                        <i data-lucide="help-circle" class="w-4 h-4 flex-shrink-0"></i>
+                        <span>Помощь</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Категории -->
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-sm font-medium text-gray-900">Категории</h3>
+                </div>
+                <div class="space-y-1">
+                    <a href="#" class="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+                        <i data-lucide="shopping-bag" class="w-4 h-4 flex-shrink-0"></i>
+                        <span>Магазины</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+                        <i data-lucide="scissors" class="w-4 h-4 flex-shrink-0"></i>
+                        <span>Красота</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+                        <i data-lucide="utensils" class="w-4 h-4 flex-shrink-0"></i>
+                        <span>Рестораны</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+                        <i data-lucide="building" class="w-4 h-4 flex-shrink-0"></i>
+                        <span>Бизнес</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- User Info -->
+            <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                        <i data-lucide="user" class="w-4 h-4 text-white"></i>
+                    </div>
+                    <div>
+                        <div class="text-sm font-medium text-gray-900">Администратор</div>
+                        <div class="text-xs text-gray-500">admin@resso.com</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content flex-1">
+            <!-- Header -->
+            <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between fixed top-0 left-0 right-0 z-30">
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-sm">R</span>
+                        </div>
+                        <span class="font-semibold text-gray-900">Resso</span>
+                        <span class="text-gray-400">•</span>
+                        <span class="text-gray-600">Создание сайта</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        Начать создание
+                    </button>
+                </div>
+            </header>
+
+            <!-- Welcome Content -->
+            <div class="flex flex-1 overflow-hidden pt-16">
+                <main class="flex-1 overflow-auto p-6">
+                    <!-- Hero Section -->
+                    <div class="max-w-4xl mx-auto text-center mb-12">
+                        <h1 class="text-4xl font-bold text-gray-900 mb-4">
+                            Создайте свой сайт с Resso
+                            <i data-lucide="rocket" class="w-8 h-8 inline-block align-text-bottom"></i>
+                        </h1>
+                        <p class="text-xl text-gray-600 mb-8">
+                            Простой и быстрый способ создать профессиональный сайт для вашего бизнеса
+                        </p>
+                        <div class="flex justify-center space-x-4">
+                            <button class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-lg flex items-center space-x-2">
+                                <span>Начать бесплатно</span>
+                                <i data-lucide="sparkles" class="w-5 h-5"></i>
+                            </button>
+                            <button class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-lg flex items-center space-x-2">
+                                <span>Посмотреть демо</span>
+                                <i data-lucide="eye" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Features Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-12">
+                        <div class="bg-white rounded-xl p-6 shadow-sm">
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                                <i data-lucide="palette" class="w-6 h-6 text-blue-600"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Красивый дизайн</h3>
+                            <p class="text-gray-600">Современные шаблоны и стильные элементы дизайна</p>
+                        </div>
+                        <div class="bg-white rounded-xl p-6 shadow-sm">
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                                <i data-lucide="zap" class="w-6 h-6 text-green-600"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Быстрая загрузка</h3>
+                            <p class="text-gray-600">Оптимизированная производительность для вашего сайта</p>
+                        </div>
+                        <div class="bg-white rounded-xl p-6 shadow-sm">
+                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+                                <i data-lucide="smartphone" class="w-6 h-6 text-purple-600"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Адаптивность</h3>
+                            <p class="text-gray-600">Идеальное отображение на всех устройствах</p>
+                        </div>
+                    </div>
+
+                    <!-- How It Works -->
+                    <div class="max-w-4xl mx-auto mb-12">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-8 text-center flex items-center justify-center space-x-2">
+                            <span>Как это работает?</span>
+                            <i data-lucide="help-circle" class="w-6 h-6"></i>
+                        </h2>
+                        <div class="space-y-6">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <span class="text-blue-600 font-semibold">1</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Выберите шаблон</h3>
+                                    <p class="text-gray-600">Подберите подходящий шаблон из нашей коллекции</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-4">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <span class="text-blue-600 font-semibold">2</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Настройте контент</h3>
+                                    <p class="text-gray-600">Добавьте свои тексты, изображения и настройте дизайн</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-4">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <span class="text-blue-600 font-semibold">3</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Опубликуйте сайт</h3>
+                                    <p class="text-gray-600">Запустите свой сайт в интернете одним кликом</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Templates Preview -->
+                    <div class="max-w-6xl mx-auto">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-8 text-center flex items-center justify-center space-x-2">
+                            <span>Популярные шаблоны</span>
+                            <i data-lucide="target" class="w-6 h-6"></i>
+                        </h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <div class="bg-white rounded-xl overflow-hidden shadow-sm">
+                                <div class="h-48 bg-gray-200"></div>
+                                <div class="p-4">
+                                    <h3 class="font-semibold text-gray-900 mb-2">Магазин красоты</h3>
+                                    <p class="text-gray-600 text-sm mb-4">Идеально для салонов красоты и спа-центров</p>
+                                    <button class="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                                        Выбрать шаблон
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-xl overflow-hidden shadow-sm">
+                                <div class="h-48 bg-gray-200"></div>
+                                <div class="p-4">
+                                    <h3 class="font-semibold text-gray-900 mb-2">Ресторан</h3>
+                                    <p class="text-gray-600 text-sm mb-4">Стильный шаблон для ресторанов и кафе</p>
+                                    <button class="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                                        Выбрать шаблон
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-xl overflow-hidden shadow-sm">
+                                <div class="h-48 bg-gray-200"></div>
+                                <div class="p-4">
+                                    <h3 class="font-semibold text-gray-900 mb-2">Бизнес</h3>
+                                    <p class="text-gray-600 text-sm mb-4">Профессиональный шаблон для компаний</p>
+                                    <button class="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                                        Выбрать шаблон
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alpine.js Logic -->
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('createPage', () => ({
+                init() {
+                    // Initialize any necessary functionality
+                }
+            }));
+        });
+
+        // Initialize Lucide Icons
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html> 

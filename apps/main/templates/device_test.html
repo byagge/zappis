@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест определения устройства</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .info-box {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .mobile { background: #e3f2fd; }
+        .desktop { background: #f3e5f5; }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 5px;
+        }
+        .button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Тест определения устройства</h1>
+    
+    <div class="info-box">
+        <h3>Информация об устройстве:</h3>
+        <p><strong>User Agent:</strong> <span id="userAgent"></span></p>
+        <p><strong>Ширина экрана:</strong> <span id="screenWidth"></span>px</p>
+        <p><strong>Высота экрана:</strong> <span id="screenHeight"></span>px</p>
+        <p><strong>Ширина viewport:</strong> <span id="viewportWidth"></span>px</p>
+        <p><strong>Высота viewport:</strong> <span id="viewportHeight"></span>px</p>
+        <p><strong>Определено как:</strong> <span id="deviceType"></span></p>
+    </div>
+
+    <div class="info-box">
+        <h3>Доступные версии:</h3>
+        <a href="/demo/" class="button">Русский десктоп</a>
+        <a href="/demo/mobile/" class="button">Русский мобильный</a>
+        <a href="/demo/ky/" class="button">Кыргызский десктоп</a>
+        <a href="/demo/ky/mobile/" class="button">Кыргызский мобильный</a>
+    </div>
+
+    <div class="info-box">
+        <h3>Автоматическое определение:</h3>
+        <a href="/demo/" class="button">Авто (русский)</a>
+        <a href="/demo/ky/" class="button">Авто (кыргызский)</a>
+    </div>
+
+    <script>
+        // Отображаем информацию об устройстве
+        document.getElementById('userAgent').textContent = navigator.userAgent;
+        document.getElementById('screenWidth').textContent = screen.width;
+        document.getElementById('screenHeight').textContent = screen.height;
+        document.getElementById('viewportWidth').textContent = window.innerWidth;
+        document.getElementById('viewportHeight').textContent = window.innerHeight;
+
+        // Определяем тип устройства
+        function isMobile() {
+            const ua = navigator.userAgent.toLowerCase();
+            const mobileKeywords = ['android', 'iphone', 'ipad', 'ipod', 'opera mini', 'iemobile', 'mobile', 'blackberry', 'windows phone'];
+            return mobileKeywords.some(keyword => ua.includes(keyword)) || window.innerWidth <= 768;
+        }
+
+        const deviceType = isMobile() ? 'Мобильное устройство' : 'Десктоп';
+        document.getElementById('deviceType').textContent = deviceType;
+
+        // Отслеживаем изменение размера окна
+        window.addEventListener('resize', function() {
+            document.getElementById('viewportWidth').textContent = window.innerWidth;
+            document.getElementById('viewportHeight').textContent = window.innerHeight;
+            
+            const newDeviceType = isMobile() ? 'Мобильное устройство' : 'Десктоп';
+            document.getElementById('deviceType').textContent = newDeviceType;
+        });
+    </script>
+</body>
+</html> 

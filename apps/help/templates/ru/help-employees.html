@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сотрудники и роли — Справочный центр Zappis</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .side-link.active {
+            background: linear-gradient(90deg, #3B82F6 0 6px, #e0e7ef 6px 100%);
+            color: #2563eb;
+            font-weight: 700;
+        }
+        .side-link {
+            transition: background 0.2s, color 0.2s;
+        }
+        .side-link:hover {
+            background: #f3f4f6;
+            color: #2563eb;
+        }
+        @media (max-width: 768px) {
+            .sidebar-nav { display: none; }
+            .sidebar-mobile { display: block; }
+        }
+        @media (min-width: 769px) {
+            .sidebar-nav { display: block; }
+            .sidebar-mobile { display: none; }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-white to-gray-50" style="font-family: system-ui, -apple-system, sans-serif;">
+    <header class="bg-white border-b border-gray-200 py-5 px-4 sm:px-8 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <a href="/support/" class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow hover:bg-blue-700 transition">
+                <i data-lucide="arrow-left" class="w-6 h-6 text-white"></i>
+            </a>
+            <span class="text-xl font-bold text-gray-900 tracking-tight">Справочный центр</span>
+        </div>
+        <a href="/support/" class="text-blue-600 hover:underline font-medium">Все темы</a>
+    </header>
+    <main class="max-w-6xl mx-auto p-6 pt-10 flex gap-8">
+                        <!-- Sidebar Navigation (Desktop) -->
+        <aside class="w-72 shrink-0 sidebar-nav">
+            <nav class="bg-white rounded-2xl border border-gray-200 shadow p-4 sticky top-24 max-h-[80vh] overflow-y-auto">
+                <h2 class="text-lg font-bold text-gray-800 mb-4">Разделы справки</h2>
+                <ul class="space-y-1">
+                    <li><a href="/support/getting-started/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="info" class="w-5 h-5 mr-2"></i> Начало работы с записью</a></li>
+                    <li><a href="/support/getting-started-profile/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="user" class="w-5 h-5 mr-2"></i> Личный кабинет</a></li>
+                    <li><a href="/support/notifications/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="bell" class="w-5 h-5 mr-2"></i> Уведомления</a></li>
+                    <li><a href="/support/schedules/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="calendar" class="w-5 h-5 mr-2"></i> Расписания</a></li>
+                    <li><a href="/support/clients/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="users" class="w-5 h-5 mr-2"></i> Клиенты</a></li>
+                    <li><a href="/support/services/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="scissors" class="w-5 h-5 mr-2"></i> Услуги</a></li>
+                    <li><a href="/support/employees/" class="side-link active flex items-center px-4 py-2 rounded-lg"><i data-lucide="badge" class="w-5 h-5 mr-2"></i> Сотрудники</a></li>
+                    <li><a href="/support/analytics/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="bar-chart-3" class="w-5 h-5 mr-2"></i> Аналитика</a></li>
+                    <li><a href="/support/settings/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="settings" class="w-5 h-5 mr-2"></i> Настройки</a></li>
+                    <li><a href="/support/privacy/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="shield" class="w-5 h-5 mr-2"></i> Конфиденциальность</a></li>
+                    <li><a href="/support/web/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="globe" class="w-5 h-5 mr-2"></i> Онлайн-запись</a></li>
+                    <li><a href="/support/ai/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="bot" class="w-5 h-5 mr-2"></i> AI-функции</a></li>
+                </ul>
+            </nav>
+        </aside>
+                        <!-- Sidebar Navigation (Mobile) -->
+        <aside class="sidebar-mobile w-full mb-8">
+            <nav class="bg-white rounded-2xl border border-gray-200 shadow p-4 flex overflow-x-auto gap-2">
+                <a href="/support/getting-started/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="info" class="w-5 h-5 mr-1"></i> Запись</a>
+                <a href="/support/getting-started-profile/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="user" class="w-5 h-5 mr-1"></i> Личный кабинет</a>
+                <a href="/support/notifications/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bell" class="w-5 h-5 mr-1"></i> Уведомления</a>
+                <a href="/support/schedules/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="calendar" class="w-5 h-5 mr-1"></i> Расписания</a>
+                <a href="/support/clients/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="users" class="w-5 h-5 mr-1"></i> Клиенты</a>
+                <a href="/support/services/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="scissors" class="w-5 h-5 mr-1"></i> Услуги</a>
+                <a href="/support/employees/" class="side-link active flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="badge" class="w-5 h-5 mr-1"></i> Сотрудники</a>
+                <a href="/support/analytics/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bar-chart-3" class="w-5 h-5 mr-1"></i> Аналитика</a>
+                <a href="/support/settings/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="settings" class="w-5 h-5 mr-1"></i> Настройки</a>
+                <a href="/support/privacy/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="shield" class="w-5 h-5 mr-1"></i> Конфиденциальность</a>
+                <a href="/support/web/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="globe" class="w-5 h-5 mr-1"></i> Онлайн-запись</a>
+                <a href="/support/ai/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bot" class="w-5 h-5 mr-1"></i> AI</a>
+            </nav>
+        </aside>
+        <!-- Main Content -->
+        <section class="flex-1 min-w-0">
+            <div class="flex items-center mb-8">
+                <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mr-5">
+                    <i data-lucide="badge" class="w-8 h-8 text-blue-600"></i>
+                </div>
+                <h1 class="text-4xl font-extrabold text-gray-900">Сотрудники и управление персоналом в Zappis</h1>
+            </div>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Что такое модуль сотрудников и зачем он нужен?</h2>
+                <p class="text-gray-700 mb-3">Модуль сотрудников — это комплексная система управления персоналом, которая позволяет вести полную базу данных о всех сотрудниках, их квалификации, документах, графиках работы и производительности. Это основа для эффективного управления бизнесом.</p>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Полная база данных сотрудников с детальной информацией</li>
+                    <li>Автоматическое создание аккаунтов для входа в систему</li>
+                    <li>Управление должностями и квалификациями</li>
+                    <li>Отслеживание документов и сертификатов</li>
+                    <li>Контроль отпусков и больничных</li>
+                    <li>История зарплат и оценок работы</li>
+                    <li>Интеграция с расписанием и записями</li>
+                </ul>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Как добавить нового сотрудника?</h2>
+                <ol class="list-decimal pl-6 text-gray-700 mb-4">
+                    <li>Перейдите в раздел <b>Сотрудники</b> в личном кабинете.</li>
+                    <li>Нажмите кнопку <b>Новый сотрудник</b>.</li>
+                    <li>Заполните обязательные поля:
+                        <ul class="list-disc pl-6 mt-2">
+                            <li><b>Имя и фамилия</b> — полное имя сотрудника</li>
+                            <li><b>Должность</b> — выберите из списка доступных должностей</li>
+                            <li><b>Телефон</b> — в формате +996 XXX XXX XXX</li>
+                            <li><b>Email</b> — для связи и входа в систему</li>
+                        </ul>
+                    </li>
+                    <li>Заполните дополнительные поля (опционально):
+                        <ul class="list-disc pl-6 mt-2">
+                            <li>Опыт работы, образование, навыки</li>
+                            <li>Личные данные (дата рождения, адрес)</li>
+                            <li>Рабочая информация (дата начала, зарплата)</li>
+                            <li>Документы (паспорт, ИНН, банковские реквизиты)</li>
+                        </ul>
+                    </li>
+                    <li>Сохраните — система автоматически создаст аккаунт для сотрудника.</li>
+                </ol>
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-xl mt-4 flex items-start">
+                    <i data-lucide="info" class="w-5 h-5 text-blue-500 mr-3 mt-1"></i>
+                    <div>
+                        <b>Важно:</b> При создании сотрудника автоматически генерируется временный пароль. Сотрудник сможет войти в систему, используя свой номер телефона и временный пароль.
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Должности и квалификации</h2>
+                <p class="text-gray-700 mb-3">Система поддерживает различные должности в зависимости от типа вашего бизнеса:</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-gray-50 rounded-xl p-4">
+                        <h4 class="font-semibold text-gray-900 mb-2">Салон красоты</h4>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>• Парикмахер</li>
+                            <li>• Стилист</li>
+                            <li>• Косметолог</li>
+                            <li>• Визажист</li>
+                            <li>• Мастер ногтевого сервиса</li>
+                            <li>• Бровист</li>
+                            <li>• Лэшмейкер</li>
+                            <li>• Администратор</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 rounded-xl p-4">
+                        <h4 class="font-semibold text-gray-900 mb-2">Медицинские услуги</h4>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>• Врач</li>
+                            <li>• Медсестра</li>
+                            <li>• Терапевт</li>
+                            <li>• Администратор</li>
+                            <li>• Регистратор</li>
+                            <li>• Фитнес-тренер</li>
+                            <li>• Массажист</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Статусы сотрудников</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
+                        <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                        <div>
+                            <div class="font-medium text-gray-900">Активный</div>
+                            <div class="text-sm text-gray-600">Сотрудник работает в обычном режиме</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3 p-3 bg-yellow-50 rounded-lg">
+                        <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                        <div>
+                            <div class="font-medium text-gray-900">В отпуске</div>
+                            <div class="text-sm text-gray-600">Сотрудник находится в отпуске</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3 p-3 bg-orange-50 rounded-lg">
+                        <div class="w-3 h-3 bg-orange-500 rounded-full"></div>
+                        <div>
+                            <div class="font-medium text-gray-900">На больничном</div>
+                            <div class="text-sm text-gray-600">Сотрудник временно не работает</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3 p-3 bg-red-50 rounded-lg">
+                        <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                        <div>
+                            <div class="font-medium text-gray-900">Неактивный</div>
+                            <div class="text-sm text-gray-600">Сотрудник не работает</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Управление документами и информацией</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
+                            <i data-lucide="file-text" class="w-6 h-6 text-blue-600"></i>
+                        </div>
+                        <h4 class="font-semibold text-gray-900 mb-2">Личные документы</h4>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>• Номер паспорта</li>
+                            <li>• Дата выдачи и срок действия</li>
+                            <li>• ИНН</li>
+                            <li>• Банковские реквизиты</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4">
+                            <i data-lucide="briefcase" class="w-6 h-6 text-green-600"></i>
+                        </div>
+                        <h4 class="font-semibold text-gray-900 mb-2">Рабочая информация</h4>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>• Номер контракта</li>
+                            <li>• Срок действия контракта</li>
+                            <li>• Страховой полис</li>
+                            <li>• Сертификаты и достижения</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
+                            <i data-lucide="calendar" class="w-6 h-6 text-purple-600"></i>
+                        </div>
+                        <h4 class="font-semibold text-gray-900 mb-2">Отпуска и больничные</h4>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>• Общее количество дней отпуска</li>
+                            <li>• Использованные дни отпуска</li>
+                            <li>• Больничные дни</li>
+                            <li>• Автоматический расчет остатка</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Просмотр и редактирование профиля</h2>
+                <p class="text-gray-700 mb-3">Каждый сотрудник имеет детальный профиль с полной информацией:</p>
+                <ul class="list-disc pl-6 text-gray-700 mb-4">
+                    <li><b>Основная информация:</b> имя, должность, контакты, статус</li>
+                    <li><b>Статистика:</b> количество клиентов, рейтинг, опыт работы</li>
+                    <li><b>Личные данные:</b> дата рождения, образование, навыки, языки</li>
+                    <li><b>Рабочая информация:</b> зарплата, график, дата начала работы</li>
+                    <li><b>Документы:</b> паспорт, ИНН, банковские реквизиты</li>
+                    <li><b>История:</b> оценки работы, обучение, изменения зарплаты</li>
+                </ul>
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-xl mt-4 flex items-start">
+                    <i data-lucide="alert-triangle" class="w-5 h-5 text-yellow-500 mr-3 mt-1"></i>
+                    <div>
+                        <b>Ограничения:</b> Сотрудники могут редактировать только свои собственные данные. Администраторы имеют полный доступ ко всем профилям.
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Поиск и фильтрация</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <h4 class="font-semibold text-gray-900 mb-3">Поиск сотрудников</h4>
+                        <ul class="text-sm text-gray-700 space-y-2">
+                            <li>• Поиск по имени, телефону или email</li>
+                            <li>• Фильтр по должности</li>
+                            <li>• Фильтр по статусу (активный, отпуск, больничный)</li>
+                            <li>• Фильтр по опыту работы (до 1 года, 1-3 года, более 3 лет)</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <h4 class="font-semibold text-gray-900 mb-3">Статистика</h4>
+                        <ul class="text-sm text-gray-700 space-y-2">
+                            <li>• Общее количество сотрудников</li>
+                            <li>• Количество активных сотрудников</li>
+                            <li>• Сотрудники в отпуске</li>
+                            <li>• Средний рейтинг и загрузка</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Интеграция с другими модулями</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                                <i data-lucide="calendar" class="w-5 h-5 text-blue-600"></i>
+                            </div>
+                            <h4 class="font-semibold text-gray-900">Расписание</h4>
+                        </div>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>• Сотрудники отображаются в календаре</li>
+                            <li>• При записи можно выбрать мастера</li>
+                            <li>• Учет статусов (отпуск, больничный)</li>
+                            <li>• Индивидуальные графики работы</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                                <i data-lucide="users" class="w-5 h-5 text-green-600"></i>
+                            </div>
+                            <h4 class="font-semibold text-gray-900">Клиенты</h4>
+                        </div>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>• История работы с клиентами</li>
+                            <li>• Подсчет количества клиентов</li>
+                            <li>• Рейтинг на основе отзывов</li>
+                            <li>• Привязка записей к мастерам</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Часто задаваемые вопросы</h2>
+                <div class="space-y-4">
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <h4 class="font-semibold text-gray-900 mb-2">Как сотрудник получает доступ в систему?</h4>
+                        <p class="text-gray-700">При создании сотрудника система автоматически генерирует временный пароль. Сотрудник входит в систему, используя свой номер телефона и временный пароль. Рекомендуется сменить пароль при первом входе.</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <h4 class="font-semibold text-gray-900 mb-2">Можно ли изменить должность сотрудника?</h4>
+                        <p class="text-gray-700">Да, должность можно изменить в любое время. Для этого откройте профиль сотрудника, нажмите "Редактировать" и выберите новую должность из списка доступных позиций.</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <h4 class="font-semibold text-gray-900 mb-2">Как отслеживать отпуска и больничные?</h4>
+                        <p class="text-gray-700">В профиле сотрудника есть раздел "Отпуска и больничные", где указано общее количество дней и использованные дни. При изменении статуса на "В отпуске" или "На больничном" система автоматически учитывает это в расписании.</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <h4 class="font-semibold text-gray-900 mb-2">Что происходит при удалении сотрудника?</h4>
+                        <p class="text-gray-700">При удалении сотрудника его аккаунт деактивируется, но история записей и работы сохраняется для аналитики. Удаленные сотрудники не отображаются в списке, но их данные остаются в базе.</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <h4 class="font-semibold text-gray-900 mb-2">Как добавить новую должность?</h4>
+                        <p class="text-gray-700">Должности создаются автоматически на основе типа вашего бизнеса. Если нужна новая должность, обратитесь в поддержку для добавления в систему.</p>
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Советы по эффективному управлению персоналом</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-blue-50 rounded-xl p-6">
+                        <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                            <i data-lucide="check-circle" class="w-5 h-5 text-blue-600 mr-2"></i>
+                            Рекомендации
+                        </h4>
+                        <ul class="text-sm text-gray-700 space-y-2">
+                            <li>• Регулярно обновляйте информацию о сотрудниках</li>
+                            <li>• Следите за сроками действия документов</li>
+                            <li>• Используйте статусы для контроля доступности</li>
+                            <li>• Ведите историю оценок и обучения</li>
+                            <li>• Анализируйте статистику производительности</li>
+                        </ul>
+                    </div>
+                    <div class="bg-green-50 rounded-xl p-6">
+                        <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                            <i data-lucide="lightbulb" class="w-5 h-5 text-green-600 mr-2"></i>
+                            Полезные функции
+                        </h4>
+                        <ul class="text-sm text-gray-700 space-y-2">
+                            <li>• Автоматическое создание аккаунтов</li>
+                            <li>• Детальные профили с полной информацией</li>
+                            <li>• Гибкая система фильтрации</li>
+                            <li>• Интеграция с расписанием</li>
+                            <li>• Отслеживание документов и сертификатов</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <div class="flex justify-between mt-12">
+                <a href="/support/services/" class="text-blue-600 hover:underline flex items-center"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> К услугам</a>
+                <a href="/support/analytics/" class="text-blue-600 hover:underline flex items-center">К аналитике <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i></a>
+            </div>
+        </section>
+    </main>
+    <script>document.addEventListener('DOMContentLoaded', function() { lucide.createIcons(); });</script>
+</body>
+</html> 

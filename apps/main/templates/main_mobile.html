@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Zapis Mobile</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <meta name="theme-color" content="#fff">
+  <style>
+    body { background: #fff; }
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="min-h-screen bg-white flex flex-col">
+  <!-- Header -->
+  <header class="sticky top-0 z-20 bg-white border-b border-gray-100 flex items-center justify-between px-4 py-3">
+    <div class="text-lg font-semibold">Запись в <span class="text-red-500 cursor-pointer" @click="showCityModal = true" x-text="selectedCityName"></span></div>
+    <button class="text-gray-500 text-xl"><i class="fas fa-bell"></i></button>
+  </header>
+
+  <!-- Специалисты -->
+  <section class="px-4 pt-4">
+    <div class="flex items-center justify-between mb-2">
+      <div class="font-semibold text-lg">Специалисты</div>
+      <button class="px-3 py-1 rounded-lg bg-gray-100 text-gray-700 text-sm">Все</button>
+    </div>
+    <div class="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
+      {% for master in masters %}
+        <div class="min-w-[120px] bg-white rounded-xl shadow p-3 flex flex-col items-center">
+          <img src="{{ master.photo }}" class="w-16 h-16 rounded-full object-cover mb-2" alt="{{ master.name }}" />
+          <div class="font-medium text-sm">{{ master.name }}</div>
+          <div class="text-xs text-gray-400">{{ master.position }}</div>
+          <div class="flex items-center gap-1 text-xs mt-1">
+            <span class="text-yellow-500 font-bold">{{ master.rating }}</span>
+            <i class="fas fa-star text-yellow-400"></i>
+            <span class="text-gray-500">{{ master.clients }}</span>
+          </div>
+        </div>
+      {% empty %}
+        <div class="text-gray-400 text-sm">Нет мастеров</div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Категории -->
+  <section class="px-4 pt-6">
+    <div class="font-semibold text-lg mb-2">Категории</div>
+    <div class="grid grid-cols-4 gap-3">
+      {% for subcat in all_subcategories|slice:":8" %}
+        <div class="flex flex-col items-center bg-gray-50 rounded-xl py-4">
+          <i class="{{ subcat.icon }} text-2xl text-gray-500 mb-2"></i>
+          <span class="text-xs text-gray-800 text-center">{{ subcat.name }}</span>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Топовые заведения -->
+  <section class="px-4 pt-6">
+    <div class="font-semibold text-lg mb-2">Топовые заведения</div>
+    <div class="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+      {% for subcat in random_subcategories %}
+        {% for business in subcat.businesses|slice:":2" %}
+          <div class="min-w-[220px] bg-white rounded-2xl shadow-md overflow-hidden flex-shrink-0">
+            <div class="relative">
+              <img src="{{ business.image }}" alt="{{ business.name }}" class="w-full h-32 object-cover" />
+              <button class="absolute top-2 right-2 bg-white/80 rounded-full p-1"><i class="far fa-heart text-gray-500"></i></button>
+              <span class="absolute bottom-2 left-2 bg-white/90 rounded px-2 py-1 text-yellow-600 font-bold text-sm flex items-center"><i class="fas fa-star mr-1"></i> {{ business.rating }}</span>
+            </div>
+            <div class="p-3">
+              <div class="font-semibold text-gray-900 text-base mb-1 truncate">{{ business.name }}</div>
+              <div class="text-xs text-gray-500 truncate">{{ business.address }}</div>
+              <div class="flex items-center gap-2 text-xs text-gray-400 mt-1">
+                <span><i class="fas fa-user-friends"></i> 2568</span>
+                <span><i class="fas fa-ruble-sign"></i> {{ business.price }}</span>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Bottom Navigation -->
+  <nav class="fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-gray-200 flex justify-around py-2 shadow-lg">
+    <a href="#" class="flex flex-col items-center text-blue-600"><i class="fas fa-home text-xl"></i><span class="text-xs">Главная</span></a>
+    <a href="#" class="flex flex-col items-center text-gray-400"><i class="fas fa-search text-xl"></i><span class="text-xs">Поиск</span></a>
+    <a href="#" class="flex flex-col items-center text-gray-400"><i class="fas fa-heart text-xl"></i><span class="text-xs">Избранное</span></a>
+    <a href="#" class="flex flex-col items-center text-gray-400"><i class="fas fa-user text-xl"></i><span class="text-xs">Мой кабинет</span></a>
+  </nav>
+
+  <div class="h-16"></div> <!-- spacer for nav -->
+
+  <!-- Модалка выбора города -->
+  <div x-show="showCityModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40" style="backdrop-filter: blur(2px);">
+    <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-3xl relative animate-fade-in">
+      <button @click="showCityModal = false" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+      </button>
+      <h2 class="text-2xl font-semibold mb-6">Укажите свое местоположение</h2>
+      <div class="flex gap-8">
+        <!-- Страны (только Кыргызстан) -->
+        <div class="min-w-[120px] border-r pr-6">
+          <div>
+            <button class="block text-base mb-2 text-black font-medium border-b-2 border-black pb-1 px-1" disabled>Кыргызстан</button>
+          </div>
+        </div>
+        <!-- Города -->
+        <div class="flex-1">
+          <div class="mb-4 flex items-center gap-2">
+            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/></svg>
+            <input type="text" x-model="citySearch" placeholder="Введите название города" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base" />
+          </div>
+          <div class="max-h-72 overflow-y-auto">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-2">
+              <template x-for="city in filteredCities()" :key="city.id">
+                <div @click="selectCity(city)" class="cursor-pointer py-1 text-base" style="text-decoration: none;"
+                     :class="{'text-red-500 font-semibold underline': city.id === selectedCityId, 'hover:text-blue-600': city.id !== selectedCityId}">
+                  <span x-text="city.name"></span>
+                </div>
+              </template>
+            </div>
+            <div x-show="filteredCities().length === 0" class="text-gray-400 text-center py-4">Город не найден</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alpine.js citySelector -->
+  <script>
+  document.addEventListener('alpine:init', () => {
+    Alpine.data('citySelector', () => ({
+      showCityModal: false,
+      cities: [],
+      citySearch: '',
+      selectedCityId: null,
+      selectedCityName: 'Ош',
+      init() {
+        fetch('/api/cities/')
+          .then(res => res.json())
+          .then(data => {
+            this.cities = data.cities || data;
+            const saved = localStorage.getItem('selectedCity');
+            if (saved) {
+              const city = this.cities.find(c => c.id == saved);
+              if (city) {
+                this.selectedCityId = city.id;
+                this.selectedCityName = city.name;
+              }
+            }
+          });
+      },
+      filteredCities() {
+        if (!this.citySearch) return this.cities;
+        return this.cities.filter(c => c.name.toLowerCase().includes(this.citySearch.toLowerCase()));
+      },
+      selectCity(city) {
+        this.selectedCityId = city.id;
+        this.selectedCityName = city.name;
+        this.showCityModal = false;
+        localStorage.setItem('selectedCity', city.id);
+        fetch('/api/save-city/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': (document.cookie.match(/csrftoken=([^;]+)/)||[])[1] || ''
+          },
+          body: JSON.stringify({ city_id: city.id })
+        }).catch(()=>{});
+      }
+    }));
+  });
+  </script>
+</body>
+</html> 

@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аналитика жана отчеттор — Zappis Жардам борбору</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .side-link.active {
+            background: linear-gradient(90deg, #3B82F6 0 6px, #e0e7ef 6px 100%);
+            color: #2563eb;
+            font-weight: 700;
+        }
+        .side-link {
+            transition: background 0.2s, color 0.2s;
+        }
+        .side-link:hover {
+            background: #f3f4f6;
+            color: #2563eb;
+        }
+        @media (max-width: 768px) {
+            .sidebar-nav { display: none; }
+            .sidebar-mobile { display: block; }
+        }
+        @media (min-width: 769px) {
+            .sidebar-nav { display: block; }
+            .sidebar-mobile { display: none; }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-white to-gray-50" style="font-family: system-ui, -apple-system, sans-serif;">
+    <header class="bg-white border-b border-gray-200 py-5 px-4 sm:px-8 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <a href="/support/" class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow hover:bg-blue-700 transition">
+                <i data-lucide="arrow-left" class="w-6 h-6 text-white"></i>
+            </a>
+            <span class="text-xl font-bold text-gray-900 tracking-tight">Жардам борбору</span>
+        </div>
+        <a href="/support/" class="text-blue-600 hover:underline font-medium">Бардык темалар</a>
+    </header>
+    <main class="max-w-6xl mx-auto p-6 pt-10 flex gap-8">
+        <!-- Sidebar Navigation (Desktop) -->
+        <aside class="w-72 shrink-0 sidebar-nav">
+            <nav class="bg-white rounded-2xl border border-gray-200 shadow p-4 sticky top-24 max-h-[80vh] overflow-y-auto">
+                <h2 class="text-lg font-bold text-gray-800 mb-4">Жардам бөлүмдөрү</h2>
+                <ul class="space-y-1">
+                    <li><a href="/support/getting-started/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="info" class="w-5 h-5 mr-2"></i> Жазма менен иштөөнү баштоо</a></li>
+                    <li><a href="/support/getting-started-profile/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="user" class="w-5 h-5 mr-2"></i> Жеке кабинет</a></li>
+                    <li><a href="/support/notifications/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="bell" class="w-5 h-5 mr-2"></i> Эскертүүлөр</a></li>
+                    <li><a href="/support/schedules/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="calendar" class="w-5 h-5 mr-2"></i> Жосундар</a></li>
+                    <li><a href="/support/clients/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="users" class="w-5 h-5 mr-2"></i> Кардарлар</a></li>
+                    <li><a href="/support/services/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="scissors" class="w-5 h-5 mr-2"></i> Кызматтар</a></li>
+                    <li><a href="/support/employees/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="badge" class="w-5 h-5 mr-2"></i> Кызматкерлер</a></li>
+                    <li><a href="/support/analytics/" class="side-link active flex items-center px-4 py-2 rounded-lg"><i data-lucide="bar-chart-3" class="w-5 h-5 mr-2"></i> Аналитика</a></li>
+                    <li><a href="/support/settings/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="settings" class="w-5 h-5 mr-2"></i> Орнотуулар</a></li>
+                    <li><a href="/support/privacy/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="shield" class="w-5 h-5 mr-2"></i> Конфиденциалдуулук</a></li>
+                    <li><a href="/support/web/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="globe" class="w-5 h-5 mr-2"></i> Онлайн-жазма</a></li>
+                    <li><a href="/support/ai/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="bot" class="w-5 h-5 mr-2"></i> AI-функциялар</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <!-- Sidebar Navigation (Mobile) -->
+        <aside class="sidebar-mobile w-full mb-8">
+            <nav class="bg-white rounded-2xl border border-gray-200 shadow p-4 flex overflow-x-auto gap-2">
+                <a href="/support/getting-started/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="info" class="w-5 h-5 mr-1"></i> Жазма</a>
+                <a href="/support/getting-started-profile/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="user" class="w-5 h-5 mr-1"></i> Жеке кабинет</a>
+                <a href="/support/notifications/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bell" class="w-5 h-5 mr-1"></i> Эскертүүлөр</a>
+                <a href="/support/schedules/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="calendar" class="w-5 h-5 mr-1"></i> Жосундар</a>
+                <a href="/support/clients/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="users" class="w-5 h-5 mr-1"></i> Кардарлар</a>
+                <a href="/support/services/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="scissors" class="w-5 h-5 mr-1"></i> Кызматтар</a>
+                <a href="/support/employees/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="badge" class="w-5 h-5 mr-1"></i> Кызматкерлер</a>
+                <a href="/support/analytics/" class="side-link active flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bar-chart-3" class="w-5 h-5 mr-1"></i> Аналитика</a>
+                <a href="/support/settings/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="settings" class="w-5 h-5 mr-1"></i> Орнотуулар</a>
+                <a href="/support/privacy/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="shield" class="w-5 h-5 mr-1"></i> Конфиденциалдуулук</a>
+                <a href="/support/web/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="globe" class="w-5 h-5 mr-1"></i> Онлайн-жазма</a>
+                <a href="/support/ai/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bot" class="w-5 h-5 mr-1"></i> AI</a>
+            </nav>
+        </aside>
+        <!-- Main Content -->
+        <section class="flex-1 min-w-0">
+            <div class="flex items-center mb-8">
+                <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center mr-5">
+                    <i data-lucide="bar-chart-3" class="w-8 h-8 text-green-600"></i>
+                </div>
+                <h1 class="text-4xl font-extrabold text-gray-900">Zappis'теги аналитика жана отчеттор</h1>
+            </div>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Аналитика деген эмне жана ага эмне үчүн керек?</h2>
+                <p class="text-gray-700 mb-3">Zappis'теги аналитика — бул бизнесиңиздин бардык негизги көрсөткүчтөрүн чыныгы убакытта көзөмөлдөө жана талдоо системасы. Ал системанын бардык модулдарынан маалыматтарды автоматтык түрдө чогултат жана аларды түшүнүүгө ыңгайлуу түрдө көрсөтөт.</p>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Чыныгы убакытта кирешелерди жана чыгымдарды көзөмөлдөө</li>
+                    <li>Кызматкерлердин жүктөмөсүн жана иштин натыйжалуулугун талдоо</li>
+                    <li>Кызматтардын популярдуулугун жана кардарлар базасын көзөмөлдөө</li>
+                    <li>Тренддерди болжолдоо жана жосундоо</li>
+                    <li>Бизнести өнүктүрүү үчүн жекечелөнгөн AI-кеңештер</li>
+                </ul>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Негизги метрикалар жана көрсөткүчтөр</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                                <i data-lucide="users" class="w-5 h-5 text-blue-600"></i>
+                            </div>
+                            <h4 class="font-semibold text-gray-900">Кардарлар</h4>
+                        </div>
+                        <ul class="text-sm text-gray-700 space-y-2">
+                            <li>• Базадагы кардарлардын жалпы саны</li>
+                            <li>Ай боюнча кардарлар базасынын өсүшү</li>
+                            <li>Жаңы кардарлардын саны</li>
+                            <li>Келиштердин саны боюнча топ кардарлар</li>
+                            <li>Кардар тарабынан жумшалган орточо сумма</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                                <i data-lucide="calendar" class="w-5 h-5 text-green-600"></i>
+                        </div>
+                            <h4 class="font-semibold text-gray-900">Жазуулар</h4>
+                        </div>
+                        <ul class="text-sm text-gray-700 space-y-2">
+                            <li>• Бүгүнкү жазуулар</li>
+                            <li>Өткөн мезгилге карата жазуулардын өсүшү</li>
+                            <li>Күндөр/жумалар/айлар боюнча жазуулардын динамикасы</li>
+                            <li>Күндүзгү убакыт боюнча жүктөмө</li>
+                            <li>Жосундун натыйжалуулугу</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+                                <i data-lucide="dollar-sign" class="w-5 h-5 text-purple-600"></i>
+                            </div>
+                            <h4 class="font-semibold text-gray-900">Каржы</h4>
+                        </div>
+                        <ul class="text-sm text-gray-700 space-y-2">
+                            <li>• Азыркы айдын кирешеси</li>
+                            <li>Өткөн айга карата кирешелердин өсүшү</li>
+                            <li>Орточо чек</li>
+                            <li>Орточо чектин өзгөрүшү</li>
+                            <li>Мезгилдер боюнча кирешелердин динамикасы</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
+                                <i data-lucide="scissors" class="w-5 h-5 text-yellow-600"></i>
+                            </div>
+                            <h4 class="font-semibold text-gray-900">Кызматтар</h4>
+                        </div>
+                        <ul class="text-sm text-gray-700 space-y-2">
+                            <li>• Активдүү кызматтардын саны</li>
+                            <li>Жазуулар боюнча популярдуу кызматтар</li>
+                            <li>Кызматтар боюнча кирешелүүлүк</li>
+                            <li>Кызматтардын орточо баасы</li>
+                            <li>Баа тизмесинин натыйжалуулугу</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Интерактивдүү графиктер жана диаграммалар</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <h4 class="font-semibold text-gray-900 mb-3">Динамика графиги</h4>
+                        <p class="text-sm text-gray-700 mb-3">Негизги график үч негизги көрсөткүчтү бир убакта көрсөтөт:</p>
+                        <ul class="text-sm text-gray-700 space-y-2">
+                            <li>• <b>Киреше</b> — көк сызык (сол шкала)</li>
+                            <li>• <b>Жазуулар</b> — жашыл сызык (оң шкала)</li>
+                            <li>• <b>Жаңы кардарлар</b> — сары сызык (оң шкала)</li>
+                        </ul>
+                        <div class="mt-4 p-3 bg-gray-50 rounded-lg">
+                            <p class="text-xs text-gray-600"><b>Мезгилдер:</b> Жума (акыркы 7 күн), Ай (азыркы айдын күндөрү), Жыл (азыркы жылдын айлары)</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <h4 class="font-semibold text-gray-900 mb-3">Топ-тизмелер</h4>
+                        <ul class="text-sm text-gray-700 space-y-3">
+                            <li><b>Популярдуу кызматтар:</b> Жазуулардын саны боюнча топ-5 кызматтар, баасы жана категориясы көрсөтүлгөн</li>
+                            <li><b>Топ кардарлар:</b> Эң көп келиштерге ээ жана көп акча жумшаган кардарлар</li>
+                            <li><b>Статистика:</b> Кызматкерлердин, кызматтардын, активдүү жазуулардын жалпы саны</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Бизнести өнүктүрүү үчүн AI-кеңештер</h2>
+                <div class="bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl p-6 text-white">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <i data-lucide="bot" class="w-6 h-6"></i>
+                        <h4 class="font-semibold text-lg">Жекечелөнгөн сунуштар</h4>
+                    </div>
+                    <p class="mb-4">Система бизнесиңиздин бардык маалыматтарын талдайт жана кирешелерди өстүрүү жана ишти жакшыртуу үчүн жекече кеңештерди түзөт:</p>
+                    <ul class="space-y-2 text-sm">
+                        <li>• <b>Автоматтык талдоо:</b> AI сиздин жазууларды, кардарларды, кызматтарды жана кирешелерди изилдейт</li>
+                        <li>• <b>Конкреттүү сунуштар:</b> Ар бир кеңеш сиздин бизнесиңизге ыңгайлаштырылган</li>
+                        <li>• <b>Үзгүлтүксүз жаңыртуу:</b> Кеңештер ар бир 7 күндө жаңыртылат</li>
+                        <li>• <b>Приоритеттөө:</b> Кеңештер мааниси боюнча иреттелет (1-3)</li>
+                        <li>• <b>Көп тилдүүлүк:</b> Орус жана кыргыз тилдерин колдоо</li>
+                    </ul>
+                </div>
+                <div class="mt-4 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-xl">
+                    <div class="flex items-start">
+                        <i data-lucide="info" class="w-5 h-5 text-yellow-500 mr-3 mt-1"></i>
+                        <div>
+                            <b>Маанилүү:</b> AI-кеңештер бизнесиңиздин чыныгы маалыматтарына негизделген түзүлөт. Системадагы маалыматтар канчалык көп болсо, сунуштар ошончолук так болот.
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Акыркы аракеттер жана активдүүлүк</h2>
+                <div class="bg-white rounded-xl p-6 border border-gray-200">
+                    <h4 class="font-semibold text-gray-900 mb-3">Эмне көзөмөлдөнөт:</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h5 class="font-medium text-gray-800 mb-2">Жаңы жазуулар</h5>
+                            <ul class="text-sm text-gray-700 space-y-1">
+                                <li>• Кардар, кызмат, сумма</li>
+                                <li>• Жазуунун күнү жана убактысы</li>
+                                <li>• Жазуунун түзүлгөн убактысы</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h5 class="font-medium text-gray-800 mb-2">Жаңы кардарлар</h5>
+                            <ul class="text-sm text-gray-700 space-y-1">
+                                <li>• Кардардын аты жана телефони</li>
+                                <li>• Кардардын статусу</li>
+                                <li>• Каттоо күнү</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h5 class="font-medium text-gray-800 mb-2">Жаңы кызматкерлер</h5>
+                            <ul class="text-sm text-gray-700 space-y-1">
+                                <li>• Аты жана кызматы</li>
+                                <li>• Кошулган күнү</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h5 class="font-medium text-gray-800 mb-2">Убакыт белгилери</h5>
+                            <ul class="text-sm text-gray-700 space-y-1">
+                                <li>• "Жаңы эле" (1 мүнөткө чейин)</li>
+                                <li>• "X мүнөт мурун" (1 саатка чейин)</li>
+                                <li>• "X саат мурун" (1 күнгө чейин)</li>
+                                <li>• "X күн мурун" (1 күндөн көп)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Аналитиканын мобилдик версиясы</h2>
+                <div class="bg-white rounded-xl p-6 border border-gray-200">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <i data-lucide="smartphone" class="w-6 h-6 text-blue-600"></i>
+                        <h4 class="font-semibold text-gray-900">Ыңгайлаштырылган интерфейс</h4>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h5 class="font-medium text-gray-800 mb-2">Негизги функциялар:</h5>
+                            <ul class="text-sm text-gray-700 space-y-2">
+                                <li>• Статистиканын ыңгайлуу карточкалары</li>
+                                <li>• Жөнөкөйлөтүлгөн динамика графиги</li>
+                                <li>• Топ-тизмелерге тез кириш</li>
+                                <li>• Толук көрүү үчүн модалдык терезелер</li>
+                                <li>• PWA колдоосу (колдонмо катары орнотуу)</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h5 class="font-medium text-gray-800 mb-2">Өзгөчөлүктөр:</h5>
+                            <ul class="text-sm text-gray-700 space-y-2">
+                                <li>• Мобилдик түзмөктү автоматтык аныктоо</li>
+                                <li>• Оптимизацияланган навигация</li>
+                                <li>• Маалыматтарды тез жүктөө</li>
+                                <li>• Караңгы теманы колдоо</li>
+                                <li>• Офлайн-режим (негизги функциялар)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Башка модулдар менен интеграция</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                                <i data-lucide="calendar" class="w-5 h-5 text-blue-600"></i>
+                            </div>
+                            <h4 class="font-semibold text-gray-900">Жазуулар жана жосун</h4>
+                        </div>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>• Жазуулар жана кирешелер тууралуу маалыматтар</li>
+                            <li>• Убакыт жана күндөр боюнча жүктөмө</li>
+                            <li>• Жосундун натыйжалуулугу</li>
+                            <li>• Кызматкерлер боюнча статистика</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                                <i data-lucide="users" class="w-5 h-5 text-green-600"></i>
+                            </div>
+                            <h4 class="font-semibold text-gray-900">Кардарлар жана кызматкерлер</h4>
+                        </div>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>• Кардарлар базасынын өсүшү</li>
+                            <li>• Кызматкерлердин активдүүлүгү</li>
+                            <li>• Топ кардарлар жана усталар</li>
+                            <li>• Оңашалашуулардын тарыхы</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
+                                <i data-lucide="scissors" class="w-5 h-5 text-yellow-600"></i>
+                            </div>
+                            <h4 class="font-semibold text-gray-900">Кызматтар жана баалар</h4>
+                        </div>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>• Кызматтардын популярдуулугу</li>
+                            <li>• Категориялар боюнча кирешелүүлүк</li>
+                            <li>• Баа тизмесинин натыйжалуулугу</li>
+                            <li>• Орточо чектер</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+                                <i data-lucide="settings" class="w-5 h-5 text-purple-600"></i>
+                            </div>
+                            <h4 class="font-semibold text-gray-900">Бизнес орнотуулары</h4>
+                        </div>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>• Бизнес түрү аналитикага таасир этет</li>
+                            <li>• AI-кеңештерди жекечелөө</li>
+                            <li>• Тил орнотуулары</li>
+                            <li>• Отчетторду конфигурациялоо</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Көп берилүүчү суроолор</h2>
+                <div class="space-y-4">
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <h4 class="font-semibold text-gray-900 mb-2">Аналитикадагы маалыматтар канчалык жийин жаңыртылат?</h4>
+                        <p class="text-gray-700">Маалыматтар чыныгы убакытта жаңыртылат. Ар бир жаңы аракет (жазуу, жаңы кардар, статусту өзгөртүү) дароо аналитикада көрсөтүлөт. AI-кеңештер автоматтык түрдө ар бир 7 күндө же мажбурлап жаңыртууда жаңыртылат.</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <h4 class="font-semibold text-gray-900 mb-2">Отчетторду экспорттоого болобу?</h4>
+                        <p class="text-gray-700">Азыркы версияда отчетторду экспорттоо иштелип чыккан эмес. Бардык маалыматтар гана веб-интерфейсте жеткиликтүү. Экспорт функциясы келечектеги жаңыртууларда жосундалган.</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <h4 class="font-semibold text-gray-900 mb-2">Эмне үчүн AI-кеңештер жеткиликсиз болушу мүмкүн?</h4>
+                        <p class="text-gray-700">AI-кеңештер сырткы сервис тарабынан түзүлөт. Байланыштын убактылуу көйгөйлөрү же жогорку жүктөмө болгондо система жеткиликсиздик тууралуу билдирмө көрсөтүшү мүмкүн. Мындай учурларда бетти кийинчерээк жаңыртууга аракет кылыңыз.</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <h4 class="font-semibold text-gray-900 mb-2">Көрсөткүчтөрдүн өсүшүн кантип түшүндүрүүгө болот?</h4>
+                        <p class="text-gray-700">Өсүш алдынкы мезгилге карата пайыздык өзгөрүү катары эсептелет. Оң маанилер (жашыл түс) жакшырууну, терс маанилер (кызыл түс) — көрсөткүчтүн төмөндөшүн билдирет. Салыштыруу автоматтык түрдө жүргүзүлөт.</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <h4 class="font-semibold text-gray-900 mb-2">Графиктер үчүн мезгилдерди орнотууга болобу?</h4>
+                        <p class="text-gray-700">Ооба, негизги график үчүн үч мезгил жеткиликтүү: жума (акыркы 7 күн), ай (азыркы айдын күндөрү) жана жыл (азыркы жылдын айлары). Алмаштыруу графиктин оң жогорку бурчунан түшүү тизмеси аркылуу жүргүзүлөт.</p>
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Аналитиканы натыйжалуу пайдалануу боюнча кеңештер</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-blue-50 rounded-xl p-6">
+                        <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                            <i data-lucide="check-circle" class="w-5 h-5 text-blue-600 mr-2"></i>
+                            Сунуштар
+                        </h4>
+                        <ul class="text-sm text-gray-700 space-y-2">
+                            <li>• Негизги метрикаларды үзгүлтүксүз текшериңиз</li>
+                            <li>• Өсүш/төмөндөш тренддерине көңүл буруңуз</li>
+                            <li>• Жосундоо үчүн AI-кеңештерди колдонуңуз</li>
+                            <li>• Кызматтардын популярдуулугун талдаңыз</li>
+                            <li>• Топ-кардарлардын активдүүлүгүн көзөмөлдөңүз</li>
+                        </ul>
+                    </div>
+                    <div class="bg-green-50 rounded-xl p-6">
+                        <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                            <i data-lucide="lightbulb" class="w-5 h-5 text-green-600 mr-2"></i>
+                            Пайдалуу функциялар
+                        </h4>
+                        <ul class="text-sm text-gray-700 space-y-2">
+                            <li>• Маалыматтарды автоматтык жаңыртуу</li>
+                            <li>• Эскертмелер менен интерактивдүү графиктер</li>
+                            <li>• Жекечелөнгөн AI-кеңештер</li>
+                            <li>• Жолдо иштөө үчүн мобилдик версия</li>
+                            <li>• Акыркы аракеттердин тарыхы</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <div class="flex justify-between mt-12">
+                <a href="/support/employees/" class="text-blue-600 hover:underline flex items-center"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> Кызматкерлерге</a>
+                <a href="/support/settings/" class="text-blue-600 hover:underline flex items-center">Орнотууларга <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i></a>
+            </div>
+        </section>
+    </main>
+    <script>document.addEventListener('DOMContentLoaded', function() { lucide.createIcons(); });</script>
+</body>
+</html> 

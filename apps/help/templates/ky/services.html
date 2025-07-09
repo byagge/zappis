@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кызматтар жана прайс-листтер — Zappis Жардам борбору</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .side-link.active {
+            background: linear-gradient(90deg, #3B82F6 0 6px, #e0e7ef 6px 100%);
+            color: #2563eb;
+            font-weight: 700;
+        }
+        .side-link {
+            transition: background 0.2s, color 0.2s;
+        }
+        .side-link:hover {
+            background: #f3f4f6;
+            color: #2563eb;
+        }
+        @media (max-width: 768px) {
+            .sidebar-nav { display: none; }
+            .sidebar-mobile { display: block; }
+        }
+        @media (min-width: 769px) {
+            .sidebar-nav { display: block; }
+            .sidebar-mobile { display: none; }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-white to-gray-50" style="font-family: system-ui, -apple-system, sans-serif;">
+    <header class="bg-white border-b border-gray-200 py-5 px-4 sm:px-8 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <a href="/support/" class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow hover:bg-blue-700 transition">
+                <i data-lucide="arrow-left" class="w-6 h-6 text-white"></i>
+            </a>
+            <span class="text-xl font-bold text-gray-900 tracking-tight">Жардам борбору</span>
+        </div>
+        <a href="/support/" class="text-blue-600 hover:underline font-medium">Бардык темалар</a>
+    </header>
+    <main class="max-w-6xl mx-auto p-6 pt-10 flex gap-8">
+                        <!-- Sidebar Navigation (Desktop) -->
+        <aside class="w-72 shrink-0 sidebar-nav">
+            <nav class="bg-white rounded-2xl border border-gray-200 shadow p-4 sticky top-24 max-h-[80vh] overflow-y-auto">
+                <h2 class="text-lg font-bold text-gray-800 mb-4">Жардам бөлүмдөрү</h2>
+                <ul class="space-y-1">
+                    <li><a href="/support/getting-started/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="info" class="w-5 h-5 mr-2"></i> Жазма менен иштөөнү баштоо</a></li>
+                    <li><a href="/support/getting-started-profile/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="user" class="w-5 h-5 mr-2"></i> Жеке кабинет</a></li>
+                    <li><a href="/support/notifications/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="bell" class="w-5 h-5 mr-2"></i> Эскертүүлөр</a></li>
+                    <li><a href="/support/schedules/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="calendar" class="w-5 h-5 mr-2"></i> Жосундар</a></li>
+                    <li><a href="/support/clients/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="users" class="w-5 h-5 mr-2"></i> Кардарлар</a></li>
+                    <li><a href="/support/services/" class="side-link active flex items-center px-4 py-2 rounded-lg"><i data-lucide="scissors" class="w-5 h-5 mr-2"></i> Кызматтар</a></li>
+                    <li><a href="/support/employees/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="badge" class="w-5 h-5 mr-2"></i> Кызматкерлер</a></li>
+                    <li><a href="/support/analytics/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="bar-chart-3" class="w-5 h-5 mr-2"></i> Аналитика</a></li>
+                    <li><a href="/support/settings/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="settings" class="w-5 h-5 mr-2"></i> Орнотуулар</a></li>
+                    <li><a href="/support/privacy/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="shield" class="w-5 h-5 mr-2"></i> Конфиденциалдуулук</a></li>
+                    <li><a href="/support/web/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="globe" class="w-5 h-5 mr-2"></i> Онлайн-жазма</a></li>
+                    <li><a href="/support/ai/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="bot" class="w-5 h-5 mr-2"></i> AI-функциялар</a></li>
+                </ul>
+            </nav>
+        </aside>
+                        <!-- Sidebar Navigation (Mobile) -->
+        <aside class="sidebar-mobile w-full mb-8">
+            <nav class="bg-white rounded-2xl border border-gray-200 shadow p-4 flex overflow-x-auto gap-2">
+                <a href="/support/getting-started/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="info" class="w-5 h-5 mr-1"></i> Жазма</a>
+                <a href="/support/getting-started-profile/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="user" class="w-5 h-5 mr-1"></i> Жеке кабинет</a>
+                <a href="/support/notifications/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bell" class="w-5 h-5 mr-1"></i> Эскертүүлөр</a>
+                <a href="/support/schedules/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="calendar" class="w-5 h-5 mr-1"></i> Жосундар</a>
+                <a href="/support/clients/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="users" class="w-5 h-5 mr-1"></i> Кардарлар</a>
+                <a href="/support/services/" class="side-link active flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="scissors" class="w-5 h-5 mr-1"></i> Кызматтар</a>
+                <a href="/support/employees/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="badge" class="w-5 h-5 mr-1"></i> Кызматкерлер</a>
+                <a href="/support/analytics/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bar-chart-3" class="w-5 h-5 mr-1"></i> Аналитика</a>
+                <a href="/support/settings/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="settings" class="w-5 h-5 mr-1"></i> Орнотуулар</a>
+                <a href="/support/privacy/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="shield" class="w-5 h-5 mr-1"></i> Конфиденциалдуулук</a>
+                <a href="/support/web/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="globe" class="w-5 h-5 mr-1"></i> Онлайн-жазма</a>
+                <a href="/support/ai/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bot" class="w-5 h-5 mr-1"></i> AI</a>
+            </nav>
+        </aside>
+        <!-- Main Content -->
+        <section class="flex-1 min-w-0">
+            <div class="flex items-center mb-8">
+                <div class="w-14 h-14 bg-yellow-100 rounded-xl flex items-center justify-center mr-5">
+                    <i data-lucide="scissors" class="w-8 h-8 text-yellow-600"></i>
+                </div>
+                <h1 class="text-4xl font-extrabold text-gray-900">Zappis'теги кызматтар жана прайс-листтер</h1>
+            </div>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Кызматтар модулу деген эмне жана ал эмне үчүн керек?</h2>
+                <p class="text-gray-700 mb-3">Кызматтар модулу бардык көрсөтүлүүчү кызматтарды түзүүгө жана башкарууга, бааларды, узактыкты, категорияларды жана сүрөттөмөлөрдү орнотууга мүмкүндүк берет. Бул — бизнесиңиздеги жазууларды, эсепти жана аналитиканы автоматташтыруунун негизи.</p>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Кызматтарды категориялар боюнча түзүү жана түзүмдөө</li>
+                    <li>Бааларды жана узактыкты орнотуу</li>
+                    <li>Кызматтардын активдүүлүгүн башкаруу</li>
+                    <li>Жазуу системасы менен интеграция</li>
+                    <li>Популярдуулук жана киреше боюнча аналитика</li>
+                </ul>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Жаңы кызматты кантип кошсо болот?</h2>
+                <ol class="list-decimal pl-6 text-gray-700 mb-4">
+                    <li><b>Кызматтар</b> бөлүмүнө кириңиз.</li>
+                    <li><b>Кызмат кошуу</b> баскычын басыңыз.</li>
+                    <li>Кызматтын аталышын жана баасын толтуруңуз (милдеттүү талаалар).</li>
+                    <li>Кааласаңыз: категория, узактык, сүрөттөмө кошуңуз.</li>
+                    <li>"Активдүү кызмат" статусун коюңуз — жазууга жеткиликтүү болот.</li>
+                    <li>Сактаңыз — кызмат тизмеге кошулат.</li>
+                </ol>
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-xl mt-4 flex items-start">
+                    <i data-lucide="info" class="w-5 h-5 text-blue-500 mr-3 mt-1"></i>
+                    <div>
+                        <b>Маанилүү:</b> Милдеттүү талаалар — кызматтын аталышы жана баасы. Калган талааларды кийин толтурса болот.
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Категорияларды түзүү жана башкаруу</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Категориялар кызматтарды топторго бөлүүгө жардам берет (мисалы, "Чач кыркуу", "Бояо", "Кам көрүү")</li>
+                    <li>Категория түзүү үчүн "Категория кошуу" баскычын басып, аталышын жана сүрөттөмөсүн киргизиңиз</li>
+                    <li>Кызматтарды категорияга кошсо болот же категориясыз калтырса болот</li>
+                    <li>Категориялар онлайн-жазмада кардарлар үчүн навигацияны жеңилдетет</li>
+                </ul>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Бааларды жана узактыкты орнотуу</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li><b>Баасы:</b> милдеттүү талаа, сом менен көрсөтүлөт</li>
+                    <li><b>Узактыгы:</b> мүнөт менен көрсөтүлөт, автоматтык түрдө форматталат (мисалы, 90 мүнөт = "1 с 30 мүн")</li>
+                    <li>Баасы жана узактыгы кардарларга жазууда көрсөтүлөт</li>
+                    <li>Баадагы өзгөрүүлөр бардык жаңы жазууларга колдонулат</li>
+                </ul>
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-xl mt-4 flex items-start">
+                    <i data-lucide="alert-circle" class="w-5 h-5 text-yellow-500 mr-3 mt-1"></i>
+                    <div>
+                        <b>Чектөө:</b> Азыркы версияда ар бир кызматкер үчүн өзүнчө баа же акция коюу мүмкүн эмес.
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Кызматтардын активдүүлүгүн башкаруу</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Активдүү эмес кызматтар онлайн-жазмада кардарларга көрсөтүлбөйт</li>
+                    <li>Активдүүлүктү каалаган убакта өзгөртсө болот</li>
+                    <li>Активдүү эмес кызматтар жазуулар тарыхында калат</li>
+                    <li>Кызматтарды убактылуу өчүрүү үчүн ыңгайлуу</li>
+                </ul>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Түзөтүү жана өчүрүү</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li><b>Түзөтүү:</b> кызмат же категория жанындагы түзөтүү иконкасын басыңыз</li>
+                    <li><b>Кызматты өчүрүү:</b> кызматты системадан өчүрөт, бирок бар жазууларга таасир этпейт</li>
+                    <li><b>Категорияны өчүрүү:</b> категорияны жана анын ичиндеги бардык кызматтарды өчүрөт</li>
+                    <li>Өчүрүүдөн мурун система ырастоо сурайт</li>
+                </ul>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Башка модулдар менен интеграция</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li><b>Жазуулар:</b> кардар жазууда кызматты тандайт, баасын жана узактыгын көрөт</li>
+                    <li><b>Жосундар:</b> кызматтын узактыгы убакытты пландаштырууда эске алынат</li>
+                    <li><b>Аналитика:</b> кызматтардын популярдуулугу жана кирешеси боюнча отчеттор</li>
+                    <li><b>Онлайн-жазма:</b> кызматтар бизнес сайтында кардарларга көрсөтүлөт</li>
+                </ul>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Мобилдик версия</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Мобилдик түзмөктөр үчүн ыңгайлаштырылган интерфейс</li>
+                    <li>Кызматтарды категориялар боюнча жөнөкөй көрүү</li>
+                    <li>Жаңы кызматтарды тез кошуу</li>
+                    <li>Кызматтарды түзөтүү жана өчүрүү</li>
+                </ul>
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-xl mt-4 flex items-start">
+                    <i data-lucide="info" class="w-5 h-5 text-blue-500 mr-3 mt-1"></i>
+                    <div>
+                        <b>Функционалдуулук:</b> Мобилдик версияда кызматтар менен бардык негизги операциялар жеткиликтүү.
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Укуктар</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Кызматтарды башкаруу укугу администраторлорго жана бизнес ээлерине гана берилет</li>
+                    <li>Кадимки кызматкерлер кызматтарды көрө алышат, бирок өзгөртө алышпайт</li>
+                    <li>Укугу жок киргенде, система башка баракчага багыттайт</li>
+                </ul>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Көп берилүүчү суроолор</h2>
+                <div class="mb-3">
+                    <b>Кызматтын баасын кийин өзгөртсө болобу?</b>
+                    <div class="text-gray-700">Ооба, бааны каалаган убакта өзгөртсө болот. Өзгөрүүлөр бардык жаңы жазууларга колдонулат, бирок бар жазууларга таасир этпейт.</div>
+                </div>
+                <div class="mb-3">
+                    <b>Кызматты онлайн-жазмадан кантип жашыруу керек?</b>
+                    <div class="text-gray-700">Кызматтын жөндөөлөрүнөн "Активдүү кызмат" белгисин алып салыңыз. Активдүү эмес кызматтар кардарларга көрсөтүлбөйт.</div>
+                </div>
+                <div class="mb-3">
+                    <b>Категориясыз кызмат түзсө болобу?</b>
+                    <div class="text-gray-700">Ооба, категория милдеттүү эмес талаа. Категориясыз кызматтар өзүнчө көрсөтүлөт.</div>
+                </div>
+                <div class="mb-3">
+                    <b>Акция же арзандатуу кошсо болобу?</b>
+                    <div class="text-gray-700">Азыркы версияда акция системасы жок. Арзандатуу үчүн өзүнчө кызмат түзүүнү сунуштайбыз.</div>
+                </div>
+                <div class="mb-3">
+                    <b>Бир нече кызматты бир жазууга кошсо болобу?</b>
+                    <div class="text-gray-700">Жазуу түзүүдө бир нече кызматты тандаса болот. Система алардын жалпы узактыгын жана баасын автоматтык эсептейт.</div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Кызматтар менен натыйжалуу иштөө боюнча кеңештер</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Кызматтарды уюштуруу үчүн категорияларды колдонуңуз</li>
+                    <li>Бааларды жана сүрөттөмөлөрдү үзгүлтүксүз жаңыртып туруңуз</li>
+                    <li>Туура пландаштыруу үчүн так узактыкты көрсөтүңүз</li>
+                    <li>Кызматтарды убактылуу өчүрүү үчүн активдүүлүк статусун колдонуңуз</li>
+                    <li>Прайс-листиңизди оптималдаштыруу үчүн кызматтардын популярдуулугун анализдеңиз</li>
+                    <li>Кардарлар үчүн түшүнүктүү аталыштар жана сүрөттөмөлөрдү түзүңүз</li>
+                </ul>
+            </section>
+            <div class="flex justify-between mt-12">
+                <a href="/support/clients/" class="text-blue-600 hover:underline flex items-center"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> Кардарларга</a>
+                <a href="/support/employees/" class="text-blue-600 hover:underline flex items-center">Кызматкерлерге <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i></a>
+            </div>
+        </section>
+    </main>
+    <script>document.addEventListener('DOMContentLoaded', function() { lucide.createIcons(); });</script>
+</body>
+</html> 

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zappis Website</title>
+  <!-- Tailwind CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- Alpine.js CDN -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  
+  <style>
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gray-50">
+  <div x-data="citySelector()" x-init="initCity()">
+  <!-- Header -->
+  <header class="bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <div class="text-2xl font-bold text-gray-900">zappis</div>
+        <div class="flex items-center gap-6">
+          <a href="" @click.prevent="showCityModal = true" class="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900 cursor-pointer">
+            <i class="fas fa-map-marker-alt w-4 h-4 text-red-500"></i>
+            <span x-text="selectedCityName"></span>
+          </a>
+          <a href="#" class="text-sm text-gray-600 hover:text-gray-900">Стать партнером</a>
+          <a href="#" class="text-sm text-gray-600 hover:text-gray-900">Контакты</a>
+          {% if user.is_authenticated %}
+            {% if user.role == 'admin' or user.role == 'employee' %}
+              <a href="/dashboard/" class="bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-600 transition-colors">
+                Dashboard
+              </a>
+            {% else %}
+              <a href="/accounts/profile/" class="bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-600 transition-colors">
+                Профиль
+              </a>
+            {% endif %}
+          {% else %}
+            <a href="/accounts/login/" class="bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-600 transition-colors">
+            Войти
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="border-b border-gray-200">
+      <div class="max-w-7xl mx-auto px-4">
+        <nav class="flex items-center gap-6 py-4">
+          <a href="#" class="text-sm text-gray-700 hover:text-gray-900">Парикмахерские услуги</a>
+          <a href="#" class="text-sm text-gray-700 hover:text-gray-900">Ногтевой сервис</a>
+          <a href="#" class="text-sm text-gray-700 hover:text-gray-900">Уход за телом</a>
+          <a href="#" class="text-sm text-gray-700 hover:text-gray-900">Макияж</a>
+          <a href="#" class="text-sm text-gray-700 hover:text-gray-900">Удаление волос</a>
+          <a href="#" class="text-sm text-gray-700 hover:text-gray-900">Косметология</a>
+          <a href="#" class="text-sm text-gray-700 hover:text-gray-900">Тату и пирсинг</a>
+          <a href="#" class="text-sm text-gray-700 hover:text-gray-900">Брови</a>
+          <a href="#" class="text-sm text-gray-700 hover:text-gray-900">Ресницы</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="bg-white py-16">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <h1 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+            Онлайн-запись<br />
+            в сфере красоты<br />
+            и здоровья
+          </h1>
+          <p id="dynamic-stats" class="text-gray-600 mb-8" style="transition: opacity 0.7s;"></p>
+          <div class="flex gap-2 max-w-md">
+            <div class="flex-1 relative">
+              <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+              <input 
+                type="text" 
+                placeholder="Поиск услуг и салонов"
+                class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              />
+            </div>
+            <button class="bg-green-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-600 transition-colors">
+              Искать
+            </button>
+          </div>
+        </div>
+        
+        <!-- Image collage -->
+        <div class="relative hidden lg:flex items-center justify-center" style="min-height: 450px;">
+          <!-- Notification: Вы записаны -->
+          <div class="absolute top-12 left-0 bg-white p-3 rounded-xl shadow-lg z-30 w-[270px]">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-medium text-gray-800">Вы записаны</span>
+              <i class="fas fa-bell w-5 h-5 text-yellow-500"></i>
+            </div>
+            <p class="text-sm text-gray-500 mt-1">Мастер: Анна, 20 мая в 13:00</p>
+          </div>
+  
+          <!-- Image: Hands -->
+          <img src="https://media.istockphoto.com/id/118281225/photo/manicured-nails-woman-hands.jpg?s=612x612&w=0&k=20&c=SaRLZ4-_nQldZT3WoskhbnuwnC9EYGmxeEXuUzj00z0=" alt="Hands" class="absolute top-0 right-16 w-48 h-64 object-cover rounded-xl shadow-lg transform rotate-6 z-10">
+  
+          <!-- Image: Doctor -->
+          <img src="https://static.vecteezy.com/system/resources/thumbnails/026/375/249/small_2x/ai-generative-portrait-of-confident-male-doctor-in-white-coat-and-stethoscope-standing-with-arms-crossed-and-looking-at-camera-photo.jpg" alt="Doctor" class="absolute top-16 right-0 w-32 h-24 object-cover rounded-xl shadow-lg z-20">
+          
+          <!-- Image: Couple -->
+          <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
+              <img src="https://img.freepik.com/premium-photo/hairdressers-makeup-artist-working-beauty-salon_10069-11140.jpg" alt="Couple" class="w-64 h-80 object-cover rounded-xl shadow-2xl transform -rotate-3">
+          </div>
+  
+          <!-- Image: Beard -->
+          <img src="data:image/jpeg;base64,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" alt="Beard" class="absolute bottom-16 right-4 w-44 h-36 object-cover rounded-xl shadow-lg z-20 transform rotate-3">
+  
+          <!-- Notification: Ваш отзыв -->
+          <div class="absolute bottom-4 right-10 bg-white p-3 rounded-xl shadow-lg z-30 w-[270px]">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-medium text-gray-800">Ваш отзыв отправлен</span>
+              <div class="flex items-center gap-1">
+                  <span class="text-sm font-bold text-yellow-500">9.4</span>
+                  <i class="fas fa-star w-4 h-4 text-yellow-400"></i>
+              </div>
+            </div>
+            <p class="text-xs text-gray-500 mt-1">Отличный салон! Работу сделали качественно и быстро...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gift Card Banner -->
+  <!-- <section class="bg-gradient-to-r from-red-500 to-red-600 text-white py-8 mx-4 rounded-lg my-8">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-2xl font-bold mb-2">Дарите радость и стиль!</h2>
+          <p class="text-red-100 mb-4">Подарочная карта на услуги в салонах и барбершопах</p>
+          <button class="bg-white/20 text-white px-6 py-2 rounded-lg font-medium hover:bg-white/30 transition-colors underline">
+            Подарить карту
+          </button>
+        </div>
+        <div class="text-right">
+          <div class="text-3xl font-bold">50 000 ₸</div>
+          <span class="text-xs">zappis</span>
+        </div>
+      </div>
+    </div>
+  </section> -->
+
+  <!-- Сетка карточек всех подкатегорий -->
+  <section class="bg-white py-8">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Категории услуг</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+        {% for subcat in all_subcategories %}
+          <div class="bg-gray-100 rounded-xl flex flex-col items-center justify-center p-6 shadow hover:bg-gray-200 transition cursor-pointer">
+            <i class="{{ subcat.icon }} text-3xl text-red-500 mb-3"></i>
+            <span class="text-base font-medium text-gray-900 text-center">{{ subcat.name }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 случайных подкатегорий с горизонтальной каруселью бизнесов -->
+  <section class="py-12 bg-white">
+    <div class="max-w-7xl mx-auto px-4 space-y-12">
+      {% for subcat in random_subcategories %}
+        <div>
+          <div class="flex items-center mb-4">
+            <i class="{{ subcat.icon }} text-2xl text-red-500 mr-2"></i>
+            <h3 class="text-xl font-semibold text-gray-900">{{ subcat.name }}</h3>
+          </div>
+          <div class="flex gap-6 overflow-x-auto no-scrollbar pb-2">
+            {% for business in subcat.businesses %}
+            <div class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow flex-shrink-0" style="width: 288px;">
+                <div class="relative">
+                  <div class="business-photo-gallery" data-business-id="{{ business.id }}">
+                    <img src="{{ business.image }}" alt="{{ business.name }}" class="w-full h-40 object-cover business-photo-img" />
+                  </div>
+                </div>
+                <div class="p-4">
+                  <h4 class="font-semibold text-gray-800 mb-1">{{ business.name }}</h4>
+                  <p class="text-sm text-gray-500 mb-2">{{ business.address }}</p>
+                  <div class="flex items-center text-sm text-gray-700">
+                    <span class="flex items-center text-yellow-500 font-bold mr-2"><i class="fas fa-star mr-1"></i> {{ business.rating }}</span>
+                    <span class="mr-2">Отзывы: {{ business.reviews }}</span>
+                    <span class="font-semibold">{{ business.price }}</span>
+                  </div>
+                </div>
+              </div>
+            {% empty %}
+              <div class="text-gray-400 text-sm">Нет бизнесов в этой категории</div>
+            {% endfor %}
+          </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Mobile App Section -->
+  <!-- <section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold text-gray-900 mb-4">
+        Онлайн-запись в сфере красоты и здоровья
+      </h2>
+      <p class="text-gray-600 mb-12">Теперь записываться стало ещё удобнее и быстрее</p>
+      <div class="relative max-w-4xl mx-auto mb-12" x-data="{ currentSlide: 0, phoneScreens: phoneScreens }">
+        <div class="flex justify-center items-center gap-8">
+          <button 
+            @click="currentSlide = Math.max(0, currentSlide - 1)"
+            class="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+            :disabled="currentSlide === 0"
+          >
+            <i class="fas fa-chevron-left w-6 h-6 text-gray-600"></i>
+          </button>
+          <div class="flex gap-4 overflow-hidden">
+            <template x-for="(screen, index) in phoneScreens.slice(currentSlide, currentSlide + 3)" :key="index">
+              <img 
+                :src="screen" 
+                alt="App screen"
+                class="w-64 h-auto rounded-2xl shadow-lg"
+              />
+            </template>
+          </div>
+          <button 
+            @click="currentSlide = Math.min(phoneScreens.length - 3, currentSlide + 1)"
+            class="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+            :disabled="currentSlide >= phoneScreens.length - 3"
+          >
+            <i class="fas fa-chevron-right w-6 h-6 text-gray-600"></i>
+          </button>
+        </div>
+      </div>
+      <div class="flex justify-center gap-4 mb-12">
+        <button id="add-to-home-btn" class="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors text-lg shadow">
+          <i class="fas fa-plus-square"></i>
+          <span id="add-to-home-text">Вывести на главный экран</span>
+        </button>
+      </div>
+    </div>
+  </section> -->
+
+  <!-- Business Section -->
+  <section class="py-16 bg-blue-500 text-white">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex items-center gap-12">
+        <div class="flex-1">
+          <img src="https://i.ibb.co/zHZDp9Wf/mockuper-removebg-preview.png" alt="Zappis Business Dashboard" class="rounded-lg" />
+        </div>
+        <div class="flex-1">
+          <h2 class="text-3xl font-bold mb-4">Zappis Business</h2>
+          <p class="text-blue-100 mb-6">
+            Более 1500 компаний в сфере красоты и здоровья<br />
+            по всему Кыргызстану уже с нами. А чего ждешь ты?
+          </p>
+          <button class="bg-white text-blue-500 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors">
+            Подробнее
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="py-16 bg-white" x-data="{ selected: 'about' }">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="space-y-4">
+          <h3 class="text-lg font-semibold text-gray-900">О компании</h3>
+          <h4 
+            class="text-gray-400 cursor-pointer hover:text-gray-900 transition"
+            :class="{ 'text-green-600 font-bold': selected === 'how' }"
+            @click="selected = 'how'"
+          >Как записаться?</h4>
+          <h4 
+            class="text-gray-400 cursor-pointer hover:text-gray-900 transition"
+            :class="{ 'text-green-600 font-bold': selected === 'about' }"
+            @click="selected = 'about'"
+          >О сервисе</h4>
+        </div>
+        <div class="md:col-span-2 space-y-6">
+          <template x-if="selected === 'how'">
+            <div>
+              <h4 class="font-semibold text-gray-900 mb-3">Как записаться?</h4>
+              <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                1. Найдите нужную услугу или салон через поиск или категории.<br>
+                2. Выберите мастера и удобное время.<br>
+                3. Подтвердите запись — и готово!<br>
+                <br>
+                Вся история ваших записей будет доступна в личном кабинете.
+              </p>
+            </div>
+          </template>
+          <template x-if="selected === 'about'">
+          <div>
+            <h4 class="font-semibold text-gray-900 mb-3">Что представляет собой Zappis?</h4>
+            <p class="text-gray-600 text-sm leading-relaxed mb-4">
+              Это сервис онлайн записи в салон красоты. С его помощью можно легко и удобно записываться на прием, не выходя из дома. Не придется 
+              много раз звонить, если линии заняты, или долго ожидать ответа в WhatsApp. Запись проходит в онлайн режиме.
+            </p>
+            <p class="text-gray-600 text-sm leading-relaxed">
+              На Zappis собрано большое количество салонов красоты Алматы, Астаны, Актау, Караганды, Талгара, Уральска и других городов Казахстана.
+            </p>
+          </div>
+          </template>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-100 pt-12 pb-8">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div>
+          <div class="text-xl font-bold text-gray-900 mb-4">zappis</div>
+          <p class="text-sm text-gray-600">
+            Сервис онлайн бронирования в сфере красоты и здоровья.
+          </p>
+        </div>
+        <div>
+          <h4 class="font-semibold text-gray-900 mb-4">Компания</h4>
+          <ul class="space-y-2 text-sm text-gray-600">
+            <li><a href="#" class="hover:text-gray-900">Стать партнером</a></li>
+            <li><a href="#" class="hover:text-gray-900">Контакты</a></li>
+            <li><a href="#" class="hover:text-gray-900">Карта сайта</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold text-gray-900 mb-4">Правовая информация</h4>
+          <ul class="space-y-2 text-sm text-gray-600">
+            <li><a href="#" class="hover:text-gray-900">Политика конфиденциальности</a></li>
+            <li><a href="#" class="hover:text-gray-900">Пользовательское соглашение</a></li>
+            <li><a href="#" class="hover:text-gray-900">Правила онлайн оплаты</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold text-gray-900 mb-4">Скачать приложение:</h4>
+          <div class="flex gap-2 mb-4">
+            <img src="/api/placeholder/120/40" alt="App Store" class="h-10" />
+            <img src="/api/placeholder/120/40" alt="Google Play" class="h-10" />
+            <img src="/api/placeholder/120/40" alt="AppGallery" class="h-10" />
+          </div>
+          <h4 class="font-semibold text-gray-900 mb-4">Следите за нами:</h4>
+          <div class="flex gap-2">
+            <div class="w-8 h-8 bg-gray-300 rounded-full"></div>
+            <div class="w-8 h-8 bg-gray-300 rounded-full"></div>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-gray-200 pt-8">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+          <div class="flex items-center gap-4">
+            <img src="/api/placeholder/40/25" alt="Visa" class="h-6" />
+            <img src="/api/placeholder/40/25" alt="Mastercard" class="h-6" />
+          </div>
+          <p class="text-sm text-gray-500">Все права защищены © Zappis 2025</p>
+          <p class="text-sm text-gray-500">Участник международного технологического парка «Astana Hub»</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Модальное окно выбора города -->
+  <div x-show="showCityModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40" style="backdrop-filter: blur(2px);">
+    <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-3xl relative animate-fade-in">
+      <button @click="showCityModal = false" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+      </button>
+      <h2 class="text-2xl font-semibold mb-6">Укажите свое местоположение</h2>
+      <div class="flex gap-8">
+        <!-- Страны (только Кыргызстан) -->
+        <div class="min-w-[120px] border-r pr-6">
+          <div>
+            <button class="block text-base mb-2 text-black font-medium border-b-2 border-black pb-1 px-1" disabled>Кыргызстан</button>
+          </div>
+        </div>
+        <!-- Города -->
+        <div class="flex-1">
+          <div class="mb-4 flex items-center gap-2">
+            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/></svg>
+            <input type="text" x-model="citySearch" placeholder="Введите название города" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base" />
+          </div>
+          <div class="max-h-72 overflow-y-auto">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-2">
+              <template x-for="city in filteredCities()" :key="city.id">
+                <div @click="selectCity(city)" class="cursor-pointer py-1 text-base" style="text-decoration: none;"
+                     :class="{'text-red-500 font-semibold underline': city.id === selectedCityId, 'hover:text-blue-600': city.id !== selectedCityId}">
+                  <span x-text="city.name"></span>
+                </div>
+              </template>
+            </div>
+            <div x-show="filteredCities().length === 0" class="text-gray-400 text-center py-4">Город не найден</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.business-photo-gallery').forEach(function(gallery) {
+      const businessId = gallery.getAttribute('data-business-id');
+      fetch(`/api/business/${businessId}/photos/`)
+        .then(resp => resp.json())
+        .then(data => {
+          if (data.photos && data.photos.length > 0) {
+            const img = gallery.querySelector('.business-photo-img');
+            img.src = data.photos[0];
+          }
+        });
+    });
+  });
+  </script>
+
+  <script>
+  (function() {
+    const phrases = [
+      () => `${rand(8000, 15000).toLocaleString('ru-RU')} женщин меняют прическу`,
+      () => `${rand(1500, 4000).toLocaleString('ru-RU')} мужчин делают новую стрижку`,
+      () => `${rand(800, 2500).toLocaleString('ru-RU')} человек записались на маникюр`,
+      () => `${rand(300, 900).toLocaleString('ru-RU')} клиентов выбрали отбеливание зубов`,
+      () => `${rand(2000, 5000).toLocaleString('ru-RU')} человек записались на массаж`,
+      () => `${rand(1000, 3000).toLocaleString('ru-RU')} девушек выбрали окрашивание волос`,
+      () => `${rand(500, 2000).toLocaleString('ru-RU')} мужчин записались на бритьё бороды`,
+      () => `${rand(700, 1800).toLocaleString('ru-RU')} клиентов выбрали педикюр`,
+      () => `${rand(400, 1200).toLocaleString('ru-RU')} человек записались на чистку лица`,
+      () => `${rand(100, 500).toLocaleString('ru-RU')} клиентов выбрали татуаж бровей`,
+      () => `${rand(200, 800).toLocaleString('ru-RU')} человек записались на лазерную эпиляцию`,
+      () => `${rand(300, 1000).toLocaleString('ru-RU')} клиентов выбрали СПА-программу`,
+    ];
+    function rand(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    let lastIndex = -1;
+    function setRandomPhrase(fade = false) {
+      const el = document.getElementById('dynamic-stats');
+      if (!el) return;
+      let idx;
+      do {
+        idx = Math.floor(Math.random() * phrases.length);
+      } while (phrases.length > 1 && idx === lastIndex);
+      lastIndex = idx;
+      const phrase = phrases[idx]();
+      if (fade) {
+        el.style.opacity = 0;
+        setTimeout(() => {
+          el.textContent = `Сегодня ${phrase}`;
+          el.style.opacity = 1;
+        }, 700);
+      } else {
+        el.textContent = `Сегодня ${phrase}`;
+        el.style.opacity = 1;
+      }
+    }
+    setRandomPhrase();
+    setInterval(() => setRandomPhrase(true), 6000);
+  })();
+  </script>
+
+  <script>
+  (function() {
+    const btn = document.getElementById('add-to-home-btn');
+    const text = document.getElementById('add-to-home-text');
+    // Simple device check
+    const isMobile = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
+    if (isMobile) {
+      text.textContent = 'Вывести на главный экран';
+      btn.onclick = function() {
+        alert('Чтобы добавить сайт на главный экран, откройте меню браузера и выберите \'Добавить на главный экран\'.');
+      };
+    } else {
+      text.textContent = 'Добавить в закладки';
+      btn.onclick = function() {
+        alert('Чтобы добавить сайт в закладки, нажмите Ctrl+D (или Cmd+D на Mac).');
+      };
+    }
+  })();
+  </script>
+
+  <script>
+  function citySelector() {
+    return {
+      showCityModal: false,
+      cities: [],
+      citySearch: '',
+      selectedCityId: null,
+      selectedCityName: 'Ош',
+      initCity() {
+        fetch('/api/cities/')
+          .then(res => res.json())
+          .then(data => {
+            this.cities = data.cities || data;
+            const saved = localStorage.getItem('selectedCity');
+            if (saved) {
+              const city = this.cities.find(c => c.id == saved);
+              if (city) {
+                this.selectedCityId = city.id;
+                this.selectedCityName = city.name;
+              }
+            }
+          });
+      },
+      filteredCities() {
+        if (!this.citySearch) return this.cities;
+        return this.cities.filter(c => c.name.toLowerCase().includes(this.citySearch.toLowerCase()));
+      },
+      selectCity(city) {
+        this.selectedCityId = city.id;
+        this.selectedCityName = city.name;
+        this.showCityModal = false;
+        localStorage.setItem('selectedCity', city.id);
+        fetch('/api/save-city/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': (document.cookie.match(/csrftoken=([^;]+)/)||[])[1] || ''
+          },
+          body: JSON.stringify({ city_id: city.id })
+        }).catch(()=>{});
+      }
+    }
+  }
+  </script>
+</body>
+</html>

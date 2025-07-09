@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resso - Документация редактора сайта</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        h1, h2, h3 {
+            color: #1a1a1a;
+        }
+        .section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: #f8f9fa;
+            border-radius: 1rem;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        .feature-list li {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        .feature-list li:before {
+            content: "•";
+            color: #3b82f6;
+            position: absolute;
+            left: 0;
+        }
+        .block-type {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .block-type h4 {
+            margin-top: 0;
+            color: #3b82f6;
+        }
+    </style>
+</head>
+<body>
+    <h1>Resso - Документация редактора сайта</h1>
+    
+    <div class="section">
+        <h2>Общее описание проекта</h2>
+        <p>
+            Resso - это современный конструктор сайтов, позволяющий пользователям создавать и редактировать 
+            свои веб-сайты с помощью удобного визуального редактора. Проект включает в себя множество 
+            функциональных блоков и возможностей для настройки.
+        </p>
+    </div>
+
+    <div class="section">
+        <h2>Основные функции</h2>
+        <ul class="feature-list">
+            <li>Визуальный редактор с предпросмотром в реальном времени</li>
+            <li>Возможность добавления и редактирования различных типов блоков</li>
+            <li>Сохранение изменений в localStorage</li>
+            <li>Управление видимостью блоков</li>
+            <li>Загрузка и управление изображениями</li>
+            <li>Современный интерфейс с анимациями</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>Типы блоков</h2>
+        
+        <div class="block-type">
+            <h4>1. Шапка (Header)</h4>
+            <ul class="feature-list">
+                <li>Название сайта</li>
+                <li>Логотип (с возможностью загрузки)</li>
+                <li>Навигационное меню</li>
+                <li>Фиксированное положение</li>
+            </ul>
+        </div>
+
+        <div class="block-type">
+            <h4>2. Главный блок (Hero)</h4>
+            <ul class="feature-list">
+                <li>Заголовок</li>
+                <li>Описание</li>
+                <li>Фоновое изображение</li>
+                <li>Кнопка призыва к действию</li>
+            </ul>
+        </div>
+
+        <div class="block-type">
+            <h4>3. Услуги</h4>
+            <ul class="feature-list">
+                <li>Заголовок секции</li>
+                <li>Описание</li>
+                <li>Карточки услуг (3 колонки)</li>
+                <li>Кнопка "Все услуги"</li>
+                <li>Синхронизация с личным кабинетом</li>
+            </ul>
+        </div>
+
+        <div class="block-type">
+            <h4>4. Портфолио</h4>
+            <ul class="feature-list">
+                <li>Заголовок секции</li>
+                <li>Сетка работ (3 колонки)</li>
+                <li>Изображения работ</li>
+                <li>Названия работ</li>
+            </ul>
+        </div>
+
+        <div class="block-type">
+            <h4>5. Контакты</h4>
+            <ul class="feature-list">
+                <li>Заголовок секции</li>
+                <li>Контактная информация</li>
+                <li>Форма обратной связи</li>
+                <li>Адрес и телефон</li>
+            </ul>
+        </div>
+
+        <div class="block-type">
+            <h4>6. Пользовательские блоки</h4>
+            <ul class="feature-list">
+                <li>Текстовый блок (заголовок, описание, изображение)</li>
+                <li>Социальные сети (иконки и ссылки)</li>
+                <li>YouTube видео (встроенный плеер)</li>
+                <li>Галерея (сетка изображений)</li>
+                <li>Отзывы (карточки с рейтингом)</li>
+                <li>Цены (тарифные планы)</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Планы по улучшению</h2>
+        <ul class="feature-list">
+            <li>Добавление возможности перетаскивания блоков (drag and drop)</li>
+            <li>Реализация полноценного предпросмотра сайта</li>
+            <li>Добавление новых типов блоков (блог, FAQ, команда)</li>
+            <li>Улучшение мобильной версии редактора</li>
+            <li>Добавление тем оформления</li>
+            <li>Реализация истории изменений</li>
+            <li>Добавление возможности экспорта/импорта конфигурации</li>
+            <li>Интеграция с системой управления контентом</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>Технические детали</h2>
+        <ul class="feature-list">
+            <li>Использование Alpine.js для реактивности</li>
+            <li>Tailwind CSS для стилизации</li>
+            <li>Lucide Icons для иконок</li>
+            <li>Локальное хранение данных в localStorage</li>
+            <li>Адаптивный дизайн</li>
+            <li>Модульная структура кода</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>Требования к обновлениям</h2>
+        <ul class="feature-list">
+            <li>Сохранение обратной совместимости с существующими блоками</li>
+            <li>Поддержка всех современных браузеров</li>
+            <li>Оптимизация производительности</li>
+            <li>Улучшение UX/UI</li>
+            <li>Добавление документации для новых функций</li>
+            <li>Тестирование на различных устройствах</li>
+        </ul>
+    </div>
+</body>
+</html> 

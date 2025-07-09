@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Интернеттеги иш — Zappis Жардам борбору</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .side-link.active {
+            background: linear-gradient(90deg, #3B82F6 0 6px, #e0e7ef 6px 100%);
+            color: #2563eb;
+            font-weight: 700;
+        }
+        .side-link {
+            transition: background 0.2s, color 0.2s;
+        }
+        .side-link:hover {
+            background: #f3f4f6;
+            color: #2563eb;
+        }
+        @media (max-width: 768px) {
+            .sidebar-nav { display: none; }
+            .sidebar-mobile { display: block; }
+        }
+        @media (min-width: 769px) {
+            .sidebar-nav { display: block; }
+            .sidebar-mobile { display: none; }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-white to-gray-50" style="font-family: system-ui, -apple-system, sans-serif;">
+    <header class="bg-white border-b border-gray-200 py-5 px-4 sm:px-8 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <a href="/support/?lang={{ lang }}" class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow hover:bg-blue-700 transition">
+                <i data-lucide="arrow-left" class="w-6 h-6 text-white"></i>
+            </a>
+            <span class="text-xl font-bold text-gray-900 tracking-tight">Жардам борбору</span>
+        </div>
+        <a href="/support/?lang={{ lang }}" class="text-blue-600 hover:underline font-medium">Бардык темалар</a>
+    </header>
+    <main class="max-w-6xl mx-auto p-6 pt-10 flex gap-8">
+                        <!-- Sidebar Navigation (Desktop) -->
+        <aside class="w-72 shrink-0 sidebar-nav">
+            <nav class="bg-white rounded-2xl border border-gray-200 shadow p-4 sticky top-24 max-h-[80vh] overflow-y-auto">
+                <h2 class="text-lg font-bold text-gray-800 mb-4">Жардам бөлүмдөрү</h2>
+                <ul class="space-y-1">
+                    <li><a href="/support/getting-started/?lang={{ lang }}" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="info" class="w-5 h-5 mr-2"></i> Жазма менен иштөөнү баштоо</a></li>
+                    <li><a href="/support/getting-started-profile/?lang={{ lang }}" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="user" class="w-5 h-5 mr-2"></i> Жеке кабинет</a></li>
+                    <li><a href="/support/notifications/?lang={{ lang }}" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="bell" class="w-5 h-5 mr-2"></i> Эскертүүлөр</a></li>
+                    <li><a href="/support/schedules/?lang={{ lang }}" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="calendar" class="w-5 h-5 mr-2"></i> Жосундар</a></li>
+                    <li><a href="/support/clients/?lang={{ lang }}" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="users" class="w-5 h-5 mr-2"></i> Кардарлар</a></li>
+                    <li><a href="/support/services/?lang={{ lang }}" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="scissors" class="w-5 h-5 mr-2"></i> Кызматтар</a></li>
+                    <li><a href="/support/employees/?lang={{ lang }}" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="badge" class="w-5 h-5 mr-2"></i> Кызматкерлер</a></li>
+                    <li><a href="/support/analytics/?lang={{ lang }}" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="bar-chart-3" class="w-5 h-5 mr-2"></i> Аналитика</a></li>
+                    <li><a href="/support/settings/?lang={{ lang }}" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="settings" class="w-5 h-5 mr-2"></i> Орнотуулар</a></li>
+                    <li><a href="/support/privacy/?lang={{ lang }}" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="shield" class="w-5 h-5 mr-2"></i> Конфиденциалдуулук</a></li>
+                    <li><a href="/support/web/?lang={{ lang }}" class="side-link active flex items-center px-4 py-2 rounded-lg"><i data-lucide="globe" class="w-5 h-5 mr-2"></i> Онлайн-жазма</a></li>
+                    <li><a href="/support/ai/?lang={{ lang }}" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="bot" class="w-5 h-5 mr-2"></i> AI-функциялар</a></li>
+                </ul>
+            </nav>
+        </aside>
+                        <!-- Sidebar Navigation (Mobile) -->
+        <aside class="sidebar-mobile w-full mb-8">
+            <nav class="bg-white rounded-2xl border border-gray-200 shadow p-4 flex overflow-x-auto gap-2">
+                <a href="/support/getting-started/?lang={{ lang }}" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="info" class="w-5 h-5 mr-1"></i> Жазма</a>
+                <a href="/support/getting-started-profile/?lang={{ lang }}" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="user" class="w-5 h-5 mr-1"></i> Жеке кабинет</a>
+                <a href="/support/notifications/?lang={{ lang }}" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bell" class="w-5 h-5 mr-1"></i> Эскертүүлөр</a>
+                <a href="/support/schedules/?lang={{ lang }}" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="calendar" class="w-5 h-5 mr-1"></i> Жосундар</a>
+                <a href="/support/clients/?lang={{ lang }}" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="users" class="w-5 h-5 mr-1"></i> Кардарлар</a>
+                <a href="/support/services/?lang={{ lang }}" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="scissors" class="w-5 h-5 mr-1"></i> Кызматтар</a>
+                <a href="/support/employees/?lang={{ lang }}" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="badge" class="w-5 h-5 mr-1"></i> Кызматкерлер</a>
+                <a href="/support/analytics/?lang={{ lang }}" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bar-chart-3" class="w-5 h-5 mr-1"></i> Аналитика</a>
+                <a href="/support/settings/?lang={{ lang }}" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="settings" class="w-5 h-5 mr-1"></i> Орнотуулар</a>
+                <a href="/support/privacy/?lang={{ lang }}" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="shield" class="w-5 h-5 mr-1"></i> Конфиденциалдуулук</a>
+                <a href="/support/web/?lang={{ lang }}" class="side-link active flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="globe" class="w-5 h-5 mr-1"></i> Онлайн-жазма</a>
+                <a href="/support/ai/?lang={{ lang }}" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bot" class="w-5 h-5 mr-1"></i> AI</a>
+            </nav>
+        </aside>
+        <!-- Main Content -->
+        <section class="flex-1 min-w-0">
+            <div class="flex items-center mb-8">
+                <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mr-5">
+                    <i data-lucide="globe" class="w-8 h-8 text-blue-600"></i>
+                </div>
+                <h1 class="text-4xl font-extrabold text-gray-900">Публичный сайт жана онлайн-жазма</h1>
+            </div>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Zappis'теги коомдук сайт деген эмне?</h2>
+                <p class="text-gray-700 mb-3">Zappis'теги ар бир бизнес үчүн кардарлар онлайн-жазыла ала турган жеке баракча бар. Сайт мобилдик түзмөктөргө ыңгайлашкан, кыргыз жана орус тилдерин колдойт, актуалдуу кызматтар жана кызматкерлер гана көрсөтүлөт.</p>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Онлайн-жазма 24/7 — чалуу жана кат жазуусуз</li>
+                    <li>Кызматты, адисти, күндү жана убакытты тандоо</li>
+                    <li>Автоматтык түрдө бош слоттор гана көрсөтүлөт</li>
+                    <li>Байланыштар, дарек, сүрөттөмө, социалдык тармактар жана карта</li>
+                </ul>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Онлайн-жазма кантип иштейт?</h2>
+                <ol class="list-decimal pl-6 text-gray-700 mb-2">
+                    <li>Кардар бир же бир нече кызматты тандайт</li>
+                    <li>Адисти тандайт (же каалаган бош адисти)</li>
+                    <li>Жеткиликтүү күн жана убакытты тандайт</li>
+                    <li>Атын жана телефонун киргизет (email — кааласа)</li>
+                    <li>Жазууну ырастайт жана ийгилик экранын көрөт</li>
+                </ol>
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-xl mt-4 flex items-start">
+                    <i data-lucide="info" class="w-5 h-5 text-blue-500 mr-3 mt-1"></i>
+                    <div>
+                        <b>Маанилүү:</b> Кардар сайт аркылуу жазууну жокко чыгара же өзгөртө албайт. Бул үчүн администраторго кайрылуу керек.
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Интеграциялар жана виджеттер</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Жазуу формасын өз сайтыңызга кошуу (виджет, шилтеме, QR-код)</li>
+                    <li>Instagram, VK, Telegram'га өтүү үчүн баскычтар</li>
+                    <li>Даректи көрсөтүү үчүн Google жана Яндекс.Карталар менен интеграция</li>
+                </ul>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">SEO жана илгерилетүү</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Баракча издөө системалары үчүн оптималдаштырылган</li>
+                    <li>Байланыштар, дарек, сүрөттөмө, кызматтар, адистер көрсөтүлөт</li>
+                    <li>Сүрөт, сүрөттөмө, ачкыч сөздөрдү кошсо болот (бизнес орнотууларынан)</li>
+                </ul>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Көп берилүүчү суроолор</h2>
+                <div class="mb-3">
+                    <b>Онлайн-жазма үчүн сайтты кантип кошсо болот?</b>
+                    <div class="text-gray-700">"Орнотуулар" бөлүмүнөн "Бизнес сайты" тандап, активдештирүү көрсөтмөсүнө ылайык иш кылыңыз. Сайтка шилтеме автоматтык түрдө түзүлөт.</div>
+                </div>
+                <div class="mb-3">
+                    <b>Жазууну өз сайтыңызга кошсо болобу?</b>
+                    <div class="text-gray-700">Ооба, сайт орнотууларында жеткиликтүү виджет, шилтеме же QR-кодду колдонуңуз.</div>
+                </div>
+                <div class="mb-3">
+                    <b>Бизнес карталарга (Google/Яндекс) кантип кошулат?</b>
+                    <div class="text-gray-700">Профиль орнотууларында даректи көрсөтүп, карталар менен интеграция боюнча көрсөтмөлөрдү аткарыңыз.</div>
+                </div>
+                <div class="mb-3">
+                    <b>Сайт аркылуу жазууну жокко чыгара же өзгөртө алабы?</b>
+                    <div class="text-gray-700">Жок, жазууну жокко чыгаруу же өзгөртүү үчүн бизнес администраторго кайрылыңыз.</div>
+                </div>
+                <div class="mb-3">
+                    <b>WhatsApp/email аркылуу ырастоо барбы?</b>
+                    <div class="text-gray-700">Жок, кардар экранда гана жазуу тууралуу билдирүү алат. Бизнес WhatsApp/email аркылуу билдирүү ала алат.</div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Онлайнда натыйжалуу иштөө боюнча кеңештер</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Бизнес, кызматтар жана кызматкерлер тууралуу маалыматты үзгүлтүксүз жаңыртып туруңуз</li>
+                    <li>Жазууларды көбөйтүү үчүн виджеттерди жана QR-коддорду колдонуңуз</li>
+                    <li>SEO үчүн сүрөт, сүрөттөмө жана ачкыч сөздөрдү кошуңуз</li>
+                    <li>Сайтка шилтемени социалдык тармактарда жана мессенжерлерде жарыялаңыз</li>
+                </ul>
+            </section>
+            <div class="flex justify-between mt-12">
+                <a href="/support/privacy/?lang={{ lang }}" class="text-blue-600 hover:underline flex items-center"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> Купуялуулукка</a>
+                <a href="/support/ai/?lang={{ lang }}" class="text-blue-600 hover:underline flex items-center">AI-функцияларга <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i></a>
+            </div>
+        </section>
+    </main>
+    <script>document.addEventListener('DOMContentLoaded', function() { lucide.createIcons(); });</script>
+</body>
+</html> 

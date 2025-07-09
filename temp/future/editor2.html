@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resso - Редактор сайта</title>
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Alpine.js -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <style>
+        body {
+            overflow: hidden;
+        }
+        /* Скрываем все скроллбары */
+        * {
+            scrollbar-width: none !important;
+            -ms-overflow-style: none !important;
+        }
+        *::-webkit-scrollbar {
+            display: none !important;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .editor-preview {
+            transform: scale(0.8);
+            transform-origin: top center;
+            transition: all 0.3s ease;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        .editor-preview:hover {
+            transform: scale(0.85);
+        }
+        .section-dragging {
+            opacity: 0.5;
+        }
+        .section-drag-handle {
+            cursor: move;
+        }
+        input[type="color"] {
+            -webkit-appearance: none;
+            padding: 0;
+            width: 100%;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            background: none;
+            border: 2px solid #e5e7eb;
+            transition: all 0.2s ease;
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+            border-radius: 6px;
+        }
+        input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        input[type="color"]:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        input[type="color"]:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px var(--glow-color, rgba(59,130,246,0.1));
+        }
+        /* Новые стили для фиксированного предпросмотра */
+        .preview-container {
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        .preview-content {
+            height: 100%;
+            overflow-y: auto;
+            padding: 2rem;
+            padding-top: 5rem;
+        }
+        .editor-panel {
+            height: calc(100vh - 4rem);
+            overflow-y: auto;
+        }
+        .sidebar {
+            height: calc(100vh - 4rem);
+            overflow-y: auto;
+        }
+        /* Стили для основного контейнера */
+        .main-container {
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+        }
+        /* Обновленные стили для переключателя режимов просмотра */
+        .viewport-switcher {
+            position: absolute;
+            top: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 50;
+            display: flex;
+            gap: 0.5rem;
+            background: white;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(229, 231, 235, 0.5);
+        }
+        .viewport-switcher button {
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .viewport-switcher button:hover {
+            background: #f3f4f6;
+        }
+        .viewport-switcher button.active {
+            background: #3b82f6;
+            color: white;
+        }
+        .viewport-switcher button i {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+        /* Стили для разных режимов просмотра */
+        .preview-mode-desktop .editor-preview {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            transform: scale(1);
+            transform-origin: top center;
+        }
+        .preview-mode-tablet .editor-preview {
+            width: 768px;
+            margin: 0 auto;
+            transform: scale(1);
+            transform-origin: top center;
+            border-left: 1px solid #e5e7eb;
+            border-right: 1px solid #e5e7eb;
+        }
+        .preview-mode-mobile .editor-preview {
+            width: 375px;
+            margin: 0 auto;
+            transform: scale(1);
+            transform-origin: top center;
+            border-left: 1px solid #e5e7eb;
+            border-right: 1px solid #e5e7eb;
+        }
+        .preview-mode-default .editor-preview {
+            width: 100%;
+            margin: 0;
+            transform: scale(0.8);
+            transform-origin: top center;
+        }
+        .preview-mode-default .editor-preview:hover {
+            transform: scale(0.85);
+        }
+    </style>
+</head>
+<body class="h-screen bg-gray-50 flex" style="font-family: system-ui, -apple-system, sans-serif;">
+    <div x-data="editorPage()" class="main-container">
+        <!-- Модальные окна -->
+        <div x-show="showDeleteModal" 
+             class="fixed inset-0 z-50 overflow-y-auto" 
+             aria-labelledby="modal-title" 
+             role="dialog" 
+             aria-modal="true">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div x-show="showDeleteModal" 
+                     class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity z-50" 
+                     aria-hidden="true"
+                     @click="showDeleteModal = false"></div>
+
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                <div x-show="showDeleteModal" 
+                     class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full relative z-50">
+                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <div class="sm:flex sm:items-start">
+                            <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                                <i data-lucide="alert-triangle" class="h-6 w-6 text-red-600"></i>
+                            </div>
+                            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                                    Удаление блока
+                                </h3>
+                                <div class="mt-2">
+                                    <p class="text-sm text-gray-500">
+                                        Вы уверены, что хотите удалить этот блок? Это действие нельзя будет отменить.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                        <button type="button" 
+                                class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+                                @click="confirmDelete">
+                            Удалить
+                        </button>
+                        <button type="button" 
+                                class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                                @click="showDeleteModal = false">
+                            Отмена
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно выбора социальной сети -->
+        <div x-show="showSocialModal" 
+             class="fixed inset-0 z-50 overflow-y-auto" 
+             aria-labelledby="modal-title" 
+             role="dialog" 
+             aria-modal="true"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0">
+            <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                <div x-show="showSocialModal" 
+                     class="fixed inset-0 bg-gray-900/75 backdrop-blur-sm transition-opacity z-50" 
+                     aria-hidden="true"
+                     @click="showSocialModal = false"></div>
+
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                <div x-show="showSocialModal" 
+                     class="inline-block align-bottom bg-white rounded-3xl text-left shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full relative z-50 max-h-[90vh] overflow-y-auto"
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                     x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                     x-transition:leave="transition ease-in duration-200"
+                     x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                     x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                    <div class="bg-white px-5 py-4"> 
+                        <div class="sm:flex sm:items-start">
+                            <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
+                                <div class="flex items-center justify-between mb-6"> 
+                                    <h3 class="text-2xl font-bold text-gray-900" id="modal-title">
+                                        Выберите социальную сеть
+                                    </h3>
+                                    <button @click="showSocialModal = false" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                                        <i data-lucide="x" class="w-6 h-6 text-gray-500"></i>
+                                    </button>
+                                </div>
+                                <div class="relative mb-4">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i data-lucide="search" class="w-5 h-5 text-gray-400"></i>
+                                    </div>
+                                    <input type="text" 
+                                           class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                           placeholder="Поиск социальной сети..."
+                                           x-model="socialSearch"
+                                           @input="filterSocialNetworks">
+                                </div>
+                                <div class="grid grid-cols-4 gap-4">
+                                    <template x-for="network in paginatedSocialNetworks" :key="network.value">
+                                        <button @click="selectSocialNetwork(network.value)" 
+                                                class="group relative flex flex-col items-center p-4 rounded-2xl border border-gray-100 hover:border-blue-500 hover:shadow-xl transition-all duration-300 bg-white">
+                                            <div class="w-14 h-14 rounded-2xl bg-gray-100 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform duration-300">
+                                                <img :src="`https://cdn.simpleicons.org/${network.si}/${network.color}`" 
+                                                     class="w-4 h-4 transition-transform duration-300 group-hover:scale-110" 
+                                                     :alt="network.label">
+                                            </div>
+                                            <span class="text-base font-medium text-gray-700 group-hover:text-blue-600 transition-colors duration-300" 
+                                                  x-text="network.label"></span>
+                                        </button>
+                                    </template>
+                                </div>
+                                <div x-show="filteredSocialNetworks.length === 0" class="text-center py-6"> 
+                                    <div class="w-14 h-14 mx-auto mb-3 bg-gray-100 rounded-full flex items-center justify-center"> 
+                                        <i data-lucide="search-x" class="w-7 h-7 text-gray-400"></i> 
+                                    </div>
+                                    <p class="text-gray-500 text-sm">Ничего не найдено</p>
+                                </div>
+                                <!-- Pagination controls -->
+                                <div x-show="filteredSocialNetworks.length > itemsPerPage" class="flex justify-between items-center mt-6 border-t border-gray-100 pt-4">
+                                    <button @click="prevPage()" :disabled="currentPage === 1" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                                        Предыдущая
+                                    </button>
+                                    <span class="text-sm text-gray-600">Страница <span x-text="currentPage"></span> из <span x-text="totalPages"></span></span>
+                                    <button @click="nextPage()" :disabled="currentPage === totalPages" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                                        Следующая
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-6 py-4 border-t border-gray-100"> 
+                        <button type="button" 
+                                class="w-full inline-flex justify-center rounded-xl border border-gray-200 shadow-sm px-6 py-3 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:text-sm"
+                                @click="showSocialModal = false">
+                            Отмена
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно ввода ссылки -->
+        <div x-show="showLinkModal" 
+             class="fixed inset-0 z-50 overflow-y-auto" 
+             aria-labelledby="modal-title" 
+             role="dialog" 
+             aria-modal="true">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div x-show="showLinkModal" 
+                     class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity z-50" 
+                     aria-hidden="true"
+                     @click="showLinkModal = false"></div>
+
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                <div x-show="showLinkModal" 
+                     class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full relative z-50">
+                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <div class="sm:flex sm:items-start">
+                            <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modal-title">
+                                    Введите ссылку на профиль
+                                </h3>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i data-lucide="link" class="w-5 h-5 text-gray-400"></i>
+                                    </div>
+                                    <input type="url" 
+                                           class="w-full border border-gray-300 rounded-lg pl-10 pr-3 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                           x-model="tempSocialLink"
+                                           placeholder="https://...">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                        <button type="button" 
+                                class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
+                                @click="saveSocialLink">
+                            Сохранить
+                        </button>
+                        <button type="button" 
+                                class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                                @click="showLinkModal = false">
+                            Отмена
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between fixed top-0 left-0 right-0 z-40 shadow-sm">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">R</span>
+                    </div>
+                    <span class="font-semibold text-gray-900">Resso</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button @click="saveChanges" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    <span>Сохранить</span>
+                </button>
+                <button @click="previewSite" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center space-x-2">
+                    <i data-lucide="globe" class="w-4 h-4"></i>
+                    <span>Опубликовать</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white border-r border-gray-200 p-4 space-y-6 fixed left-0 top-16 bottom-0 overflow-y-auto no-scrollbar z-40 sidebar">
+            <!-- Навигация -->
+            <div class="pt-2">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-sm font-medium text-gray-900">Навигация</h3>
+                </div>
+                <div class="space-y-1.5">
+                    <a href="index.html" class="nav-item flex items-center space-x-2 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                        <i data-lucide="home" class="w-4 h-4 flex-shrink-0"></i>
+                        <span>Главная</span>
+                    </a>
+                    <a href="create.html" class="nav-item flex items-center space-x-2 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                        <i data-lucide="plus-circle" class="w-4 h-4 flex-shrink-0"></i>
+                        <span>Создать сайт</span>
+                    </a>
+                    <a href="templates.html" class="nav-item flex items-center space-x-2 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors" @click.prevent="selectedSection = 'templates'">
+                        <i data-lucide="palette" class="w-4 h-4 flex-shrink-0"></i>
+                        <span>Темы</span>
+                    </a>
+                    <a href="templates.html" class="nav-item flex items-center space-x-2 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                        <i data-lucide="layout" class="w-4 h-4 flex-shrink-0"></i>
+                        <span>Шаблоны</span>
+                    </a>
+                    <a href="#" class="nav-item flex items-center space-x-2 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+                        <i data-lucide="help-circle" class="w-4 h-4 flex-shrink-0"></i>
+                        <span>Помощь</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Секции сайта -->
+            <div class="pt-4 border-t border-gray-100">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-sm font-medium text-gray-900">Секции сайта</h3>
+                </div>
+                <div class="space-y-2">
+                    <template x-for="(section, index) in sections" :key="index">
+                        <div class="bg-gray-30 rounded-lg p-3 flex items-center justify-between group cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md"
+                             :class="{'bg-blue-50': selectedSection === index}"
+                             @click="editSection(index)">
+                            <div class="flex items-center space-x-2">
+                                <i data-lucide="grip-vertical" class="w-4 h-4 text-gray-400 section-drag-handle"></i>
+                                <span class="text-sm text-gray-700" x-text="section.name"></span>
+                            </div>
+                            <div class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button @click.stop="editSection(index)" class="p-1 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                                    <i data-lucide="edit" class="w-4 h-4"></i>
+                                </button>
+                                <button x-show="index > 1" @click.stop="toggleSection(index)" class="p-1 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                                    <i data-lucide="eye-off" x-show="section.visible" class="w-4 h-4"></i>
+                                    <i data-lucide="eye" x-show="!section.visible" class="w-4 h-4"></i>
+                                </button>
+                                <button x-show="index > 1" @click.stop="deleteSection(index)" class="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 ml-64 pt-16">
+            <div class="flex">
+                <!-- Editor Panel -->
+                <div class="w-96 bg-white border-r border-gray-200 p-6 overflow-y-auto h-screen editor-panel">
+                    <div x-show="selectedSection !== null && selectedSection !== 'templates'">
+                        <div class="mb-6">
+                            <h2 class="text-lg font-semibold text-gray-900 mb-2" x-text="sections[selectedSection].name"></h2>
+                            <p class="text-sm text-gray-500">Настройте параметры выбранной секции</p>
+                        </div>
+
+                        <!-- Шапка -->
+                        <template x-if="sections[selectedSection].id === 'header'">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Название сайта</label>
+                                    <input type="text" 
+                                           class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                           x-model="sections[selectedSection].content.title">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Цвет фона</label>
+                                    <input type="color" 
+                                           class="w-full h-10 border border-gray-300 rounded-lg cursor-pointer" 
+                                           x-model="sections[selectedSection].content.backgroundColor">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Цвет текста</label>
+                                    <input type="color" 
+                                           class="w-full h-10 border border-gray-300 rounded-lg cursor-pointer" 
+                                           x-model="sections[selectedSection].content.textColor">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Логотип</label>
+                                    <div class="relative w-16 h-16">
+                                        <img x-show="sections[selectedSection].content.logo" :src="sections[selectedSection].content.logo" class="w-full h-full object-cover rounded-lg">
+                                        <div x-show="!sections[selectedSection].content.logo" class="w-full h-full bg-gray-100 rounded-lg flex items-center justify-center">
+                                            <i data-lucide="image" class="w-8 h-8 text-gray-400"></i>
+                                        </div>
+                                        <input type="file" @change="uploadLogo" class="absolute inset-0 opacity-0 cursor-pointer">
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Главный блок -->
+                        <template x-if="sections[selectedSection].id === 'main'">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Заголовок</label>
+                                    <input type="text" 
+                                           class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                           x-model="sections[selectedSection].content.title">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Описание</label>
+                                    <textarea class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                              rows="4"
+                                              x-model="sections[selectedSection].content.description"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Цвет фона</label>
+                                    <input type="color" 
+                                           class="w-full h-10 border border-gray-300 rounded-lg cursor-pointer" 
+                                           x-model="sections[selectedSection].content.backgroundColor">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Цвет текста</label>
+                                    <input type="color" 
+                                           class="w-full h-10 border border-gray-300 rounded-lg cursor-pointer" 
+                                           x-model="sections[selectedSection].content.textColor">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Цвет фона кнопки</label>
+                                    <input type="color" 
+                                           class="w-full h-10 border border-gray-300 rounded-lg cursor-pointer" 
+                                           x-model="sections[selectedSection].content.buttonBackgroundColor">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Цвет текста кнопки</label>
+                                    <input type="color" 
+                                           class="w-full h-10 border border-gray-300 rounded-lg cursor-pointer" 
+                                           x-model="sections[selectedSection].content.buttonTextColor">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Фоновое изображение</label>
+                                    <div class="relative w-32 h-20">
+                                        <img x-show="sections[selectedSection].content.image" :src="sections[selectedSection].content.image" class="w-full h-full object-cover rounded-lg">
+                                        <div x-show="!sections[selectedSection].content.image" class="w-full h-full bg-gray-100 rounded-lg flex items-center justify-center">
+                                            <i data-lucide="image" class="w-8 h-8 text-gray-400"></i>
+                                        </div>
+                                        <input type="file" @change="uploadMainImage" class="absolute inset-0 opacity-0 cursor-pointer">
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Портфолио -->
+                        <template x-if="sections[selectedSection].id === 'portfolio'">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Заголовок</label>
+                                    <input type="text" 
+                                           class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                           x-model="sections[selectedSection].content.title">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Цвет фона секции</label>
+                                    <input type="color" 
+                                           class="w-full h-10 border border-gray-300 rounded-lg cursor-pointer" 
+                                           x-model="sections[selectedSection].content.backgroundColor">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Цвет текста секции</label>
+                                    <input type="color" 
+                                           class="w-full h-10 border border-gray-300 rounded-lg cursor-pointer" 
+                                           x-model="sections[selectedSection].content.textColor">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Цвет фона карточек</label>
+                                    <input type="color" 
+                                           class="w-full h-10 border border-gray-300 rounded-lg cursor-pointer" 
+                                           x-model="sections[selectedSection].content.cardBackgroundColor">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Цвет текста карточек</label>
+                                    <input type="color" 
+                                           class="w-full h-10 border border-gray-300 rounded-lg cursor-pointer" 
+                                           x-model="sections[selectedSection].content.cardTextColor">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Работы</label>
+                                    <div class="space-y-3">
+                                        <template x-for="(work, index) in sections[selectedSection].content.works" :key="index">
+                                            <div class="bg-gray-50 rounded-lg p-3">
+                                                <div class="flex items-center space-x-3 mb-2">
+                                                    <div class="relative w-16 h-16">
+                                                        <img x-show="work.image" :src="work.image" class="w-full h-full object-cover rounded-lg">
+                                                        <div x-show="!work.image" class="w-full h-full bg-gray-200 rounded-lg flex items-center justify-center">
+                                                        <i data-lucide="image" class="w-6 h-6 text-gray-400"></i>
+                                                        </div>
+                                                        <input type="file" @change="uploadWorkImage(index, $event)" class="absolute inset-0 opacity-0 cursor-pointer">
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <input type="text" 
+                                                               class="w-full border border-gray-300 rounded-lg px-2 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                               x-model="work.title"
+                                                               placeholder="Название работы">
+                                                    </div>
+                                                </div>
+                                                <div class="flex justify-end space-x-2">
+                                                    <button @click="removeWork(index)" class="p-1 text-red-500 hover:text-red-700">
+                                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </template>
+                                        <button @click="addWork" class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 flex items-center justify-center space-x-2">
+                                            <i data-lucide="plus" class="w-4 h-4"></i>
+                                            <span>Добавить работу</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Услуги -->
+                        <template x-if="sections[selectedSection].id === 'services'">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Заголовок</label>
+                                    <input type="text" 
+                                           class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                           x-model="sections[selectedSection].content.title">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Описание</label>
+                                    <textarea class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                              rows="4"
+                                              x-model="sections[selectedSection].content.description"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Цвет фона секции</label>
+                                    <input type="color" 
+                                           class="w-full h-10 border border-gray-300 rounded-lg cursor-pointer" 
+                                           x-model="sections[selectedSection].content.backgroundColor">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Цвет текста секции</label>
+                                    <input type="color" 
+                                           class="w-full h-10 border border-gray-300 rounded-lg cursor-pointer" 
+                                           x-model="sections[selectedSection].content.textColor">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Цвет фона карточек</label>
+                                    <input type="color" 
+                                           class="w-full h-10 border border-gray-300 rounded-lg cursor-pointer" 
+                                           x-model="sections[selectedSection].content.cardBackgroundColor">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Цвет текста карточек</label>
+                                    <input type="color" 
+                                           class="w-full h-10 border border-gray-300 rounded-lg cursor-pointer" 
+                                           x-model="sections[selectedSection].content.cardTextColor">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Цвет фона кнопки</label>
+                                    <input type="color" 
+                                           class="w-full h-10 border border-gray-300 rounded-lg cursor-pointer" 
+                                           x-model="sections[selectedSection].content.buttonBackgroundColor">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Цвет текста кнопки</label>
+                                    <input type="color" 
+                                           class="w-full h-10 border border-gray-300 rounded-lg cursor-pointer" 
+                                           x-model="sections[selectedSection].content.buttonTextColor">
+                                </div>
+                                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                    <p class="text-sm text-blue-700">
+                                        Услуги автоматически синхронизируются с разделом услуг в личном кабинете. 
+                                        Для изменения списка услуг перейдите в раздел "Услуги" в личном кабинете.
+                                    </p>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Контакты -->
+                        <template x-if="sections[selectedSection].id === 'contacts'">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Заголовок</label>
+                                    <input type="text" 
+                                           class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                           x-model="sections[selectedSection].content.title">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Описание</label>
+                                    <textarea class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                              rows="4"
+                                              x-model="sections[selectedSection].content.description"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Цвет фона секции</label>
+                                    <input type="color" 
+                                           class="w-full h-10 border border-gray-300 rounded-lg cursor-pointer" 
+                                           x-model="sections[selectedSection].content.backgroundColor">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Цвет текста секции</label>
+                                    <input type="color" 
+                                           class="w-full h-10 border border-gray-300 rounded-lg cursor-pointer" 
+                                           x-model="sections[selectedSection].content.textColor">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Телефон</label>
+                                    <input type="tel" 
+                                           class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                           x-model="sections[selectedSection].content.phone">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Адрес</label>
+                                    <input type="text" 
+                                           class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                           x-model="sections[selectedSection].content.address">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Социальные сети</label>
+                                    <div class="space-y-4">
+                                        <template x-for="(social, index) in sections[selectedSection].content.socials" :key="index">
+                                            <div class="bg-white rounded-lg p-3 border border-gray-200 shadow-sm flex items-center transition-all hover:shadow-md">
+                                                <div class="flex items-center space-x-3 flex-grow">
+                                                    <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center shadow-sm">
+                                                        <img :src="`https://cdn.simpleicons.org/${socialNetworks.find(n => n.value === social.icon)?.si || 'globe'}/${socialNetworks.find(n => n.value === social.icon)?.color || '000000'}`" class="w-4 h-4" :alt="getSocialNetworkName(social.icon)">
+                                                    </div>
+                                                    <div class="min-w-0">
+                                                        <div class="text-base font-medium text-gray-900 truncate" x-text="getSocialNetworkName(social.icon)"></div>
+                                                        <div class="text-sm text-gray-500 truncate" x-text="social.link ? 'Ссылка указана' : 'Ссылка не указана'"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center space-x-1 flex-shrink-0 ml-auto">
+                                                    <button @click="editSocialLink(index)" class="p-1 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                                                        <i data-lucide="edit" class="w-4 h-4"></i>
+                                                    </button>
+                                                    <button @click="removeSocial(index)" class="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
+                                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </template>
+                                        <button @click="showSocialModal = true" class="w-full px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50 hover:border-gray-400 transition-colors flex items-center justify-center space-x-2">
+                                            <i data-lucide="plus" class="w-4 h-4"></i>
+                                            <span>Добавить социальную сеть</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                    <div x-show="selectedSection === 'templates'">
+                        <div class="mb-6">
+                            <h2 class="text-lg font-semibold text-gray-900 mb-2">Темы</h2>
+                            <p class="text-sm text-gray-500">Выберите готовую цветовую тему для вашего сайта.</p>
+                        </div>
+                        <div class="grid grid-cols-1 gap-4">
+                            <template x-for="template in templates" :key="template.name">
+                                <div @click="applyTemplate(template)" 
+                                     class="bg-white rounded-lg p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow">
+                                    <h3 class="text-base font-semibold text-gray-900 mb-2" x-text="template.name"></h3>
+                                    <div class="flex space-x-2">
+                                        <div class="w-8 h-8 rounded-full border border-gray-200" :style="`background-color: ${template.colors.header.backgroundColor};`"></div>
+                                        <div class="w-8 h-8 rounded-full border border-gray-200" :style="`background-color: ${template.colors.main.backgroundColor};`"></div>
+                                        <div class="w-8 h-8 rounded-full border border-gray-200" :style="`background-color: ${template.colors.services.backgroundColor};`"></div>
+                                        <div class="w-8 h-8 rounded-full border border-gray-200" :style="`background-color: ${template.colors.portfolio.backgroundColor};`"></div>
+                                        <div class="w-8 h-8 rounded-full border border-gray-200" :style="`background-color: ${template.colors.contacts.backgroundColor};`"></div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preview Panel -->
+                <div class="flex-1 p-8 overflow-y-auto h-screen preview-container">
+                    <div class="max-w-4xl mx-auto editor-preview relative" :class="{
+                        'preview-mode-desktop': previewMode === 'desktop',
+                        'preview-mode-tablet': previewMode === 'tablet',
+                        'preview-mode-mobile': previewMode === 'mobile',
+                        'preview-mode-default': previewMode === 'default'
+                    }">
+                        <!-- Переключатель режимов просмотра -->
+                        <div class="viewport-switcher">
+                            <button @click="previewMode = 'default'" :class="{ 'active': previewMode === 'default' }" title="Обычный режим">
+                                <i data-lucide="maximize" class="w-5 h-5"></i>
+                            </button>
+                            <button @click="previewMode = 'desktop'" :class="{ 'active': previewMode === 'desktop' }" title="Десктоп">
+                                <i data-lucide="monitor" class="w-5 h-5"></i>
+                            </button>
+                            <button @click="previewMode = 'tablet'" :class="{ 'active': previewMode === 'tablet' }" title="Планшет">
+                                <i data-lucide="tablet" class="w-5 h-5"></i>
+                            </button>
+                            <button @click="previewMode = 'mobile'" :class="{ 'active': previewMode === 'mobile' }" title="Телефон">
+                                <i data-lucide="smartphone" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                        <div class="preview-content">
+                            <!-- Шапка -->
+                            <template x-if="sections.find(s => s.id === 'header')?.visible">
+                                <header class="shadow-sm cursor-pointer backdrop-blur-sm bg-opacity-95" @click="editSection(sections.findIndex(s => s.id === 'header'))" :style="`background-color: ${sections.find(s => s.id === 'header').content.backgroundColor};`">
+                                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                                    <div class="flex justify-between items-center py-6">
+                                        <div class="flex items-center">
+                                                <div class="w-10 h-10 rounded-lg overflow-hidden">
+                                                    <img x-show="sections.find(s => s.id === 'header').content.logo" :src="sections.find(s => s.id === 'header').content.logo" class="w-full h-full object-cover">
+                                                    <div x-show="!sections.find(s => s.id === 'header').content.logo" class="w-full h-full bg-blue-600 flex items-center justify-center">
+                                                <span class="text-white font-bold">R</span>
+                                                    </div>
+                                                </div>
+                                                <span class="ml-3 text-xl font-semibold" :style="`color: ${sections.find(s => s.id === 'header').content.textColor};`" x-text="sections.find(s => s.id === 'header').content.title"></span>
+                                        </div>
+                                        <nav class="flex space-x-8">
+                                            <a href="#" class="hover:text-gray-900" :style="`color: ${sections.find(s => s.id === 'header').content.textColor};`">Главная</a>
+                                            <a href="#" class="hover:text-gray-900" :style="`color: ${sections.find(s => s.id === 'header').content.textColor};`">Портфолио</a>
+                                            <a href="#" class="hover:text-gray-900" :style="`color: ${sections.find(s => s.id === 'header').content.textColor};`">Контакты</a>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </header>
+                            </template>
+
+                            <!-- Главный блок -->
+                            <template x-if="sections.find(s => s.id === 'main')?.visible">
+                                <section class="cursor-pointer relative" @click="editSection(sections.findIndex(s => s.id === 'main'))" :style="`background-color: ${sections.find(s => s.id === 'main').content.backgroundColor};`">
+                                <div class="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none"></div>
+                                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                                    <div class="grid grid-cols-2 gap-12 items-center">
+                                        <div>
+                                                <h1 class="text-4xl font-bold mb-4" :style="`color: ${sections.find(s => s.id === 'main').content.textColor};`" x-text="sections.find(s => s.id === 'main').content.title"></h1>
+                                                <p class="text-xl mb-8" :style="`color: ${sections.find(s => s.id === 'main').content.textColor};`" x-text="sections.find(s => s.id === 'main').content.description"></p>
+                                            <button class="px-6 py-3 rounded-lg hover:opacity-90 transition-opacity" :style="`background-color: ${sections.find(s => s.id === 'main').content.buttonBackgroundColor}; color: ${sections.find(s => s.id === 'main').content.buttonTextColor};`">
+                                                Записаться
+                                            </button>
+                                            </div>
+                                            <div class="rounded-lg h-96" :class="{'bg-gray-200': !sections.find(s => s.id === 'main').content.image}" :style="sections.find(s => s.id === 'main').content.image ? { 'background-image': 'url(' + sections.find(s => s.id === 'main').content.image + ')', 'background-size': 'cover', 'background-position': 'center' } : {}"></div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </template>
+
+                            <!-- Услуги -->
+                            <template x-if="sections.find(s => s.id === 'services')?.visible">
+                                <section class="cursor-pointer relative" @click="editSection(sections.findIndex(s => s.id === 'services'))" :style="`background-color: ${sections.find(s => s.id === 'services').content.backgroundColor};`">
+                                <div class="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none"></div>
+                                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                                        <h2 class="text-3xl font-bold mb-8 text-center" :style="`color: ${sections.find(s => s.id === 'services').content.textColor};`" x-text="sections.find(s => s.id === 'services').content.title"></h2>
+                                        <p class="text-xl mb-12 text-center" :style="`color: ${sections.find(s => s.id === 'services').content.textColor};`" x-text="sections.find(s => s.id === 'services').content.description"></p>
+                                        <div class="grid grid-cols-3 gap-8">
+                                            <template x-for="(service, index) in sections.find(s => s.id === 'services').content.services" :key="index">
+                                                <div class="rounded-lg p-6 shadow-sm" :style="`background-color: ${sections.find(s => s.id === 'services').content.cardBackgroundColor};`">
+                                                    <h3 class="text-xl font-semibold mb-3" :style="`color: ${sections.find(s => s.id === 'services').content.cardTextColor};`" x-text="service.title"></h3>
+                                                    <p :style="`color: ${sections.find(s => s.id === 'services').content.cardTextColor};`" x-text="service.description"></p>
+                                                </div>
+                                            </template>
+                                        </div>
+                                        <div class="mt-12 text-center">
+                                            <a href="#" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg hover:opacity-90 transition-opacity" :style="`background-color: ${sections.find(s => s.id === 'services').content.buttonBackgroundColor}; color: ${sections.find(s => s.id === 'services').content.buttonTextColor};`">
+                                                <span>Все услуги</span>
+                                                <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                                            </a>
+                                        </div>
+                                        <div class="mt-8 text-center text-sm text-gray-500">
+                                            <p>* Услуги автоматически синхронизируются с разделом услуг в личном кабинете</p>
+                                    </div>
+                                </div>
+                            </section>
+                            </template>
+
+                            <!-- Портфолио -->
+                            <template x-if="sections.find(s => s.id === 'portfolio')?.visible">
+                                <section class="cursor-pointer relative" @click="editSection(sections.findIndex(s => s.id === 'portfolio'))" :style="`background-color: ${sections.find(s => s.id === 'portfolio').content.backgroundColor};`">
+                                <div class="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none"></div>
+                                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                                        <h2 class="text-3xl font-bold mb-8 text-center" :style="`color: ${sections.find(s => s.id === 'portfolio').content.textColor};`" x-text="sections.find(s => s.id === 'portfolio').content.title"></h2>
+                                    <div class="grid grid-cols-3 gap-8">
+                                            <template x-for="(work, index) in sections.find(s => s.id === 'portfolio').content.works" :key="index">
+                                            <div class="rounded-lg overflow-hidden shadow-sm" :style="`background-color: ${sections.find(s => s.id === 'portfolio').content.cardBackgroundColor};`">
+                                                    <div class="h-48" :class="{'bg-gray-200': !work.image}" :style="work.image ? { 'background-image': 'url(' + work.image + ')', 'background-size': 'cover', 'background-position': 'center' } : {}"></div>
+                                                <div class="p-4">
+                                                    <h3 class="font-semibold" :style="`color: ${sections.find(s => s.id === 'portfolio').content.cardTextColor};`" x-text="work.title"></h3>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                            </section>
+                            </template>
+
+                            <!-- Контакты -->
+                            <template x-if="sections.find(s => s.id === 'contacts')?.visible">
+                                <section class="cursor-pointer relative" @click="editSection(sections.findIndex(s => s.id === 'contacts'))" :style="`background-color: ${sections.find(s => s.id === 'contacts').content.backgroundColor};`">
+                                <div class="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none"></div>
+                                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                                        <h2 class="text-3xl font-bold mb-8 text-center" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor};`" x-text="sections.find(s => s.id === 'contacts').content.title"></h2>
+                                    <div class="max-w-2xl mx-auto text-center">
+                                            <p class="text-xl mb-8" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor};`" x-text="sections.find(s => s.id === 'contacts').content.description"></p>
+                                        <div class="space-y-4">
+                                            <div class="flex items-center justify-center space-x-2">
+                                                <i data-lucide="phone" class="w-5 h-5 text-gray-400" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor}80;`"></i>
+                                                    <span :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor};`" x-text="sections.find(s => s.id === 'contacts').content.phone"></span>
+                                            </div>
+                                            <div class="flex items-center justify-center space-x-2">
+                                                <i data-lucide="map-pin" class="w-5 h-5 text-gray-400" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor}80;`"></i>
+                                                    <span :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor};`" x-text="sections.find(s => s.id === 'contacts').content.address"></span>
+                                                </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                            </template>
+
+                            <!-- Футер -->
+                            <footer class="text-white relative" :style="`background-color: ${sections.find(s => s.id === 'contacts').content.backgroundColor};`">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none"></div>
+                                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                                    <div class="grid grid-cols-4 gap-8">
+                                        <div>
+                                            <h3 class="text-lg font-semibold mb-4" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor};`">О компании</h3>
+                                            <p class="text-gray-400" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor}CC;`">Мы создаем красивые и функциональные сайты для вашего бизнеса</p>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-lg font-semibold mb-4" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor};`">Контакты</h3>
+                                            <div class="space-y-2 text-gray-400" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor}CC;`">
+                                                <p x-text="sections.find(s => s.id === 'contacts').content.phone"></p>
+                                                <p x-text="sections.find(s => s.id === 'contacts').content.address"></p>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-lg font-semibold mb-4" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor};`">Навигация</h3>
+                                            <div class="space-y-2 flex flex-col">
+                                                <a href="#" class="hover:text-white transition-colors duration-200" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor}CC;`">Главная</a>
+                                                <a href="#" class="hover:text-white transition-colors duration-200" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor}CC;`">Портфолио</a>
+                                                <a href="#" class="hover:text-white transition-colors duration-200" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor}CC;`">Услуги</a>
+                                                <a href="#" class="hover:text-white transition-colors duration-200" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor}CC;`">Контакты</a>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-lg font-semibold mb-4" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor};`">Социальные сети</h3>
+                                            <div class="flex flex-wrap gap-4">
+                                                <template x-for="(social, index) in sections.find(s => s.id === 'contacts').content.socials" :key="index">
+                                                    <a :href="social.link" target="_blank" class="transition-colors duration-200">
+                                                        <img :src="`https://cdn.simpleicons.org/${socialNetworks.find(n => n.value === social.icon)?.si || 'globe'}/${socialNetworks.find(n => n.value === social.icon)?.color || '000000'}`" class="w-5 h-5" :alt="getSocialNetworkName(social.icon)">
+                                                    </a>
+                                                </template>
+                                                <div x-show="sections.find(s => s.id === 'contacts').content.socials.length === 0" class="text-sm" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor}99;`">
+                                                    Нет добавленных социальных сетей
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="border-t border-gray-800 mt-8 pt-8 text-center" :style="`border-color: ${sections.find(s => s.id === 'contacts').content.textColor}33; color: ${sections.find(s => s.id === 'contacts').content.textColor}CC;`">
+                                        <p>© <span x-text="sections.find(s => s.id === 'header').content.title"></span>. Все права защищены.</p>
+                                    </div>
+                                </div>
+                            </footer>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alpine.js Logic -->
+    <script src="js/scripts.js"></script>
+</body>
+</html> 

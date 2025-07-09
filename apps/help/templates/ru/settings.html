@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Настройки системы — Справочный центр Zappis</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .side-link.active {
+            background: linear-gradient(90deg, #3B82F6 0 6px, #e0e7ef 6px 100%);
+            color: #2563eb;
+            font-weight: 700;
+        }
+        .side-link {
+            transition: background 0.2s, color 0.2s;
+        }
+        .side-link:hover {
+            background: #f3f4f6;
+            color: #2563eb;
+        }
+        @media (max-width: 768px) {
+            .sidebar-nav { display: none; }
+            .sidebar-mobile { display: block; }
+        }
+        @media (min-width: 769px) {
+            .sidebar-nav { display: block; }
+            .sidebar-mobile { display: none; }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-white to-gray-50" style="font-family: system-ui, -apple-system, sans-serif;">
+    <header class="bg-white border-b border-gray-200 py-5 px-4 sm:px-8 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <a href="/support/" class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow hover:bg-blue-700 transition">
+                <i data-lucide="arrow-left" class="w-6 h-6 text-white"></i>
+            </a>
+            <span class="text-xl font-bold text-gray-900 tracking-tight">Справочный центр</span>
+        </div>
+        <a href="/support/" class="text-blue-600 hover:underline font-medium">Все темы</a>
+    </header>
+    <main class="max-w-6xl mx-auto p-6 pt-10 flex gap-8">
+                        <!-- Sidebar Navigation (Desktop) -->
+        <aside class="w-72 shrink-0 sidebar-nav">
+            <nav class="bg-white rounded-2xl border border-gray-200 shadow p-4 sticky top-24 max-h-[80vh] overflow-y-auto">
+                <h2 class="text-lg font-bold text-gray-800 mb-4">Разделы справки</h2>
+                <ul class="space-y-1">
+                    <li><a href="/support/getting-started/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="info" class="w-5 h-5 mr-2"></i> Начало работы с записью</a></li>
+                    <li><a href="/support/getting-started-profile/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="user" class="w-5 h-5 mr-2"></i> Личный кабинет</a></li>
+                    <li><a href="/support/notifications/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="bell" class="w-5 h-5 mr-2"></i> Уведомления</a></li>
+                    <li><a href="/support/schedules/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="calendar" class="w-5 h-5 mr-2"></i> Расписания</a></li>
+                    <li><a href="/support/clients/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="users" class="w-5 h-5 mr-2"></i> Клиенты</a></li>
+                    <li><a href="/support/services/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="scissors" class="w-5 h-5 mr-2"></i> Услуги</a></li>
+                    <li><a href="/support/employees/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="badge" class="w-5 h-5 mr-2"></i> Сотрудники</a></li>
+                    <li><a href="/support/analytics/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="bar-chart-3" class="w-5 h-5 mr-2"></i> Аналитика</a></li>
+                    <li><a href="/support/settings/" class="side-link active flex items-center px-4 py-2 rounded-lg"><i data-lucide="settings" class="w-5 h-5 mr-2"></i> Настройки</a></li>
+                    <li><a href="/support/privacy/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="shield" class="w-5 h-5 mr-2"></i> Конфиденциальность</a></li>
+                    <li><a href="/support/web/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="globe" class="w-5 h-5 mr-2"></i> Онлайн-запись</a></li>
+                    <li><a href="/support/ai/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="bot" class="w-5 h-5 mr-2"></i> AI-функции</a></li>
+                </ul>
+            </nav>
+        </aside>
+                        <!-- Sidebar Navigation (Mobile) -->
+        <aside class="sidebar-mobile w-full mb-8">
+            <nav class="bg-white rounded-2xl border border-gray-200 shadow p-4 flex overflow-x-auto gap-2">
+                <a href="/support/getting-started/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="info" class="w-5 h-5 mr-1"></i> Запись</a>
+                <a href="/support/getting-started-profile/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="user" class="w-5 h-5 mr-1"></i> Личный кабинет</a>
+                <a href="/support/notifications/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bell" class="w-5 h-5 mr-1"></i> Уведомления</a>
+                <a href="/support/schedules/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="calendar" class="w-5 h-5 mr-1"></i> Расписания</a>
+                <a href="/support/clients/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="users" class="w-5 h-5 mr-1"></i> Клиенты</a>
+                <a href="/support/services/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="scissors" class="w-5 h-5 mr-1"></i> Услуги</a>
+                <a href="/support/employees/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="badge" class="w-5 h-5 mr-1"></i> Сотрудники</a>
+                <a href="/support/analytics/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bar-chart-3" class="w-5 h-5 mr-1"></i> Аналитика</a>
+                <a href="/support/settings/" class="side-link active flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="settings" class="w-5 h-5 mr-1"></i> Настройки</a>
+                <a href="/support/privacy/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="shield" class="w-5 h-5 mr-1"></i> Конфиденциальность</a>
+                <a href="/support/web/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="globe" class="w-5 h-5 mr-1"></i> Онлайн-запись</a>
+                <a href="/support/ai/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bot" class="w-5 h-5 mr-1"></i> AI</a>
+            </nav>
+        </aside>
+        <!-- Main Content -->
+        <section class="flex-1 min-w-0">
+            <div class="flex items-center mb-8">
+                <div class="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center mr-5">
+                    <i data-lucide="settings" class="w-8 h-8 text-gray-600"></i>
+                </div>
+                <h1 class="text-4xl font-extrabold text-gray-900">Настройки системы в Zappis</h1>
+            </div>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Какие настройки доступны?</h2>
+                <p class="text-gray-700 mb-3">В разделе настроек вы управляете всеми ключевыми параметрами работы системы. Доступ к большинству настроек имеют только владелец бизнеса и администраторы.</p>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li><b>Профиль пользователя:</b> ФИО, email, телефон, язык, часовой пояс, город, страна, смена пароля, подтверждение email/телефона</li>
+                    <li><b>Бизнес:</b> название, описание, категория и подкатегория, адрес, город, страна, телефон, email, сайт, Instagram, часовой пояс, язык, статус активности, username, реферальный код</li>
+                    <li><b>Рабочие часы:</b> настройка по дням недели, включение/выключение, время начала/окончания</li>
+                    <li><b>Уведомления:</b> email, WhatsApp, Telegram — для пользователя и бизнеса</li>
+                    <li><b>Бронирование:</b> длительность слота, буферное время, авто-подтверждение</li>
+                    <li><b>Сотрудники:</b> список, роли, статусы, добавление/редактирование</li>
+                    <li><b>Подписка и история платежей:</b> текущий тариф, история, скачивание чеков</li>
+                    <li><b>Правовая информация:</b> политика, соглашение, cookie, экспорт данных</li>
+                    <li><b>Опасная зона:</b> удаление аккаунта, восстановление в течение 30 дней</li>
+                </ul>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Права доступа и безопасность</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Доступ к настройкам имеют только владелец бизнеса и администраторы</li>
+                    <li>Обычные сотрудники не могут менять бизнес-настройки и опасные действия</li>
+                    <li>Смена пароля требует подтверждения старого пароля</li>
+                    <li>После смены пароля происходит выход со всех устройств</li>
+                    <li>Подтверждение email и телефона через код</li>
+                    <li>Журнал активности доступен в разделе безопасности</li>
+                </ul>
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-xl mt-4 flex items-start">
+                    <i data-lucide="shield" class="w-5 h-5 text-yellow-500 mr-3 mt-1"></i>
+                    <div>
+                        <b>Совет:</b> Регулярно меняйте пароли и проверяйте журнал активности для защиты данных.
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Интеграции и сайт бизнеса</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Онлайн-оплата (эквайринг, QR-коды)</li>
+                    <li>Мессенджеры и email-рассылки</li>
+                    <li>Календари (Google, Яндекс и др.)</li>
+                    <li>API для интеграции с другими системами</li>
+                    <li>Управление сайтом бизнеса: активность, username, статистика бронирований и просмотров</li>
+                </ul>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Опасная зона: удаление аккаунта</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>После удаления аккаунта бизнес, сайт, сотрудники и все данные становятся недоступны</li>
+                    <li>Восстановление возможно в течение 30 дней через поддержку</li>
+                    <li>Через 30 дней данные удаляются без возможности восстановления</li>
+                </ul>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Часто задаваемые вопросы</h2>
+                <div class="mb-3">
+                    <b>Как сменить пароль, email или телефон?</b>
+                    <div class="text-gray-700">В разделе "Профиль" выберите нужный параметр и следуйте инструкции. Для смены пароля потребуется ввести старый пароль. Email и телефон подтверждаются кодом.</div>
+                </div>
+                <div class="mb-3">
+                    <b>Можно ли ограничить доступ сотрудника к настройкам?</b>
+                    <div class="text-gray-700">Да, права доступа настраиваются для каждой роли. Обычные сотрудники не могут менять бизнес-настройки.</div>
+                </div>
+                <div class="mb-3">
+                    <b>Как подключить онлайн-оплату?</b>
+                    <div class="text-gray-700">В разделе "Интеграции" выберите нужный сервис и следуйте инструкции.</div>
+                </div>
+                <div class="mb-3">
+                    <b>Где посмотреть журнал активности?</b>
+                    <div class="text-gray-700">В разделе "Безопасность" доступен журнал всех изменений и входов.</div>
+                </div>
+                <div class="mb-3">
+                    <b>Как восстановить аккаунт после удаления?</b>
+                    <div class="text-gray-700">В течение 30 дней после удаления обратитесь в поддержку для восстановления. После 30 дней восстановление невозможно.</div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Советы по эффективной настройке системы</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Регулярно обновляйте данные бизнеса и расписания</li>
+                    <li>Проверяйте права доступа сотрудников</li>
+                    <li>Используйте интеграции для автоматизации</li>
+                    <li>Следите за безопасностью и резервным копированием</li>
+                </ul>
+            </section>
+            <div class="flex justify-between mt-12">
+                <a href="/support/analytics/" class="text-blue-600 hover:underline flex items-center"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> К аналитике</a>
+                <a href="/support/privacy/" class="text-blue-600 hover:underline flex items-center">К конфиденциальности <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i></a>
+            </div>
+        </section>
+    </main>
+    <script>document.addEventListener('DOMContentLoaded', function() { lucide.createIcons(); });</script>
+</body>
+</html> 

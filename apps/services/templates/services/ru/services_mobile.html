@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ru" x-data="mobileServices()" x-init="init()">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#2563eb">
+    <title>Zappis — Услуги</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <style>
+        body { background: linear-gradient(135deg, #f3f4f6 0%, #dbeafe 100%); }
+        .nav-active { color: #2563eb; }
+        .nav-bar { box-shadow: 0 -2px 16px 0 rgba(37,99,235,0.08); }
+        .card { box-shadow: 0 2px 12px 0 rgba(0,0,0,0.04); }
+        .modal-bg { background: rgba(0,0,0,0.35); }
+        .skeleton { background: linear-gradient(90deg, #e0e7ef 25%, #f3f4f6 50%, #e0e7ef 75%); background-size: 200% 100%; animation: skeleton 1.2s infinite linear; }
+        @keyframes skeleton { 0% {background-position: 200% 0;} 100% {background-position: -200% 0;} }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col" style="font-family: system-ui, -apple-system, sans-serif;">
+    <!-- AppBar -->
+    <header class="fixed top-0 left-0 right-0 z-20 bg-white/90 backdrop-blur border-b border-gray-200 flex items-center justify-between px-4 h-16">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
+                <span class="text-white font-bold text-2xl">Z</span>
+            </div>
+            <span class="text-lg font-semibold text-gray-900">Zappis</span>
+        </div>
+        <div class="flex items-center space-x-2">
+            <button class="text-gray-600 hover:text-blue-600">
+                <i data-lucide="bell" class="w-6 h-6"></i>
+            </button>
+            <button class="text-gray-600 hover:text-blue-600">
+                <i data-lucide="settings" class="w-6 h-6"></i>
+            </button>
+            <div class="w-9 h-9 bg-blue-600 rounded-full flex items-center justify-center">
+                <span class="text-white text-lg font-bold">A</span>
+            </div>
+        </div>
+    </header>
+    <!-- Main Content -->
+    <main class="flex-1 pt-20 pb-20 px-2 max-w-md mx-auto w-full">
+        <div class="flex justify-between items-center mb-4">
+            <h1 class="text-2xl font-bold text-gray-900">Услуги</h1>
+            <button @click="showAddServiceModal = true" class="px-3 py-2 bg-blue-600 text-white rounded-lg flex items-center space-x-2 text-sm">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span>Добавить</span>
+            </button>
+        </div>
+        <!-- Loading State -->
+        <template x-if="loading">
+            <div class="space-y-4 animate-pulse">
+                <div class="h-8 rounded-xl skeleton"></div>
+                <div class="h-20 rounded-2xl skeleton"></div>
+                <div class="h-20 rounded-2xl skeleton"></div>
+            </div>
+        </template>
+        <!-- Categories and Services -->
+        <template x-if="!loading">
+            <div>
+                <template x-for="category in categories" :key="category.id">
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center space-x-2">
+                                <i data-lucide="folder" class="w-5 h-5 text-blue-600"></i>
+                                <span class="font-semibold text-gray-900" x-text="category.name"></span>
+                            </div>
+                            <button @click="editCategory(category)" class="text-gray-400 hover:text-gray-600">
+                                <i data-lucide="edit" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <div class="text-gray-500 text-sm mb-2" x-text="category.description"></div>
+                        <div class="space-y-3">
+                            <template x-for="service in category.services" :key="service.id">
+                                <div class="card bg-white rounded-xl p-4 flex flex-col">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <div>
+                                            <span class="font-medium text-gray-900" x-text="service.name"></span>
+                                            <span class="ml-2 text-xs text-gray-500" x-text="service.formatted_duration"></span>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <button @click="editService(service)" class="text-gray-400 hover:text-gray-600">
+                                                <i data-lucide="edit" class="w-4 h-4"></i>
+                                            </button>
+                                            <button @click="deleteService(service.id)" class="text-gray-400 hover:text-red-600">
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between mt-1">
+                                        <span class="text-lg font-semibold text-gray-900" x-text="service.formatted_price"></span>
+                                        <span :class="service.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'" class="px-2 py-1 text-xs rounded-full" x-text="service.is_active ? 'Активна' : 'Неактивна'"></span>
+                                    </div>
+                                    <div class="text-gray-500 text-xs mt-2" x-text="service.description"></div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </template>
+    </main>
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 z-30 bg-white nav-bar border-t border-gray-200 flex justify-around items-center h-16 max-w-md mx-auto w-full">
+        <a href="/" class="flex flex-col items-center">
+            <i data-lucide="home" class="w-6 h-6"></i>
+            <span class="text-xs mt-1">Главная</span>
+        </a>
+        <a href="#" class="flex flex-col items-center">
+            <i data-lucide="calendar" class="w-6 h-6"></i>
+            <span class="text-xs mt-1">Записи</span>
+        </a>
+        <a href="#" class="flex flex-col items-center">
+            <i data-lucide="user-plus" class="w-6 h-6"></i>
+            <span class="text-xs mt-1">Клиенты</span>
+        </a>
+        <a href="#" class="flex flex-col items-center nav-active">
+            <i data-lucide="scissors" class="w-6 h-6"></i>
+            <span class="text-xs mt-1">Услуги</span>
+        </a>
+        <a href="#" class="flex flex-col items-center">
+            <i data-lucide="settings" class="w-6 h-6"></i>
+            <span class="text-xs mt-1">Профиль</span>
+        </a>
+    </nav>
+    <!-- Add/Edit Service Modal -->
+    <template x-if="showAddServiceModal">
+        <div class="fixed inset-0 z-40 flex items-end justify-center modal-bg" @click.self="showAddServiceModal = false">
+            <div class="bg-white rounded-t-2xl w-full max-w-md p-6">
+                <h2 class="text-lg font-bold mb-4 text-gray-900">Добавить услугу</h2>
+                <form @submit.prevent="submitService" class="space-y-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Название услуги <span class="text-red-500">*</span></label>
+                        <input type="text" x-model="serviceForm.name" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <div x-show="serviceErrors.name" class="text-xs text-red-600 mt-1" x-text="serviceErrors.name"></div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Категория</label>
+                        <select x-model="serviceForm.categoryId" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">Нет</option>
+                            <template x-for="category in categories" :key="category.id">
+                                <option :value="category.id" x-text="category.name"></option>
+                            </template>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Цена <span class="text-red-500">*</span></label>
+                        <input type="number" x-model="serviceForm.price" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <div x-show="serviceErrors.price" class="text-xs text-red-600 mt-1" x-text="serviceErrors.price"></div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Длительность (минуты)</label>
+                        <input type="number" x-model="serviceForm.duration" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Описание</label>
+                        <textarea x-model="serviceForm.description" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="2"></textarea>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" x-model="serviceForm.is_active" class="w-4 h-4 text-blue-600 border-gray-300 rounded">
+                        <label class="ml-2 text-sm text-gray-700">Активная услуга</label>
+                    </div>
+                    <div class="flex justify-end space-x-3 mt-2">
+                        <button type="button" @click="showAddServiceModal = false" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700">Отмена</button>
+                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg">Добавить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </template>
+    <!-- Success Modal -->
+    <template x-if="showSuccessModal">
+        <div class="fixed inset-0 z-50 flex items-center justify-center modal-bg">
+            <div class="bg-white rounded-xl p-6 w-full max-w-sm text-center">
+                <div class="flex flex-col items-center mb-4">
+                    <i data-lucide="check-circle" class="w-10 h-10 text-green-500 mb-2"></i>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Успешно!</h3>
+                    <p class="text-gray-700" x-text="successModalText"></p>
+                </div>
+                <button @click="showSuccessModal = false" class="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg">Ок</button>
+            </div>
+        </div>
+    </template>
+    <script>
+    function mobileServices() {
+        return {
+            showAddServiceModal: false,
+            showSuccessModal: false,
+            loading: true,
+            error: null,
+            businessId: 1,
+            serviceForm: {
+                name: '',
+                categoryId: '',
+                price: '',
+                duration: '',
+                description: '',
+                is_active: true
+            },
+            categories: [],
+            serviceErrors: {},
+            successModalText: '',
+            async init() {
+                await this.loadData();
+                lucide.createIcons();
+            },
+            async loadData() {
+                try {
+                    this.loading = true;
+                    this.error = null;
+                    const response = await fetch(`/services/api/page_data/?business=${this.businessId}`);
+                    if (!response.ok) throw new Error('Ошибка загрузки данных');
+                    this.categories = await response.json();
+                    setTimeout(() => lucide.createIcons(), 0);
+                } catch (error) {
+                    this.error = 'Ошибка загрузки данных';
+                    this.categories = [];
+                } finally {
+                    this.loading = false;
+                }
+            },
+            async submitService() {
+                this.serviceErrors = {};
+                this.error = null;
+                if (!this.serviceForm.name) {
+                    this.serviceErrors.name = 'Пожалуйста, заполните это поле';
+                }
+                if (!this.serviceForm.price) {
+                    this.serviceErrors.price = 'Пожалуйста, укажите цену';
+                }
+                if (Object.keys(this.serviceErrors).length > 0) {
+                    return;
+                }
+                try {
+                    const payload = {
+                        name: this.serviceForm.name,
+                        category_id: this.serviceForm.categoryId === '' ? null : parseInt(this.serviceForm.categoryId),
+                        price: parseInt(this.serviceForm.price),
+                        duration: parseInt(this.serviceForm.duration) || null,
+                        description: this.serviceForm.description,
+                        is_active: this.serviceForm.is_active,
+                        business_id: this.businessId
+                    };
+                    const response = await fetch('/services/api/services/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': this.getCsrfToken()
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) throw new Error('Ошибка создания услуги');
+                    await this.loadData();
+                    this.showAddServiceModal = false;
+                    this.resetServiceForm();
+                    this.successModalText = 'Услуга успешно добавлена!';
+                    this.showSuccessModal = true;
+                } catch (error) {
+                    this.error = 'Ошибка создания услуги';
+                }
+            },
+            editService(service) {
+                // Аналогично submitEditService, можно реализовать модалку редактирования
+            },
+            deleteService(serviceId) {
+                // Аналогично, можно реализовать подтверждение и удаление
+            },
+            editCategory(category) {
+                // Аналогично, можно реализовать модалку редактирования категории
+            },
+            resetServiceForm() {
+                this.serviceForm = {
+                    name: '',
+                    categoryId: '',
+                    price: '',
+                    duration: '',
+                    description: '',
+                    is_active: true
+                };
+            },
+            getCsrfToken() {
+                const name = 'csrftoken';
+                const cookies = document.cookie.split(';');
+                for (let cookie of cookies) {
+                    cookie = cookie.trim();
+                    if (cookie.startsWith(name + '=')) {
+                        return decodeURIComponent(cookie.substring(name.length + 1));
+                    }
+                }
+                return '';
+            }
+        }
+    }
+    document.addEventListener('DOMContentLoaded', function() { lucide.createIcons(); });
+    </script>
+</body>
+</html> 

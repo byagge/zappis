@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Функции системы — Справочный центр Zappis</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .side-link.active {
+            background: linear-gradient(90deg, #3B82F6 0 6px, #e0e7ef 6px 100%);
+            color: #2563eb;
+            font-weight: 700;
+        }
+        .side-link {
+            transition: background 0.2s, color 0.2s;
+        }
+        .side-link:hover {
+            background: #f3f4f6;
+            color: #2563eb;
+        }
+        @media (max-width: 768px) {
+            .sidebar-nav { display: none; }
+            .sidebar-mobile { display: block; }
+        }
+        @media (min-width: 769px) {
+            .sidebar-nav { display: block; }
+            .sidebar-mobile { display: none; }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-white to-gray-50" style="font-family: system-ui, -apple-system, sans-serif;">
+    <header class="bg-white border-b border-gray-200 py-5 px-4 sm:px-8 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <a href="/support/" class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow hover:bg-blue-700 transition">
+                <i data-lucide="arrow-left" class="w-6 h-6 text-white"></i>
+            </a>
+            <span class="text-xl font-bold text-gray-900 tracking-tight">Справочный центр</span>
+        </div>
+        <a href="/support/" class="text-blue-600 hover:underline font-medium">Все темы</a>
+    </header>
+    <main class="max-w-6xl mx-auto p-6 pt-10 flex gap-8">
+        <!-- Sidebar Navigation (Desktop) -->
+        <aside class="w-72 shrink-0 sidebar-nav">
+            <nav class="bg-white rounded-2xl border border-gray-200 shadow p-4 sticky top-24 max-h-[80vh] overflow-y-auto">
+                <h2 class="text-lg font-bold text-gray-800 mb-4">Разделы справки</h2>
+                <ul class="space-y-1">
+                    <li><a href="/support/getting-started/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="info" class="w-5 h-5 mr-2"></i> Начало работы с записью</a></li>
+                    <li><a href="/support/getting-started-profile/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="user" class="w-5 h-5 mr-2"></i> Личный кабинет</a></li>
+                    <li><a href="/support/notifications/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="bell" class="w-5 h-5 mr-2"></i> Уведомления</a></li>
+                    <li><a href="/support/schedules/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="calendar" class="w-5 h-5 mr-2"></i> Расписания</a></li>
+                    <li><a href="/support/clients/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="users" class="w-5 h-5 mr-2"></i> Клиенты</a></li>
+                    <li><a href="/support/services/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="scissors" class="w-5 h-5 mr-2"></i> Услуги</a></li>
+                    <li><a href="/support/employees/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="badge" class="w-5 h-5 mr-2"></i> Сотрудники</a></li>
+                    <li><a href="/support/analytics/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="bar-chart-3" class="w-5 h-5 mr-2"></i> Аналитика</a></li>
+                    <li><a href="/support/settings/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="settings" class="w-5 h-5 mr-2"></i> Настройки</a></li>
+                    <li><a href="/support/privacy/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="shield" class="w-5 h-5 mr-2"></i> Конфиденциальность</a></li>
+                    <li><a href="/support/web/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="globe" class="w-5 h-5 mr-2"></i> Онлайн-запись</a></li>
+                    <li><a href="/support/ai/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="bot" class="w-5 h-5 mr-2"></i> AI-функции</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <!-- Sidebar Navigation (Mobile) -->
+        <aside class="sidebar-mobile w-full mb-8">
+            <nav class="bg-white rounded-2xl border border-gray-200 shadow p-4 flex overflow-x-auto gap-2">
+                <a href="/support/getting-started/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="info" class="w-5 h-5 mr-1"></i> Запись</a>
+                <a href="/support/getting-started-profile/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="user" class="w-5 h-5 mr-1"></i> Личный кабинет</a>
+                <a href="/support/notifications/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bell" class="w-5 h-5 mr-1"></i> Уведомления</a>
+                <a href="/support/schedules/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="calendar" class="w-5 h-5 mr-1"></i> Расписания</a>
+                <a href="/support/clients/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="users" class="w-5 h-5 mr-1"></i> Клиенты</a>
+                <a href="/support/services/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="scissors" class="w-5 h-5 mr-1"></i> Услуги</a>
+                <a href="/support/employees/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="badge" class="w-5 h-5 mr-1"></i> Сотрудники</a>
+                <a href="/support/analytics/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bar-chart-3" class="w-5 h-5 mr-1"></i> Аналитика</a>
+                <a href="/support/settings/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="settings" class="w-5 h-5 mr-1"></i> Настройки</a>
+                <a href="/support/privacy/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="shield" class="w-5 h-5 mr-1"></i> Конфиденциальность</a>
+                <a href="/support/web/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="globe" class="w-5 h-5 mr-1"></i> Онлайн-запись</a>
+                <a href="/support/ai/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bot" class="w-5 h-5 mr-1"></i> AI</a>
+            </nav>
+        </aside>
+        <!-- Main Content -->
+        <section class="flex-1 min-w-0">
+            <div class="flex items-center mb-8">
+                <div class="w-14 h-14 bg-yellow-100 rounded-xl flex items-center justify-center mr-5">
+                    <i data-lucide="star" class="w-8 h-8 text-yellow-600"></i>
+                </div>
+                <h1 class="text-4xl font-extrabold text-gray-900">Функции системы Zappis</h1>
+            </div>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Ключевые функции системы</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li><b>Напоминания клиентам:</b> автоматические WhatsApp, email и push-уведомления о предстоящих визитах, повторных записях, акциях.</li>
+                    <li><b>Создание записей:</b> быстрая онлайн-запись клиентов через сайт, приложение или администратором.</li>
+                    <li><b>Создание сотрудника:</b> добавление новых сотрудников, назначение ролей и прав доступа.</li>
+                    <li><b>Управление расписаниями:</b> гибкое планирование, учёт выходных, исключений, интеграция с календарями.</li>
+                    <li><b>Уведомления:</b> настройка шаблонов, каналов связи, автоматизация рассылок.</li>
+                    <li><b>Интеграции:</b> онлайн-оплата, мессенджеры, карты, API.</li>
+                    <li><b>Аналитика:</b> отчёты по записям, клиентам, сотрудникам, услугам.</li>
+                    <li><b>Безопасность:</b> права доступа, двухфакторная аутентификация, журнал действий.</li>
+                </ul>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Подробнее о функциях</h2>
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Напоминания клиентам</h3>
+                    <p class="text-gray-700">Система автоматически отправляет уведомления клиентам о предстоящих визитах, днях рождения. Можно выбрать канал (WhatsApp, email, push), настроить шаблоны и время отправки.</p>
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-3 rounded-xl text-sm text-blue-800">Совет: используйте персонализированные сообщения для повышения лояльности клиентов.</div>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Создание записей</h3>
+                    <p class="text-gray-700 mb-2">Клиенты могут записаться онлайн через сайт, мобильное приложение или по телефону. Администратор может создавать записи вручную, изменять и отменять их, а также видеть всю историю посещений.</p>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Создание сотрудника</h3>
+                    <p class="text-gray-700 mb-2">Добавьте нового сотрудника в разделе "Сотрудники", укажите ФИО, контактные данные, назначьте роль (мастер, администратор и т.д.) и права доступа. Сотрудник получит приглашение на email или телефон.</p>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Управление расписаниями</h3>
+                    <p class="text-gray-700 mb-2">Гибко настраивайте рабочие часы, выходные, исключения для каждого сотрудника. Интеграция с Google/Яндекс.Календарём позволяет синхронизировать расписания.</p>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Уведомления</h3>
+                    <p class="text-gray-700 mb-2">Настройте шаблоны сообщений для разных событий: запись, отмена, напоминание, поздравление. Выберите каналы доставки и автоматизируйте рассылки.</p>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Интеграции</h3>
+                    <p class="text-gray-700 mb-2">Подключайте онлайн-оплату, мессенджеры (Telegram, WhatsApp), карты, CRM и другие сервисы через API. Это расширяет возможности автоматизации и клиентского сервиса.</p>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Аналитика</h3>
+                    <p class="text-gray-700 mb-2">Получайте отчёты по записям, посещаемости, эффективности сотрудников и услуг. Используйте аналитику для принятия решений и развития бизнеса.</p>
+                </div>
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-2">Безопасность</h3>
+                    <p class="text-gray-700 mb-2">Гибко управляйте правами доступа, используйте двухфакторную аутентификацию, отслеживайте действия пользователей в журнале активности.</p>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Часто задаваемые вопросы</h2>
+                <div class="mb-3">
+                    <b>Как настроить напоминания клиентам?</b>
+                    <div class="text-gray-700">Перейдите в раздел "Уведомления", выберите тип напоминания, настройте шаблон и время отправки.</div>
+                </div>
+                <div class="mb-3">
+                    <b>Как добавить нового сотрудника?</b>
+                    <div class="text-gray-700">В разделе "Сотрудники" нажмите "Добавить", заполните данные и выберите роль.</div>
+                </div>
+                <div class="mb-3">
+                    <b>Можно ли интегрировать систему с мессенджерами?</b>
+                    <div class="text-gray-700">Да, в разделе "Интеграции" доступны настройки для Telegram, WhatsApp и других сервисов.</div>
+                </div>
+                <div class="mb-3">
+                    <b>Как посмотреть аналитику по записям?</b>
+                    <div class="text-gray-700">В разделе "Аналитика" выберите нужный отчёт или период.</div>
+                </div>
+            </section>
+            <div class="flex justify-between mt-12">
+                <a href="/support/" class="text-blue-600 hover:underline flex items-center"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> На главную</a>
+                <a href="/support/records-reminders/" class="text-blue-600 hover:underline flex items-center">К напоминаниям <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i></a>
+            </div>
+        </section>
+    </main>
+    <script>document.addEventListener('DOMContentLoaded', function() { lucide.createIcons(); });</script>
+</body>
+</html> 

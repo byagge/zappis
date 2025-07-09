@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Редактор контактов</title>
+  <!-- Tailwind CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Alpine.js -->
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <style>
+    body { overflow: hidden; }
+    * { scrollbar-width: none !important; -ms-overflow-style: none !important; }
+    *::-webkit-scrollbar { display: none !important; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .editor-preview { transform: scale(0.8); transform-origin: top center; transition: all 0.3s ease; height: 100vh; overflow: hidden; position: relative; }
+    .editor-preview:hover { transform: scale(0.85); }
+    .main-container { height: 100vh; overflow: hidden; display: flex; }
+    .preview-container { height: 100vh; overflow: hidden; position: relative; }
+    .preview-content { height: 100%; overflow-y: auto; padding: 2rem; }
+    .editor-panel { height: calc(100vh - 4rem); overflow-y: auto; }
+    .sidebar { height: calc(100vh - 4rem); overflow-y: auto; }
+  </style>
+</head>
+<body class="h-screen bg-gray-50 flex" style="font-family: system-ui, -apple-system, sans-serif;">
+<div x-data="userEditor()" class="main-container">
+  <!-- Header -->
+  <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between fixed top-0 left-0 right-0 z-40 shadow-sm">
+    <div class="flex items-center space-x-4">
+      <div class="flex items-center space-x-2">
+        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+          <span class="text-white font-bold text-sm">R</span>
+        </div>
+        <span class="font-semibold text-gray-900">Контакты бизнеса</span>
+      </div>
+    </div>
+    <div class="flex items-center space-x-4">
+      <button @click="save" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2">
+        <i data-lucide="save" class="w-4 h-4"></i>
+        <span>Сохранить</span>
+      </button>
+      <button @click="reset" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center space-x-2">
+        <i data-lucide="refresh-ccw" class="w-4 h-4"></i>
+        <span>Сбросить</span>
+      </button>
+    </div>
+  </header>
+  <!-- Sidebar -->
+  <aside class="w-64 bg-white border-r border-gray-200 p-4 space-y-6 fixed left-0 top-16 bottom-0 overflow-y-auto no-scrollbar z-40 sidebar">
+    <div class="pt-2">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-sm font-medium text-gray-900">Навигация</h3>
+      </div>
+      <div class="space-y-1.5">
+        <button @click="selectedSection = 'contacts'" :class="selectedSection === 'contacts' ? 'bg-blue-50' : ''" class="w-full flex items-center space-x-2 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+          <i data-lucide="phone" class="w-4 h-4 flex-shrink-0"></i>
+          <span>Контакты</span>
+        </button>
+        <button @click="selectedSection = 'themes'" :class="selectedSection === 'themes' ? 'bg-blue-50' : ''" class="w-full flex items-center space-x-2 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors">
+          <i data-lucide="palette" class="w-4 h-4 flex-shrink-0"></i>
+          <span>Темы</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+  <!-- Main Content -->
+  <div class="flex-1 ml-64 pt-16">
+    <div class="flex">
+      <!-- Editor Panel -->
+      <div class="w-96 bg-white border-r border-gray-200 p-6 overflow-y-auto h-screen editor-panel">
+        <div x-show="selectedSection === 'contacts'">
+          <div class="mb-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-2">Контакты</h2>
+            <p class="text-sm text-gray-500">Укажите контакты и соцсети вашего бизнеса</p>
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Название</label>
+            <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" x-model="contacts.title">
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Телефон</label>
+            <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" x-model="contacts.phone">
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Адрес</label>
+            <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" x-model="contacts.address">
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Социальные сети</label>
+            <template x-for="(social, idx) in contacts.socials" :key="idx">
+              <div class="flex items-center gap-2 mb-2">
+                <input x-model="contacts.socials[idx]" class="flex-1 border border-gray-200 rounded-lg p-2" placeholder="Ссылка на соцсеть" />
+                <button @click="removeSocial(idx)" class="p-1 text-red-500 hover:text-red-700"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+              </div>
+            </template>
+            <button @click="addSocial" class="mt-2 px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+              <i data-lucide="plus" class="w-4 h-4"></i> Добавить соцсеть
+            </button>
+          </div>
+        </div>
+        <div x-show="selectedSection === 'themes'">
+          <div class="mb-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-2">Темы</h2>
+            <p class="text-sm text-gray-500">Выберите цветовую тему для вашего сайта.</p>
+          </div>
+          <div class="grid grid-cols-1 gap-4">
+            <template x-for="theme in themes" :key="theme.name">
+              <div @click="setTheme(theme)" :class="theme.name === selectedTheme.name ? 'ring-2 ring-blue-500' : ''" class="bg-white rounded-lg p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow">
+                <h3 class="text-base font-semibold text-gray-900 mb-2" x-text="theme.name"></h3>
+                <div class="flex space-x-2">
+                  <div class="w-8 h-8 rounded-full border border-gray-200" :style="`background-color: ${theme.bg};`"></div>
+                  <div class="w-8 h-8 rounded-full border border-gray-200" :style="`background-color: ${theme.accent};`"></div>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+      <!-- Preview Panel -->
+      <div class="flex-1 p-8 overflow-y-auto h-screen preview-container">
+        <div class="max-w-4xl mx-auto editor-preview">
+          <div class="preview-content" :style="`background:${selectedTheme.bg};color:${selectedTheme.text}`">
+            <div class="bg-white/80 rounded-xl shadow p-8 max-w-xl mx-auto">
+              <h2 class="text-3xl font-bold mb-4" x-text="contacts.title"></h2>
+              <div class="mb-2 flex items-center gap-2">
+                <i data-lucide="phone" class="w-5 h-5 text-gray-400"></i>
+                <span x-text="contacts.phone"></span>
+              </div>
+              <div class="mb-2 flex items-center gap-2">
+                <i data-lucide="map-pin" class="w-5 h-5 text-gray-400"></i>
+                <span x-text="contacts.address"></span>
+              </div>
+              <div class="flex flex-wrap gap-3 mt-4">
+                <template x-for="social in contacts.socials" :key="social">
+                  <a :href="social" target="_blank" class="underline text-blue-600 hover:text-blue-800 text-sm" x-text="social"></a>
+                </template>
+              </div>
+            </div>
+            <div class="text-xs mt-8 text-center">Тема: <span x-text="selectedTheme.name"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function userEditor() {
+  return {
+    selectedSection: 'contacts',
+    contacts: JSON.parse(localStorage.getItem('ue_contacts')) || {
+      title: 'Салон красоты "Элегант"',
+      phone: '+996 700 123 456',
+      address: 'г. Бишкек, ул. Исанова, 42',
+      socials: ['https://t.me/yourtg','https://instagram.com/yourinsta']
+    },
+    themes: [
+      {name: 'Светлая', bg: '#fff', text: '#222', accent: '#2563eb'},
+      {name: 'Тёмная', bg: '#222', text: '#fff', accent: '#2563eb'},
+      {name: 'Бежевая', bg: '#f5e9da', text: '#3b2f2f', accent: '#eab308'},
+      {name: 'Лавандовая', bg: '#ede9fe', text: '#5b21b6', accent: '#a78bfa'},
+      {name: 'Мятная', bg: '#d1fae5', text: '#065f46', accent: '#34d399'}
+    ],
+    selectedTheme: JSON.parse(localStorage.getItem('ue_theme')) || {name: 'Светлая', bg: '#fff', text: '#222', accent: '#2563eb'},
+    addSocial() { this.contacts.socials.push(''); },
+    removeSocial(idx) { this.contacts.socials.splice(idx, 1); },
+    setTheme(theme) { this.selectedTheme = theme; },
+    save() {
+      localStorage.setItem('ue_contacts', JSON.stringify(this.contacts));
+      localStorage.setItem('ue_theme', JSON.stringify(this.selectedTheme));
+      alert('Сохранено!');
+    },
+    reset() {
+      if(confirm('Сбросить все изменения?')) {
+        localStorage.removeItem('ue_contacts');
+        localStorage.removeItem('ue_theme');
+        location.reload();
+      }
+    }
+  }
+}
+</script>
+</body>
+</html> 

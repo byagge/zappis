@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body_class %}template-homepage{% endblock %}
+
+{% block extra_css %}
+
+{% comment %}
+Delete the line below if you're just getting started and want to remove the welcome screen!
+{% endcomment %}
+<link rel="stylesheet" href="{% static 'css/welcome_page.css' %}">
+{% endblock extra_css %}
+
+{% block content %}
+
+{% comment %}
+Delete the line below if you're just getting started and want to remove the welcome screen!
+{% endcomment %}
+{% include 'home/welcome_page.html' %}
+
+{% for block in page.body %}
+    {% if block.block_type == 'heading' %}
+        <h1>{{ block.value }}</h1>
+    {% elif block.block_type == 'paragraph' %}
+        {{ block.value }}
+    {% elif block.block_type == 'image' %}
+        <img src="{{ block.value.url }}" alt="{{ block.value.alt }}">
+    {% elif block.block_type == 'online_booking' %}
+        <section class="online-booking">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h2>{{ block.value.title }}</h2>
+                        {{ block.value.description }}
+                    </div>
+                    <div class="col-md-6">
+                        <img src="{{ block.value.image.url }}" alt="{{ block.value.image.alt }}" class="img-fluid">
+                    </div>
+                </div>
+            </div>
+        </section>
+    {% endif %}
+{% endfor %}
+
+{% endblock content %}

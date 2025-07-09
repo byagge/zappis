@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zappis — Жазылуулар</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="h-screen bg-gray-50 flex flex-col" style="font-family: system-ui, -apple-system, sans-serif;">
+    <div x-data="employeeBooking()">
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-200 py-4 fixed top-0 left-0 right-0 z-50">
+            <div class="flex items-center justify-between px-4 sm:px-6">
+                <div class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-xl">Z</span>
+                    </div>
+                    <span class="text-xl font-semibold text-gray-900">Zappis</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/employee/" class="text-gray-600 hover:text-gray-900">
+                        <i data-lucide="home" class="w-5 h-5"></i>
+                    </a>
+                    <a href="/settings/" class="text-gray-600 hover:text-gray-900">
+                        <i data-lucide="settings" class="w-5 h-5"></i>
+                    </a>
+                </div>
+            </div>
+        </header>
+        <div class="flex flex-1 overflow-hidden pt-16">
+            <!-- Sidebar -->
+            <aside class="w-64 bg-white border-r border-gray-200 p-4 space-y-6 fixed left-0 top-16 bottom-0 overflow-y-auto no-scrollbar">
+                <div>
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-sm font-medium text-gray-900" x-text="formatMonthYear(currentDate)"></h3>
+                        <div class="flex space-x-2">
+                            <button @click="changeDate(-1)" class="p-1 hover:bg-gray-100 rounded">
+                                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                            </button>
+                            <button @click="changeDate(1)" class="p-1 hover:bg-gray-100 rounded">
+                                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-7 gap-1 text-xs">
+                        <template x-for="day in ['Дш', 'Шш', 'Шр', 'Бш', 'Жм', 'Иш', 'Жк']" :key="day">
+                            <div class="text-center text-gray-500 py-1" x-text="day"></div>
+                        </template>
+                        <template x-for="day in getDaysInMonth(currentDate)" :key="day">
+                            <button @click="setDate(day)"
+                                    :class="{'bg-blue-600 text-white': day === currentDate.getDate() && isSameMonth(currentDate), 'text-gray-700 hover:text-blue-600': day !== currentDate.getDate() || !isSameMonth(currentDate)}"
+                                    class="text-center py-1 rounded hover:bg-blue-50 transition-colors">
+                                <span x-text="day"></span>
+                            </button>
+                        </template>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Навигация</h3>
+                    <nav class="space-y-1">
+                        <a href="/employee/" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50">
+                            <i data-lucide="home" class="w-5 h-5"></i>
+                            <span>Башкы бет</span>
+                        </a>
+                        <a href="/employee/clients/" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50">
+                            <i data-lucide="users" class="w-5 h-5"></i>
+                            <span>Клиенттер</span>
+                        </a>
+                        <a href="/employee/schedules/" class="flex items-center space-x-3 px-3 py-2 rounded-lg bg-blue-50 text-blue-600">
+                            <i data-lucide="calendar" class="w-5 h-5"></i>
+                            <span>Жазылуулар</span>
+                        </a>
+                        <a href="/employee/notifications/" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50">
+                            <i data-lucide="bell" class="w-5 h-5"></i>
+                            <span>Билдирмелер</span>
+                        </a>
+                        <a href="/settings/" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50">
+                            <i data-lucide="settings" class="w-5 h-5"></i>
+                            <span>Жөндөөлөр</span>
+                        </a>
+                    </nav>
+                </div>
+            </aside>
+            <!-- Main Calendar -->
+            <main class="flex-1 overflow-auto ml-64 no-scrollbar" style="scroll-behavior: smooth;">
+                <div class="min-w-[800px]">
+                    <div class="bg-white border-b border-gray-200 sticky top-0 z-20">
+                        <div class="flex">
+                            <div class="w-16 border-r border-gray-200"></div>
+                            <template x-if="view === 'week'">
+                                <template x-for="date in getWeekDays()" :key="date.toISOString()">
+                                    <div class="flex-1 p-4 text-center border-r border-gray-200 last:border-r-0">
+                                        <div class="text-sm text-gray-500" x-text="getDayName(date)"></div>
+                                        <div :class="{'text-blue-600': isToday(date), 'text-gray-900': !isToday(date)}"
+                                             class="text-xl font-semibold" x-text="date.getDate()"></div>
+                                    </div>
+                                </template>
+                            </template>
+                            <template x-if="view === 'day'">
+                                <div class="flex-1 p-4 text-center">
+                                    <div class="text-sm text-gray-500" x-text="getDayName(currentDate)"></div>
+                                    <div :class="{'text-blue-600': isToday(currentDate), 'text-gray-900': !isToday(currentDate)}"
+                                         class="text-xl font-semibold" x-text="currentDate.getDate()"></div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                    <div class="flex">
+                        <div class="w-16 border-r border-gray-200">
+                            <div class="h-10"></div>
+                            <template x-for="(time, index) in timeSlots" :key="time">
+                                <div class="h-10 border-b border-gray-100 flex items-center justify-center text-xs text-gray-500"
+                                     x-text="index % 2 === 0 ? time : ''"></div>
+                            </template>
+                        </div>
+                        <template x-if="view === 'week'">
+                            <template x-for="date in getWeekDays()" :key="date.toISOString()">
+                                <div class="flex-1 border-r border-gray-200 last:border-r-0 relative">
+                                    <div class="h-10 bg-gray-50"></div>
+                                    <template x-for="slot in timeSlots" :key="slot">
+                                        <div class="h-10 border-b border-gray-100 hover:bg-blue-50 cursor-pointer transition-colors relative"
+                                             @click="showBookingModal = true; selectedBooking = null; setBookingForm(slot, date)"
+                                             class="hover:bg-blue-50"></div>
+                                    </template>
+                                    <template x-for="booking in getBookingsForDate(date)" :key="booking.id">
+                                        <div class="absolute left-1 right-1 rounded-lg p-2 text-white text-xs cursor-pointer shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] z-10"
+                                             :style="getBookingStyle(booking)"
+                                             @click="selectedBooking = booking; showBookingModal = true; setBookingForm()">
+                                            <div class="font-medium truncate" x-text="booking.client?.name || booking.client_name || 'Клиент'"></div>
+                                            <div class="text-white/80 truncate">
+                                                <span x-text="booking.service?.name || getServiceNameById(booking.service)"></span>
+                                            </div>
+                                            <div class="text-white/70 text-xs" x-text="formatTimeRange(booking.start_time, booking.end_time)"></div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                        </template>
+                        <template x-if="view === 'day'">
+                            <div class="flex-1 relative">
+                                <div class="h-10 bg-gray-50"></div>
+                                <template x-for="slot in timeSlots" :key="slot">
+                                    <div class="h-10 border-b border-gray-100 hover:bg-blue-50 cursor-pointer transition-colors relative"
+                                         @click="showBookingModal = true; selectedBooking = null; setBookingForm(slot, currentDate)"
+                                         class="hover:bg-blue-50"></div>
+                                </template>
+                                <template x-for="booking in getBookingsForDate(currentDate)" :key="booking.id">
+                                    <div class="absolute left-1 right-1 rounded-lg p-2 text-white text-xs cursor-pointer shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] z-10"
+                                         :style="getBookingStyle(booking)"
+                                         @click="selectedBooking = booking; showBookingModal = true; setBookingForm()">
+                                        <div class="font-medium truncate" x-text="booking.client?.name || booking.client_name || 'Клиент'"></div>
+                                        <div class="text-white/80 truncate">
+                                            <span x-text="booking.service?.name || getServiceNameById(booking.service)"></span>
+                                        </div>
+                                        <div class="text-white/70 text-xs" x-text="formatTimeRange(booking.start_time, booking.end_time)"></div>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <!-- Booking Form -->
+        <div x-show="showBookingModal" class="fixed inset-0 z-50" :class="{'lg:flex lg:items-center lg:justify-center': true}">
+            <div class="fixed inset-0 bg-black bg-opacity-50 lg:bg-opacity-0"></div>
+            <div class="fixed inset-0 lg:relative lg:inset-auto lg:max-w-6xl lg:w-full lg:mx-4 lg:my-8 bg-white lg:rounded-xl lg:shadow-2xl overflow-hidden flex flex-col lg:flex-row">
+                <div class="flex-1 p-4 sm:p-6 overflow-y-auto">
+                    <div class="flex justify-between items-center mb-4 sm:mb-6 sticky top-0 bg-white pb-4 border-b border-gray-200 lg:border-none lg:pb-0 lg:static">
+                        <h3 class="text-lg sm:text-xl font-semibold text-gray-900" x-text="selectedBooking ? 'Жазылууну түзөтүү' : 'Жаңы жазылуу'"></h3>
+                        <button @click="showBookingModal = false; selectedBooking = null" class="text-gray-400 hover:text-gray-600 lg:hidden">
+                            <i data-lucide="x" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Дата</label>
+                                <input type="date" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base" :class="{'border-red-500': errors.date}" x-model="bookingForm.date">
+                                <div x-show="errors.date" class="mt-1 text-sm text-red-600" x-text="errors.date"></div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Башталышы</label>
+                                    <input type="time" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base" :class="{'border-red-500': errors.startTime}" x-model="bookingForm.startTime">
+                                    <div x-show="errors.startTime" class="mt-1 text-sm text-red-600" x-text="errors.startTime"></div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Аягы</label>
+                                    <input type="time" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base" :class="{'border-red-500': errors.endTime}" x-model="bookingForm.endTime" required>
+                                    <div x-show="errors.endTime" class="mt-1 text-sm text-red-600" x-text="errors.endTime"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Клиент</label>
+                                <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base" :class="{'border-red-500': errors.clientName}" x-model="bookingForm.clientName" placeholder="Имя клиента">
+                                <div x-show="errors.clientName" class="mt-1 text-sm text-red-600" x-text="errors.clientName"></div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Телефон</label>
+                                <input type="tel" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base" :class="{'border-red-500': errors.phone}" x-model="bookingForm.phone" placeholder="+996 500 123 456">
+                                <div x-show="errors.phone" class="mt-1 text-sm text-red-600" x-text="errors.phone"></div>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Баасы</label>
+                                <div class="relative">
+                                    <input type="number" class="w-full border border-gray-300 rounded-lg pl-8 pr-3 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base" :class="{'border-red-500': errors.price}" x-model="bookingForm.price" placeholder="Введите стоимость" min="0" @input="formatPrice">
+                                    <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">⃀</div>
+                                </div>
+                                <div x-show="errors.price" class="mt-1 text-sm text-red-600" x-text="errors.price"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-3 mt-6 pt-6 border-t border-gray-200 sticky bottom-0 bg-white lg:static">
+                        <template x-if="selectedBooking">
+                            <button @click="deleteBooking(selectedBooking.id)" class="px-4 py-2.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </template>
+                        <button @click="showBookingModal = false; selectedBooking = null" class="px-4 py-2.5 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">Болтурбоо</button>
+                        <button @click="saveBooking" class="px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            <span x-text="selectedBooking ? 'Сактоо' : 'Түзүү'"></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="hidden lg:block w-80 bg-gray-50 p-6 border-l border-gray-200">
+                    <h4 class="text-sm font-medium text-gray-900 mb-4">Жазылууну алдын ала көрүү</h4>
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i data-lucide="calendar" class="w-5 h-5 text-blue-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500">Дата жана убакыт</div>
+                                <div class="text-sm font-medium text-gray-900" x-text="formatDate(new Date(bookingForm.date)) + ' ' + bookingForm.startTime + ' - ' + bookingForm.endTime"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                <i data-lucide="user" class="w-5 h-5 text-green-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500">Клиент</div>
+                                <div class="text-sm font-medium text-gray-900" x-text="bookingForm.clientName || 'Не указано'"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                                <i data-lucide="scissors" class="w-5 h-5 text-purple-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500">Кызмат</div>
+                                <div class="text-sm font-medium text-gray-900" x-text="getServiceNameById(bookingForm.service) || 'Не выбрано'"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                                <i data-lucide="credit-card" class="w-5 h-5 text-red-600"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500">Баасы</div>
+                                <div class="text-sm font-medium text-gray-900" x-text="bookingForm.price ? bookingForm.price + ' ⃀' : 'Не указано'"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Toast -->
+        <div x-show="toast" class="fixed top-4 right-4 z-50">
+            <div :class="{'bg-green-500': toast.type === 'success', 'bg-red-500': toast.type === 'error'}" class="px-4 py-3 rounded-lg shadow-lg text-white">
+                <span x-text="toast.message"></span>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('employeeBooking', () => ({
+                currentDate: new Date(),
+                view: 'week',
+                showBookingModal: false,
+                selectedBooking: null,
+                bookingForm: {
+                    clientName: '',
+                    service: '',
+                    startTime: '09:00',
+                    endTime: '10:00',
+                    phone: '',
+                    price: 0,
+                    date: ''
+                },
+                errors: {},
+                toast: null,
+                bookings: [],
+                services: [],
+                timeSlots: Array.from({ length: 26 }, (_, i) => {
+                    const hour = Math.floor(i / 2) + 7;
+                    const minute = i % 2 === 0 ? '00' : '30';
+                    return `${hour.toString().padStart(2, '0')}:${minute}`;
+                }),
+                formatDate(date) {
+                    return new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' }).format(date);
+                },
+                getWeekDays() {
+                    const startOfWeek = new Date(this.currentDate);
+                    const day = startOfWeek.getDay();
+                    const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1);
+                    startOfWeek.setDate(diff);
+                    const days = [];
+                    for (let i = 0; i < 7; i++) {
+                        const date = new Date(startOfWeek);
+                        date.setDate(startOfWeek.getDate() + i);
+                        days.push(date);
+                    }
+                    return days;
+                },
+                getDayName(date) {
+                    return ['Жк', 'Дш', 'Шш', 'Шр', 'Бш', 'Жм', 'Иш'][date.getDay()];
+                },
+                isToday(date) {
+                    const today = new Date();
+                    return date.toDateString() === today.toDateString();
+                },
+                formatTimeRange(startTime, endTime) {
+                    if (!startTime || !endTime) return '';
+                    const start = startTime.length > 5 ? startTime.slice(0, 5) : startTime;
+                    const end = endTime.length > 5 ? endTime.slice(0, 5) : endTime;
+                    return `${start}-${end}`;
+                },
+                getBookingsForDate(date) {
+                    if (!Array.isArray(this.bookings)) return [];
+                    const dateStr = date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+                    return this.bookings.filter(booking => booking.date === dateStr);
+                },
+                getBookingStyle(booking) {
+                    const startRaw = booking.start_time;
+                    const endRaw = booking.end_time;
+                    if (!startRaw || !endRaw) return '';
+                    const minHour = parseInt(this.timeSlots[0].split(':')[0], 10);
+                    const start = startRaw.split(':').map(Number);
+                    const end = endRaw.split(':').map(Number);
+                    const startMinutes = (start[0] - minHour) * 60 + start[1];
+                    const endMinutes = (end[0] - minHour) * 60 + end[1];
+                    const top = `${(startMinutes / 30) * 2.5}rem`;
+                    const height = `${((endMinutes - startMinutes) / 30) * 2.5}rem`;
+                    const color = '#2563eb';
+                    const overlappingBookings = this.getOverlappingBookings(booking);
+                    const index = overlappingBookings.findIndex(b => b.id === booking.id);
+                    const totalOverlapping = overlappingBookings.length;
+                    const width = `${100 / totalOverlapping}%`;
+                    const left = `${(index * 100) / totalOverlapping}%`;
+                    return `top: ${top}; height: ${height}; background-color: ${color}; border: 2px solid ${color}; width: ${width}; left: ${left};`;
+                },
+                getOverlappingBookings(booking) {
+                    return this.bookings.filter(b => {
+                        if (b.id === booking.id) return true;
+                        if (b.date !== booking.date) return false;
+                        const bStart = this.timeToMinutes(b.start_time);
+                        const bEnd = this.timeToMinutes(b.end_time);
+                        const bookingStart = this.timeToMinutes(booking.start_time);
+                        const bookingEnd = this.timeToMinutes(booking.end_time);
+                        return (bStart < bookingEnd && bEnd > bookingStart);
+                    });
+                },
+                timeToMinutes(time) {
+                    if (!time) return 0;
+                    const [hours, minutes] = time.split(':').map(Number);
+                    return hours * 60 + minutes;
+                },
+                setBookingForm(clickedTime = null, clickedDate = null) {
+                    if (this.selectedBooking) {
+                        this.bookingForm = {
+                            clientName: this.selectedBooking.client?.name || this.selectedBooking.client_name || '',
+                            phone: this.selectedBooking.client?.phone || this.selectedBooking.phone || '',
+                            service: this.selectedBooking.service?.id || this.selectedBooking.service,
+                            startTime: this.selectedBooking.start_time?.slice(0, 5) || this.selectedBooking.start_time,
+                            endTime: this.selectedBooking.end_time?.slice(0, 5) || this.selectedBooking.end_time,
+                            price: this.selectedBooking.price,
+                            date: this.selectedBooking.date
+                        };
+                    } else {
+                        const startTime = clickedTime || '09:00';
+                        const [hours, minutes] = startTime.split(':').map(Number);
+                        const endTime = `${hours + 1}:${minutes.toString().padStart(2, '0')}`;
+                        let dateToUse = clickedDate || this.currentDate;
+                        const year = dateToUse.getFullYear();
+                        const month = dateToUse.getMonth();
+                        const day = dateToUse.getDate();
+                        const formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                        this.bookingForm = {
+                            clientName: '',
+                            service: '',
+                            startTime: startTime,
+                            endTime: endTime,
+                            phone: '',
+                            price: 0,
+                            date: formattedDate
+                        };
+                    }
+                },
+                validateForm() {
+                    this.errors = {};
+                    let isValid = true;
+                    if (!this.bookingForm.date) {
+                        this.errors.date = 'Датаны тандаңыз';
+                        isValid = false;
+                    }
+                    if (!this.bookingForm.startTime) {
+                        this.errors.startTime = 'Башталыш убакытын тандаңыз';
+                        isValid = false;
+                    }
+                    if (!this.bookingForm.endTime) {
+                        this.errors.endTime = 'Аяктоо убакытын тандаңыз';
+                        isValid = false;
+                    } else {
+                        const start = this.timeToMinutes(this.bookingForm.startTime);
+                        const end = this.timeToMinutes(this.bookingForm.endTime);
+                        if (end <= start) {
+                            this.errors.endTime = 'Аяктоо убактысы башталышынан кийин болушу керек';
+                            isValid = false;
+                        }
+                    }
+                    if (!this.bookingForm.clientName) {
+                        this.errors.clientName = 'Клиенттин атын жазыңыз';
+                        isValid = false;
+                    }
+                    if (!this.bookingForm.phone) {
+                        this.errors.phone = 'Телефон номерин жазыңыз';
+                        isValid = false;
+                    }
+                    if (!this.bookingForm.price) {
+                        this.errors.price = 'Баасын жазыңыз';
+                        isValid = false;
+                    } else if (this.bookingForm.price <= 0) {
+                        this.errors.price = 'Баасы 0дөн чоң болушу керек';
+                        isValid = false;
+                    }
+                    return isValid;
+                },
+                async fetchBookings() {
+                    try {
+                        const response = await fetch('/employee/api/schedules/');
+                        if (!response.ok) throw new Error('Маалыматты жүктөөдө ката кетти');
+                        const data = await response.json();
+                        this.bookings = Array.isArray(data) ? data : (data.results || []);
+                    } catch (e) {
+                        this.bookings = [];
+                        this.showToast('Жазылууларды жүктөөдө ката кетти', 'error');
+                    }
+                },
+                async saveBooking() {
+                    if (!this.validateForm()) return;
+                    if (!this.checkTimeAvailability()) {
+                        this.showToast('Бул убакытта сизде жазылуу бар', 'error');
+                        return;
+                    }
+                    const method = this.selectedBooking ? 'PUT' : 'POST';
+                    const url = this.selectedBooking
+                        ? `/employee/api/schedules/${this.selectedBooking.id}/`
+                        : '/employee/api/schedules/';
+                    const payload = {
+                        client_name: this.bookingForm.clientName,
+                        client_phone: this.bookingForm.phone,
+                        service_id: this.bookingForm.service,
+                        date: this.bookingForm.date,
+                        start_time: this.bookingForm.startTime,
+                        end_time: this.bookingForm.endTime,
+                        price: this.bookingForm.price,
+                        master_id: this.employeeId
+                    };
+                    try {
+                        const response = await fetch(url, {
+                            method: method,
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': this.getCsrfToken()
+                            },
+                            body: JSON.stringify(payload)
+                        });
+                        if (!response.ok) {
+                            const data = await response.json();
+                            let errorMessage = 'Сактоодо ката кетти';
+                            if (response.status === 400) {
+                                if (data.non_field_errors && data.non_field_errors.length > 0) {
+                                    errorMessage = data.non_field_errors[0];
+                                } else if (data.detail) {
+                                    errorMessage = data.detail;
+                                } else if (typeof data === 'string') {
+                                    errorMessage = data;
+                                } else {
+                                    const fieldErrors = [];
+                                    for (const [field, errors] of Object.entries(data)) {
+                                        if (Array.isArray(errors)) {
+                                            fieldErrors.push(`${field}: ${errors[0]}`);
+                                        }
+                                    }
+                                    if (fieldErrors.length > 0) {
+                                        errorMessage = fieldErrors.join(', ');
+                                    }
+                                }
+                            }
+                            this.showToast(errorMessage, 'error');
+                            return;
+                        }
+                        await this.fetchBookings();
+                        this.showToast(this.selectedBooking ? 'Жазылуу жаңыртылды' : 'Жазылуу түзүлдү', 'success');
+                        this.showBookingModal = false;
+                        this.selectedBooking = null;
+                        this.errors = {};
+                    } catch (e) {
+                        this.showToast('Сактоодо ката кетти', 'error');
+                    }
+                },
+                async deleteBooking(id) {
+                    try {
+                        const response = await fetch(`/employee/api/schedules/${id}/`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRFToken': this.getCsrfToken()
+                            }
+                        });
+                        if (!response.ok) throw new Error('Өчүрүүдө ката кетти');
+                        await this.fetchBookings();
+                        this.showToast('Жазылуу өчүрүлдү', 'success');
+                        this.showBookingModal = false;
+                        this.selectedBooking = null;
+                    } catch (e) {
+                        this.showToast('Өчүрүүдө ката кетти', 'error');
+                    }
+                },
+                getCsrfToken() {
+                    const name = 'csrftoken';
+                    const cookies = document.cookie.split(';');
+                    for (let cookie of cookies) {
+                        cookie = cookie.trim();
+                        if (cookie.startsWith(name + '=')) {
+                            return decodeURIComponent(cookie.substring(name.length + 1));
+                        }
+                    }
+                    return '';
+                },
+                async init() {
+                    // Получаем профиль пользователя для businessId и employeeId
+                    try {
+                        const resp = await fetch('/accounts/api/profile/');
+                        if (resp.ok) {
+                            const data = await resp.json();
+                            this.businessId = data.business?.id;
+                            this.employeeId = data.employee?.id;
+                        }
+                    } catch (e) {}
+                    await Promise.all([this.fetchServices(), this.fetchBookings()]);
+                },
+                formatPrice(event) {
+                    let value = event.target.value.replace(/\D/g, '');
+                    if (value === '') {
+                        this.bookingForm.price = null;
+                        return;
+                    }
+                    let numValue = parseInt(value);
+                    this.bookingForm.price = numValue;
+                },
+                async fetchServices() {
+                    try {
+                        if (!this.businessId) return;
+                        const response = await fetch(`/services/api/services/?business=${this.businessId}`);
+                        if (!response.ok) throw new Error('Кызматтарды жүктөөдө ката кетти');
+                        const data = await response.json();
+                        this.services = Array.isArray(data) ? data : (Array.isArray(data.results) ? data.results : []);
+                        if (this.services.length === 0) {
+                            this.showToast('Сизде жеткиликтүү кызматтар жок', 'info');
+                        }
+                    } catch (e) {
+                        this.services = [];
+                        this.showToast('Кызматтарды жүктөөдө ката кетти', 'error');
+                    }
+                },
+                getServiceNameById(service) {
+                    if (typeof service === 'object' && service !== null) {
+                        return service.name;
+                    }
+                    const found = this.services.find(s => String(s.id) === String(service));
+                    return found ? found.name : '';
+                },
+                showToast(message, type = 'success') {
+                    this.toast = { message, type };
+                    setTimeout(() => this.toast = null, 3000);
+                },
+                checkTimeAvailability() {
+                    const currentBookingId = this.selectedBooking ? this.selectedBooking.id : null;
+                    const dateStr = this.bookingForm.date;
+                    const bookingsOnDate = this.bookings.filter(booking => booking.date === dateStr && booking.id !== currentBookingId);
+                    const newStart = this.timeToMinutes(this.bookingForm.startTime);
+                    const newEnd = this.timeToMinutes(this.bookingForm.endTime);
+                    for (let booking of bookingsOnDate) {
+                        const existingStart = this.timeToMinutes(booking.start_time);
+                        const existingEnd = this.timeToMinutes(booking.end_time);
+                        if (newStart < existingEnd && newEnd > existingStart) {
+                            return false;
+                        }
+                    }
+                    return true;
+                },
+                changeDate(delta) {
+                    const newDate = new Date(this.currentDate);
+                    const increment = this.view === 'week' ? 7 : 1;
+                    newDate.setDate(newDate.getDate() + delta * increment);
+                    this.currentDate = newDate;
+                },
+                formatMonthYear(date) {
+                    return new Intl.DateTimeFormat('ru-RU', { month: 'long', year: 'numeric' }).format(date);
+                },
+                goToday() {
+                    this.currentDate = new Date();
+                },
+                setDate(date) {
+                    this.currentDate = new Date(date);
+                }
+            }));
+        });
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html> 

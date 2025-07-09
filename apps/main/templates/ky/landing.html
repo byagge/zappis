@@ -1,0 +1,1302 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zappis - Онлайн-бронирование жана автоматташтыруу</title>
+  <!-- Tailwind CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- Alpine.js CDN -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Smooth scrolling CSS -->
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+    .backdrop-blur {
+      backdrop-filter: blur(12px);
+      background: rgba(255,255,255,0.7);
+    }
+    .minimal-shadow {
+      box-shadow: 0 2px 16px 0 rgba(40, 60, 180, 0.06);
+    }
+    .btn-accent {
+      background: linear-gradient(90deg, #3b82f6 0%, #6366f1 100%);
+      color: #fff;
+      transition: box-shadow 0.2s, transform 0.2s, background 0.2s;
+      box-shadow: 0 2px 8px 0 rgba(59,130,246,0.10);
+    }
+    .btn-accent:hover {
+      background: linear-gradient(90deg, #6366f1 0%, #3b82f6 100%);
+      box-shadow: 0 4px 24px 0 rgba(59,130,246,0.18);
+      transform: translateY(-2px) scale(1.03);
+    }
+    .btn-minimal {
+      border: none;
+      background: transparent;
+      color: #6366f1;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .btn-minimal:hover {
+      color: #3b82f6;
+      text-decoration: underline;
+    }
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .no-scrollbar {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+    /* Typing animation styles */
+    .typing-text {
+      display: inline-block;
+      border-right: 2px solid #000;
+      animation: blink 0.7s step-end infinite;
+    }
+    @keyframes blink {
+      from, to { border-color: transparent }
+      50% { border-color: #000; }
+    }
+    .footer-made-with {
+      transition: color 0.2s;
+      cursor: pointer;
+    }
+    .footer-made-with .heart-outline {
+      transition: fill 0.2s, color 0.2s;
+      fill: #ef4444; /* Tailwind red-500, заполнено по умолчанию */
+      color: #ef4444;
+    }
+    .footer-made-with:hover .heart-outline {
+      fill: none;
+      color: #ef4444;
+    }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const businessTypes = [
+        'сулуулук салондору',
+        'чачтарачтар',
+        'стоматологдор',
+        'барбершоптор',
+        'маникюр салондору',
+        'массаж кабинеттер',
+        'жеке дарыгерлер',
+        'косметологдор',
+        'спа-салондор',
+        'тату-салондор',
+        'фотографтар',
+        'йога жана фитнес студиялар',
+        'психологдор',
+        'репетиторлор',
+        'ветеринарлар',
+        'нотариустар',
+        'автоинструкторлор',
+        'усталар',
+        'СТО',
+        'техника оңдоочулар',
+        'юристтер',
+        'мончо жана сауналар',
+        'бий мектептери',
+        'туристтик агенттер',
+        'диагностика борборлору',
+        'астрологдор жана тарологдор',
+        'медициналык клиникалар',
+        'бассейндер'
+      ];
+
+      
+      let currentIndex = 0;
+      let currentText = '';
+      let isDeleting = false;
+      let typingSpeed = 100;
+      
+      function typeText() {
+        const element = document.getElementById('typing-text');
+        const currentType = businessTypes[currentIndex];
+        
+        if (isDeleting) {
+          currentText = currentType.substring(0, currentText.length - 1);
+          typingSpeed = 50;
+        } else {
+          currentText = currentType.substring(0, currentText.length + 1);
+          typingSpeed = 100;
+        }
+        
+        element.textContent = currentText;
+        
+        if (!isDeleting && currentText === currentType) {
+          typingSpeed = 2000; // Pause at the end
+          isDeleting = true;
+        } else if (isDeleting && currentText === '') {
+          isDeleting = false;
+          currentIndex = (currentIndex + 1) % businessTypes.length;
+          typingSpeed = 500; // Pause before starting new word
+        }
+        
+        setTimeout(typeText, typingSpeed);
+      }
+      
+      typeText();
+    });
+  </script>
+</head>
+<body x-data="{ mobileMenuOpen: false, activeFeature: 'elektronnyy-zhurnal', 
+    featureNames: {
+        'elektronnyy-zhurnal': 'Электронный журнал',
+        'klientskaya-baza': 'Клиентская база',
+        'sistema-loyalnosti': 'Система лояльности',
+        'statistika-biznesa': 'Статистика бизнеса',
+        'sistema-opovescheniya': 'Система оповещения'
+    },
+    scrollToFeature: function(id) {
+        const featureElement = document.getElementById(id);
+        if (featureElement) {
+            const carousel = this.$refs.carousel;
+            const carouselRect = carousel.getBoundingClientRect();
+            const elementRect = featureElement.getBoundingClientRect();
+            
+            // Calculate the center position of the carousel
+            const carouselCenter = carouselRect.left + carouselRect.width / 2;
+            
+            // Calculate how far the element is from the center
+            const elementCenter = elementRect.left + elementRect.width / 2;
+            const offset = elementCenter - carouselCenter;
+            
+            // Calculate the new scroll position
+            const newScrollLeft = carousel.scrollLeft + offset;
+            
+            // Ensure we don't scroll beyond boundaries
+            const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+            const targetScroll = Math.min(Math.max(0, newScrollLeft), maxScroll);
+            
+            carousel.scrollTo({
+                left: targetScroll,
+                behavior: 'smooth'
+            });
+            this.activeFeature = id;
+        }
+    },
+    nextSlide: function() {
+        const slides = Object.keys(this.featureNames);
+        const currentIndex = slides.indexOf(this.activeFeature);
+        if (currentIndex < slides.length - 1) {
+            this.scrollToFeature(slides[currentIndex + 1]);
+        }
+    },
+    prevSlide: function() {
+        const slides = Object.keys(this.featureNames);
+        const currentIndex = slides.indexOf(this.activeFeature);
+        if (currentIndex > 0) {
+            this.scrollToFeature(slides[currentIndex - 1]);
+        }
+    },
+    init: function() {
+        const carousel = this.$refs.carousel;
+        if (!carousel) return;
+
+        let isScrolling = false;
+        let scrollTimeout;
+        let lastScrollLeft = 0;
+
+        const updateActiveFeature = () => {
+            if (isScrolling) return;
+            
+            const slides = Object.keys(this.featureNames);
+            let currentActive = this.activeFeature;
+            let minDistance = Infinity;
+            const carouselRect = carousel.getBoundingClientRect();
+            const carouselCenter = carouselRect.left + carouselRect.width / 2;
+
+            slides.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    const rect = el.getBoundingClientRect();
+                    const elementCenter = rect.left + rect.width / 2;
+                    const distance = Math.abs(elementCenter - carouselCenter);
+
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        currentActive = id;
+                    }
+                }
+            });
+
+            if (this.activeFeature !== currentActive) {
+                this.activeFeature = currentActive;
+                // Snap to the active slide
+                const activeElement = document.getElementById(currentActive);
+                if (activeElement) {
+                    const elementRect = activeElement.getBoundingClientRect();
+                    const elementCenter = elementRect.left + elementRect.width / 2;
+                    const offset = elementCenter - carouselCenter;
+                    const newScrollLeft = carousel.scrollLeft + offset;
+                    const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+                    const targetScroll = Math.min(Math.max(0, newScrollLeft), maxScroll);
+                    
+                    carousel.scrollTo({
+                        left: targetScroll,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        };
+
+        carousel.addEventListener('scroll', () => {
+            isScrolling = true;
+            clearTimeout(scrollTimeout);
+            
+            scrollTimeout = setTimeout(() => {
+                isScrolling = false;
+                updateActiveFeature();
+            }, 150);
+        });
+
+        // Initial check
+        updateActiveFeature();
+    }
+}">
+    <div class="bg-white">
+    <!-- Header -->
+    <header class="backdrop-blur minimal-shadow fixed top-0 left-0 w-full z-50 transition-all duration-300">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center py-5 lg:py-6">
+          <div class="flex items-center">
+            <div class="text-2xl font-bold text-gray-900 tracking-tight">zappis</div>
+          </div>
+          <nav class="hidden md:flex space-x-8">
+            <a href="#product-features" class="text-gray-700 hover:text-blue-600 transition-colors">Продукт</a>
+            <a href="#pricing" class="text-gray-700 hover:text-blue-600 transition-colors">Баалар</a>
+            <a href="#reviews" class="text-gray-700 hover:text-blue-600 transition-colors">Пикирлер</a>
+            <a href="#contact" class="text-gray-700 hover:text-blue-600 transition-colors">Байланыш</a>
+          </nav>
+          <div class="hidden md:flex items-center space-x-4">
+            <button class="btn-accent px-7 py-2 rounded-lg font-medium text-lg" onclick="window.location.href='http://127.0.0.1:8000/accounts/partners/register/'">{% trans "Попробовать бесплатно" %}</button>
+            <!-- Language Switcher -->
+            <div class="ml-6 flex items-center space-x-2">
+              <a href="?lang=ky" class="px-3 py-1 rounded font-semibold text-sm transition-all {% if current_language == 'ky' %}bg-blue-600 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}">KY</a>
+              <a href="?lang=ru" class="px-3 py-1 rounded font-semibold text-sm transition-all {% if current_language == 'ru' %}bg-blue-600 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}">RU</a>
+            </div>
+          </div>
+          <button class="md:hidden" @click="mobileMenuOpen = !mobileMenuOpen" :aria-expanded="mobileMenuOpen">
+            <i data-lucide="menu" x-show="!mobileMenuOpen" aria-hidden="true" style="width: 24px; height: 24px;"></i>
+            <i data-lucide="x" x-show="mobileMenuOpen" aria-hidden="true" style="width: 24px; height: 24px;"></i>
+          </button>
+        </div>
+      </div>
+      <div x-show="mobileMenuOpen" class="md:hidden bg-white border-t">
+        <div class="px-4 py-2 space-y-2">
+          <a href="#product-features" class="block py-2 text-gray-700" @click="mobileMenuOpen = false">Продукт</a>
+          <a href="#pricing" class="block py-2 text-gray-700" @click="mobileMenuOpen = false">Баалар</a>
+          <a href="#reviews" class="block py-2 text-gray-700" @click="mobileMenuOpen = false">Пикирлер</a>
+          <a href="#contact" class="block py-2 text-gray-700" @click="mobileMenuOpen = false">Байланыш</a>
+          <button class="w-full btn-accent py-2 rounded-lg mt-2" onclick="window.location.href='http://127.0.0.1:8000/accounts/partners/register/'">Попробовать бесплатно</button>
+          <!-- Language Switcher Mobile -->
+          <div class="flex items-center space-x-2 mt-4">
+            <a href="?lang=ky" class="px-3 py-1 rounded font-semibold text-sm transition-all {% if current_language == 'ky' %}bg-blue-600 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}">KY</a>
+            <a href="?lang=ru" class="px-3 py-1 rounded font-semibold text-sm transition-all {% if current_language == 'ru' %}bg-blue-600 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}">RU</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="bg-white h-screen flex items-center pt-32 pb-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 w-full">
+        <div class="flex flex-col lg:flex-row gap-24 items-center justify-between min-h-[600px]">
+          <div class="flex-1 min-w-[340px]">
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-8 tracking-tight">
+              Онлайн-бронирование жана автоматташтыруу үчүн <span id="typing-text" class="typing-text text-blue-600"></span>
+            </h1>
+            <p class="text-lg sm:text-xl lg:text-2xl text-gray-600 mb-10 max-w-2xl">
+              Кардарларды чалууcуз алып келебиз — сайт, CRM жана жазылуулар бир жерде
+            </p>
+            <div class="flex gap-4">
+              <button class="btn-accent px-8 py-4 rounded-xl font-semibold text-lg shadow-lg" onclick="window.location.href='http://127.0.0.1:8000/accounts/partners/register/'">{% trans "Начать бесплатно" %}</button>
+              <button class="btn-minimal text-base" onclick="window.location.href='/demo/'">{% trans "Посмотреть демо" %}</button>
+            </div>
+          </div>
+          <div class="flex-1 flex justify-center min-w-[340px]">
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-3xl shadow-xl p-0 w-[420px] h-[420px] flex items-center justify-center overflow-hidden">
+              <img src="https://i.ibb.co/whmcTRd7/image.png" alt="Zappis Дашборду" class="w-full h-full object-cover rounded-3xl shadow-lg border border-gray-100" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Product Features Carousel Section -->
+    <section id="product-features" class="py-0 bg-gray-50 min-h-[calc(100vh-80px)] flex items-center pt-24 pb-24">
+       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div class="mb-16 flex flex-col sm:flex-row justify-between items-center gap-6">
+          <div class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight" x-text="featureNames[activeFeature]"></div>
+          <div class="flex space-x-2">
+            <button @click="prevSlide()" class="w-10 h-10 rounded-full flex items-center justify-center bg-white border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition-all shadow-sm">
+              <i data-lucide="arrow-left" class="text-blue-500" style="width: 22px; height: 22px;"></i>
+            </button>
+            <button @click="nextSlide()" class="w-10 h-10 rounded-full flex items-center justify-center bg-white border border-gray-200 hover:bg-blue-50 hover:border-blue-300 transition-all shadow-sm">
+              <i data-lucide="arrow-right" class="text-blue-500" style="width: 22px; height: 22px;"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div x-ref="carousel" class="flex overflow-x-auto snap-x snap-mandatory no-scrollbar pb-4 -mx-4 sm:mx-0 overscroll-x-contain gap-8" 
+             style="scroll-behavior: smooth; -webkit-overflow-scrolling: touch;">
+          <!-- Slide 1: Электронный журнал -->
+          <div id="elektronnyy-zhurnal" x-ref="elektronnyyZhurnal" class="flex-shrink-0 w-full snap-center px-4 sm:px-0">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center w-full">
+              <div>
+                <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 hidden">
+                  Электрондук журнал
+                </h2>
+                <p class="text-lg text-gray-600 mb-6">
+                  Эми кагаз журнал колдонууга муктаждык жок. Ар бир мастер, администратор жана өзүңүз күн сайын электрондук журналды алыстан, үйдөн да көрө аласыз.
+                </p>
+                <ul class="space-y-3">
+                  <li class="flex items-start p-2 rounded-lg hover:bg-blue-50 transition-all">
+                    <i data-lucide="check" class="text-blue-500 mt-1 mr-3 flex-shrink-0" style="width: 20px; height: 20px;"></i>
+                    <span class="text-gray-700">Ыңгайлуу түстүү график</span>
+                  </li>
+                  <li class="flex items-start p-2 rounded-lg hover:bg-blue-50 transition-all">
+                    <i data-lucide="check" class="text-blue-500 mt-1 mr-3 flex-shrink-0" style="width: 20px; height: 20px;"></i>
+                    <span class="text-gray-700">Жазууларды тез көрүү жана оңдоо</span>
+                  </li>
+                  <li class="flex items-start p-2 rounded-lg hover:bg-blue-50 transition-all">
+                    <i data-lucide="check" class="text-blue-500 mt-1 mr-3 flex-shrink-0" style="width: 20px; height: 20px;"></i>
+                    <span class="text-gray-700">Каалаган түзмөктөн, каалаган убакта жеткиликтүү</span>
+                  </li>
+                  <li class="flex items-start p-2 rounded-lg hover:bg-blue-50 transition-all">
+                    <i data-lucide="check" class="text-blue-500 mt-1 mr-3 flex-shrink-0" style="width: 20px; height: 20px;"></i>
+                    <span class="text-gray-700">Клиенттик база жана эскертмелер менен интеграция</span>
+                  </li>
+                </ul>
+              </div>
+              <div class="relative">
+                <div class="bg-white rounded-2xl p-8 max-w-lg mx-auto border border-gray-200 hover:shadow-xl transition-all duration-300">
+                  <div class="flex justify-around border-b pb-3 mb-4 text-gray-600">
+                    <span class="font-medium text-blue-600">Журнал</span>
+                    <span>Клиенттик база</span>
+                    <span>Статистика</span>
+                    <span>Кампа</span>
+                  </div>
+                  <div class="grid grid-cols-7 gap-1 text-center text-sm font-medium mb-2">
+                    <span>Дш</span><span>Шш</span><span>Шр</span><span>Бш</span><span>Жм</span><span>Иш</span><span>Жк</span>
+                  </div>
+                  <div class="grid grid-cols-7 gap-1 text-center text-sm">
+                    <span class="py-2"></span><span class="py-2"></span><span class="py-2"></span><span class="py-2"></span><span class="py-2"></span>
+                    <span class="py-2 text-gray-500">1</span>
+                    <span class="py-2 text-gray-500">2</span>
+                    <span class="py-2">3</span>
+                    <span class="py-2">4</span>
+                    <span class="py-2">5</span>
+                    <span class="py-2">6</span>
+                    <span class="py-2">7</span>
+                    <span class="py-2">8</span>
+                    <span class="py-2">9</span>
+                    <span class="py-2">10</span>
+                    <span class="py-2">11</span>
+                    <span class="py-2">12</span>
+                    <span class="py-2">13</span>
+                    <span class="py-2">14</span>
+                    <span class="py-2">15</span>
+                    <span class="py-2">16</span>
+                    <span class="py-2">17</span>
+                    <span class="py-2 bg-blue-100 rounded text-blue-700 font-bold">18</span>
+                    <span class="py-2">19</span>
+                    <span class="py-2">20</span>
+                    <span class="py-2">21</span>
+                    <span class="py-2">22</span>
+                    <span class="py-2">23</span>
+                    <span class="py-2">24</span>
+                    <span class="py-2">25</span>
+                    <span class="py-2">26</span>
+                    <span class="py-2">27</span>
+                    <span class="py-2">28</span>
+                    <span class="py-2">29</span>
+                    <span class="py-2">30</span>
+                  </div>
+                  
+                  <!-- Appointment Card -->
+                  <div class="absolute left-4 -bottom-8 bg-blue-600 text-white p-4 rounded-lg shadow-lg w-48 text-sm">
+                    <p class="font-semibold mb-1">8:00 - 10:30</p>
+                    <p class="opacity-90">Медек</p>
+                    <p class="opacity-90">+7 747 368 65 74</p>
+                    <p class="opacity-90">Комби маникюр</p>
+                  </div>
+
+                  <!-- Stats Card -->
+                  <div class="absolute right-4 top-8 bg-white p-4 rounded-lg shadow-md w-48 text-sm">
+                    <h4 class="font-semibold mb-2">Статистика</h4>
+                    <div class="flex items-center mb-1">
+                      <div class="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
+                      <span>155 кардар тейленди</span>
+                    </div>
+                    <div class="flex items-center">
+                      <div class="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
+                      <span>30 кардар күтүп жатат</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 2: Клиентская база -->
+          <div id="klientskaya-baza" x-ref="klientskayaBaza" class="flex-shrink-0 w-full snap-center px-4 sm:px-0 bg-gray-50">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
+              <div>
+                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-6 hidden">
+                  Кардарлар базасы
+                </h2>
+                <ul class="space-y-4">
+                  <li class="flex items-start p-3 rounded-lg">
+                    <i data-lucide="check" class="text-green-500 mt-1 mr-3 flex-shrink-0" style="width: 20px; height: 20px;"></i>
+                    <span class="text-gray-700">Бирдиктүү кардарлар базасы</span>
+                  </li>
+                  <li class="flex items-start p-3 rounded-lg">
+                    <i data-lucide="check" class="text-green-500 mt-1 mr-3 flex-shrink-0" style="width: 20px; height: 20px;"></i>
+                    <span class="text-gray-700">Лоялдуулук программаларын түзүү</span>
+                  </li>
+                  <li class="flex items-start p-3 rounded-lg">
+                    <i data-lucide="check" class="text-green-500 mt-1 mr-3 flex-shrink-0" style="width: 20px; height: 20px;"></i>
+                    <span class="text-gray-700">{% trans "Сегментирование по активностям клиентов" %}</span>
+                  </li>
+                  <li class="flex items-start p-3 rounded-lg">
+                    <i data-lucide="check" class="text-green-500 mt-1 mr-3 flex-shrink-0" style="width: 20px; height: 20px;"></i>
+                    <span class="text-gray-700">{% trans "Напоминания о днях рождения" %}</span>
+                  </li>
+                  <li class="flex items-start p-3 rounded-lg">
+                    <i data-lucide="check" class="text-green-500 mt-1 mr-3 flex-shrink-0" style="width: 20px; height: 20px;"></i>
+                    <span class="text-gray-700">{% trans "Амбулаторные карты и истории болезни для клиник и стоматологии" %}</span>
+                  </li>
+                </ul>
+              </div>
+              
+              <div class="relative">
+                <div class="bg-white rounded-2xl shadow-xl p-6 max-w-lg mx-auto transform -rotate-2 hover:rotate-0 transition-transform duration-300">
+                  <div class="flex justify-around border-b pb-3 mb-4 text-gray-600">
+                    <span>{% trans "Журнал" %}</span>
+                    <span class="font-medium text-blue-600">{% trans "Клиентская база" %}</span>
+                    <span>{% trans "Статистика" %}</span>
+                    <span>{% trans "Склад" %}</span>
+                  </div>
+                  <div class="grid grid-cols-3 gap-4 text-center mb-6">
+                    <div>
+                      <p class="text-3xl font-bold text-blue-600">84</p>
+                      <p class="text-sm text-gray-600">{% trans "Количество переходов онлайн записи" %}</p>
+                    </div>
+                    <div>
+                      <p class="text-3xl font-bold text-blue-600">17</p>
+                      <p class="text-sm text-gray-600">{% trans "Новых клиентов за период" %}</p>
+                    </div>
+                    <div>
+                      <p class="text-3xl font-bold text-blue-600">10</p>
+                      <p class="text-sm text-gray-600">{% trans "Активных клиентов за период" %}</p>
+                    </div>
+                  </div>
+                  
+                  <!-- Client List Table -->
+                  <div class="overflow-x-auto">
+                    <table class="min-w-full text-sm text-gray-700">
+                      <thead>
+                        <tr class="text-left border-b">
+                          <th class="py-2 pr-2">{% trans "Имя" %}</th>
+                          <th class="py-2 px-2">{% trans "Телефон" %}</th>
+                          <th class="py-2 px-2">{% trans "Визиты" %}</th>
+                          <th class="py-2 pl-2">{% trans "Последний визит" %}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr class="border-b hover:bg-gray-50 transition-colors">
+                          <td class="py-2 pr-2">Иван</td>
+                          <td class="py-2 px-2">+996 123 456</td>
+                          <td class="py-2 px-2">5</td>
+                          <td class="py-2 pl-2">24 Сентября, 15:00</td>
+                        </tr>
+                        <tr class="border-b hover:bg-gray-50 transition-colors">
+                          <td class="py-2 pr-2">Айгерим</td>
+                          <td class="py-2 px-2">+996 654 321</td>
+                          <td class="py-2 px-2">12</td>
+                          <td class="py-2 pl-2">12 Октября, 11:00</td>
+                        </tr>
+                        <tr class="border-b hover:bg-gray-50 transition-colors">
+                          <td class="py-2 pr-2">Мадина</td>
+                          <td class="py-2 px-2">+996 111 222</td>
+                          <td class="py-2 px-2">3</td>
+                          <td class="py-2 pl-2">01 Ноября, 14:30</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <!-- Active Clients Stats -->
+                  <div class="absolute right-4 top-8 bg-white p-4 rounded-lg shadow-md w-48 text-sm">
+                    <h4 class="font-semibold mb-2">{% trans "Статистика активных клиентов" %}</h4>
+                    <div class="space-y-2">
+                      <div class="flex justify-between items-center">
+                        <span class="text-gray-700">{% trans "Постоянные" %}</span>
+                        <div class="w-1/2 bg-blue-100 h-2 rounded-full">
+                          <div class="bg-blue-500 h-full rounded-full w-4/5"></div>
+                        </div>
+                      </div>
+                      <div class="flex justify-between items-center">
+                        <span class="text-gray-700">{% trans "Первичные" %}</span>
+                        <div class="w-1/2 bg-blue-100 h-2 rounded-full">
+                          <div class="bg-blue-500 h-full rounded-full w-2/3"></div>
+                        </div>
+                      </div>
+                      <div class="flex justify-between items-center">
+                        <span class="text-gray-700">{% trans "Вторичные" %}</span>
+                        <div class="w-1/2 bg-blue-100 h-2 rounded-full">
+                          <div class="bg-blue-500 h-full rounded-full w-1/2"></div>
+                        </div>
+                      </div>
+                      <div class="flex justify-between items-center">
+                        <span class="text-gray-700">{% trans "Спящие" %}</span>
+                        <div class="w-1/2 bg-blue-100 h-2 rounded-full">
+                          <div class="bg-blue-500 h-full rounded-full w-1/4"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 3: Система лояльности -->
+          <div id="sistema-loyalnosti" x-ref="sistemaLoyalnosti" class="flex-shrink-0 w-full snap-center px-4 sm:px-0">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
+              <div>
+                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-6 hidden">
+                  Лоялдуулук системасы
+                </h2>
+                <ul class="space-y-4">
+                  <li class="flex items-start p-3 rounded-lg">
+                    <i data-lucide="check" class="text-green-500 mt-1 mr-3 flex-shrink-0" style="width: 20px; height: 20px;"></i>
+                    <span class="text-gray-700">Бонус карталар</span>
+                  </li>
+                  <li class="flex items-start p-3 rounded-lg">
+                    <i data-lucide="check" class="text-green-500 mt-1 mr-3 flex-shrink-0" style="width: 20px; height: 20px;"></i>
+                    <span class="text-gray-700">Сертификаттар</span>
+                  </li>
+                  <li class="flex items-start p-3 rounded-lg">
+                    <i data-lucide="check" class="text-green-500 mt-1 mr-3 flex-shrink-0" style="width: 20px; height: 20px;"></i>
+                    <span class="text-gray-700">Абонементтер</span>
+                  </li>
+                  <li class="flex items-start p-3 rounded-lg">
+                    <i data-lucide="check" class="text-green-500 mt-1 mr-3 flex-shrink-0" style="width: 20px; height: 20px;"></i>
+                    <span class="text-gray-700">Кызматтар боюнча акциялар</span>
+                  </li>
+                  <li class="flex items-start p-3 rounded-lg">
+                    <i data-lucide="check" class="text-green-500 mt-1 mr-3 flex-shrink-0" style="width: 20px; height: 20px;"></i>
+                    <span class="text-gray-700">Ысык сааттар</span>
+                  </li>
+                </ul>
+              </div>
+              
+              <div class="relative">
+                <div class="bg-white rounded-2xl shadow-xl p-6 max-w-lg mx-auto transform -rotate-2 hover:rotate-0 transition-transform duration-300">
+                  <div class="flex justify-around border-b pb-3 mb-4 text-gray-600">
+                    <span>Журнал</span>
+                    <span>Кардарлар базасы</span>
+                    <span class="font-medium text-blue-600">Лоялдуулук</span>
+                    <span>Кампа</span>
+                  </div>
+                  <div class="grid grid-cols-3 gap-4 text-center mb-6">
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                      <p class="text-2xl font-bold text-blue-600">10 000 &#8381;</p>
+                      <p class="text-sm text-gray-600">Макс бонус</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg">
+                      <p class="text-2xl font-bold text-green-600">10</p>
+                      <p class="text-sm text-gray-600">келүү</p>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-lg">
+                      <p class="text-2xl font-bold text-purple-600">10 000 &#8381;</p>
+                      <p class="text-sm text-gray-600">Сертификат</p>
+                    </div>
+                  </div>
+                  <div class="overflow-x-auto">
+                    <table class="min-w-full text-sm text-gray-700">
+                      <thead>
+                        <tr class="text-left border-b">
+                          <th class="py-2 pr-2">Аты</th>
+                          <th class="py-2 px-2">Түрү</th>
+                          <th class="py-2 px-2">Жарактуу</th>
+                          <th class="py-2 pl-2">Саны</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr class="border-b hover:bg-gray-50 transition-colors">
+                          <td class="py-2 pr-2">VIP Кардар</td>
+                          <td class="py-2 px-2">Бонус</td>
+                          <td class="py-2 px-2">25.06.2025</td>
+                          <td class="py-2 pl-2">Чексиз</td>
+                        </tr>
+                        <tr class="border-b hover:bg-gray-50 transition-colors">
+                          <td class="py-2 pr-2">Жазгы акция</td>
+                          <td class="py-2 px-2">15% арзандатуу</td>
+                          <td class="py-2 px-2">15.05.2024</td>
+                          <td class="py-2 pl-2">Бир жолу</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50 transition-colors">
+                          <td class="py-2 pr-2">Белек</td>
+                          <td class="py-2 px-2">Сертификат</td>
+                          <td class="py-2 px-2">31.12.2024</td>
+                          <td class="py-2 pl-2">1</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="absolute left-4 -bottom-8 bg-blue-600 text-white p-4 rounded-lg shadow-lg w-48 text-sm transform rotate-3">
+                    <p class="font-semibold mb-1">Абонемент</p>
+                    <p class="opacity-90">10 жолу келүү</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 4: Статистика бизнеса -->
+          <div id="statistika-biznesa" x-ref="statistikaBiznesa" class="flex-shrink-0 w-full snap-center px-4 sm:px-0 bg-gray-50">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
+              <div>
+                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-6 hidden">
+                  Бизнес статистикасы
+                </h2>
+                <ul class="space-y-4">
+                  <li class="flex items-start p-3 rounded-lg">
+                    <i data-lucide="check" class="text-green-500 mt-1 mr-3 flex-shrink-0" style="width: 20px; height: 20px;"></i>
+                    <span class="text-gray-700">Ар кандай мезгил үчүн жазылуулар статистикасы</span>
+                  </li>
+                  <li class="flex items-start p-3 rounded-lg">
+                    <i data-lucide="check" class="text-green-500 mt-1 mr-3 flex-shrink-0" style="width: 20px; height: 20px;"></i>
+                    <span class="text-gray-700">Убакыт жана кардарларды кармоо</span>
+                  </li>
+                  <li class="flex items-start p-3 rounded-lg">
+                    <i data-lucide="check" class="text-green-500 mt-1 mr-3 flex-shrink-0" style="width: 20px; height: 20px;"></i>
+                    <span class="text-gray-700">Кайра кайтуу жана толуктук</span>
+                  </li>
+                  <li class="flex items-start p-3 rounded-lg">
+                    <i data-lucide="check" class="text-green-500 mt-1 mr-3 flex-shrink-0" style="width: 20px; height: 20px;"></i>
+                    <span class="text-gray-700">Ар бир мастер боюнча деталдуу статистика</span>
+                  </li>
+                  <li class="flex items-start p-3 rounded-lg">
+                    <i data-lucide="check" class="text-green-500 mt-1 mr-3 flex-shrink-0" style="width: 20px; height: 20px;"></i>
+                    <span class="text-gray-700">Лоялдуулук карталары боюнча детализация</span>
+                  </li>
+                </ul>
+              </div>
+              
+              <div class="relative">
+                <div class="bg-white rounded-2xl shadow-xl p-6 max-w-lg mx-auto transform -rotate-2 hover:rotate-0 transition-transform duration-300">
+                  <div class="flex justify-around border-b pb-3 mb-4 text-gray-600">
+                    <span>Журнал</span>
+                    <span>Кардарлар базасы</span>
+                    <span class="font-medium text-blue-600">Статистика</span>
+                    <span>Кампа</span>
+                  </div>
+                  <div class="mb-6">
+                    <h4 class="font-semibold mb-2">Жалпы статистика</h4>
+                    <img src="https://img.uxcel.com/practices/line-1593163127590/a-1722533320007-2x.jpg" alt="Line Chart" class="w-full rounded-lg shadow-sm">
+                  </div>
+                  <div class="absolute left-4 -bottom-8 bg-white p-4 rounded-lg shadow-md w-48 text-sm">
+                    <h4 class="font-semibold mb-2">Булактар боюнча жазылуулар</h4>
+                    <img src="https://datavizproject.com/wp-content/uploads/types/Bar-Chart-Vertical.png" alt="Bar Chart" class="w-full rounded-lg shadow-sm">
+                  </div>
+                  <div class="absolute right-4 top-8 bg-blue-500 text-white p-4 rounded-lg shadow-lg w-48 text-sm">
+                    <p class="font-semibold mb-1">Иштөө сааттары</p>
+                    <p class="text-2xl font-bold">820</p>
+                    <p class="font-semibold mt-2 mb-1">Бош сааттар</p>
+                    <p class="text-2xl font-bold">312</p>
+                    <p class="font-semibold mt-2 mb-1">Толуктук</p>
+                    <p class="text-2xl font-bold">17%</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 5: Система оповещения -->
+          <div id="sistema-opovescheniya" x-ref="sistemaOpovescheniya" class="flex-shrink-0 w-full snap-center px-4 sm:px-0">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
+              <div>
+                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-6 hidden">
+                  Эскертүү системасы
+                </h2>
+                <ul class="space-y-4">
+                  <li class="flex items-start p-3 rounded-lg">
+                    <i data-lucide="check" class="text-green-500 mt-1 mr-3 flex-shrink-0" style="width: 20px; height: 20px;"></i>
+                    <span class="text-gray-700">Клиенттер жана кызматкерлер үчүн push-эскертмелер</span>
+                  </li>
+                  <li class="flex items-start p-3 rounded-lg">
+                    <i data-lucide="check" class="text-green-500 mt-1 mr-3 flex-shrink-0" style="width: 20px; height: 20px;"></i>
+                    <span class="text-gray-700">WhatsApp интеграциялары</span>
+                  </li>
+                  <li class="flex items-start p-3 rounded-lg">
+                    <i data-lucide="check" class="text-green-500 mt-1 mr-3 flex-shrink-0" style="width: 20px; height: 20px;"></i>
+                    <span class="text-gray-700">WhatsApp интеграциялары</span>
+                  </li>
+                </ul>
+              </div>
+              
+              <div class="relative">
+                <div class="bg-white rounded-2xl shadow-xl p-6 max-w-lg mx-auto transform -rotate-2 hover:rotate-0 transition-transform duration-300">
+                  <div class="flex justify-around border-b pb-3 mb-4 text-gray-600">
+                    <span>Журнал</span>
+                    <span>Клиентская база</span>
+                    <span>Статистика</span>
+                    <span class="font-medium text-blue-600">Эскертүүлөр</span>
+                  </div>
+                  
+                  <!-- Notification Cards -->
+                  <div class="space-y-4">
+                    <div class="bg-blue-50 p-4 rounded-lg shadow-sm">
+                      <p class="font-semibold mb-1">Жаңы жазылуу</p>
+                      <p class="text-sm text-gray-700">Сардор - Кариес дарылоо, 10:00, эртең</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg shadow-sm">
+                      <p class="font-semibold mb-1">Тастыкталды</p>
+                      <p class="text-sm text-gray-700">Асем - Тиш тазалоо, 14:30, бүгүн</p>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg shadow-sm">
+                      <p class="font-semibold mb-1">Жокко чыгарылды</p>
+                      <p class="text-sm text-gray-700">Иван - Агартуу, 16:00, бүгүн</p>
+                    </div>
+                  </div>
+
+                  <!-- Floating Notification Alert -->
+                  <div class="absolute left-4 -bottom-8 bg-purple-600 text-white p-4 rounded-lg shadow-lg w-48 text-sm">
+                    <p class="font-semibold mb-1">Жаңы эскертүү</p>
+                    <p class="opacity-90">Сизде 5 окула элек билдирүү бар</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="features" class="py-24 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12">
+        <div class="text-center mb-20">
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4">Онлайн-жазылуу бизнесиңиз үчүн — 15 мүнөттө</h2>
+          <p class="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">Биз ар бир бизнес үчүн жеке сайт түзөбүз жана кардарларды онлайн кабыл алуу үчүн бардык инструменттерди орнотобуз</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          <div class="text-center bg-white border border-gray-200 rounded-2xl p-8 transition-all hover:shadow-xl group">
+            <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5 bg-blue-50 group-hover:bg-blue-100 transition-all">
+              <i data-lucide="globe" class="text-blue-600" style="width: 32px; height: 32px;"></i>
+            </div>
+            <h3 class="text-lg font-semibold mb-2">1. Жеке сайт</h3>
+            <p class="text-gray-600">Биз сиз үчүн даяр онлайн-жазылуу сайтын түзөбүз, бизнесиңизге ылайыкташтырылган</p>
+          </div>
+          <div class="text-center bg-white border border-gray-200 rounded-2xl p-8 transition-all hover:shadow-xl group">
+            <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5 bg-blue-50 group-hover:bg-blue-100 transition-all">
+              <i data-lucide="layout-dashboard" class="text-blue-600" style="width: 32px; height: 32px;"></i>
+            </div>
+            <h3 class="text-lg font-semibold mb-2">2. Жазылуу виджеттери</h3>
+            <p class="text-gray-600">Сайтка, социалдык тармактарга же QR-кодго ыңгайлуу формаларды орнотуңуз — кардарыңыз бир нече баскычта жазылат</p>
+          </div>
+          <div class="text-center bg-white border border-gray-200 rounded-2xl p-8 transition-all hover:shadow-xl group">
+            <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5 bg-blue-50 group-hover:bg-blue-100 transition-all">
+              <i data-lucide="send" class="text-blue-600" style="width: 32px; height: 32px;"></i>
+            </div>
+            <h3 class="text-lg font-semibold mb-2">3. Мессенджерлер менен интеграция</h3>
+            <p class="text-gray-600">WhatsApp, Telegram же Instagram аркылуу жазылууларды кабыл алыңыз — кошумча программалар талап кылынбайт</p>
+          </div>
+          <div class="text-center bg-white border border-gray-200 rounded-2xl p-8 transition-all hover:shadow-xl group">
+            <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5 bg-blue-50 group-hover:bg-blue-100 transition-all">
+              <i data-lucide="megaphone" class="text-blue-600" style="width: 32px; height: 32px;"></i>
+            </div>
+            <h3 class="text-lg font-semibold mb-2">4. Жарнамалык билдирүүлөр</h3>
+            <p class="text-gray-600">WhatsApp, Telegram же Instagram аркылуу кардарларга билдирүүлөрдү жөнөтүңүз — ыңгайлуу, тез жана өз базаңыз боюнча</p>
+          </div>
+          <div class="text-center bg-white border border-gray-200 rounded-2xl p-8 transition-all hover:shadow-xl group">
+            <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5 bg-blue-50 group-hover:bg-blue-100 transition-all">
+              <i data-lucide="qr-code" class="text-blue-600" style="width: 32px; height: 32px;"></i>
+            </div>
+            <h3 class="text-lg font-semibold mb-2">5. QR-код дизайны</h3>
+            <p class="text-gray-600">Брендиңизге ылайык жеке QR-код алыңыз — витринаңызга, Instagram же визиткаңызга жайгаштырыңыз</p>
+          </div>
+          <div class="text-center bg-white border border-gray-200 rounded-2xl p-8 transition-all hover:shadow-xl group">
+            <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5 bg-blue-50 group-hover:bg-blue-100 transition-all">
+              <i data-lucide="bar-chart-3" class="text-blue-600" style="width: 32px; height: 32px;"></i>
+            </div>
+            <h3 class="text-lg font-semibold mb-2">6. Аналитика жана өсүү</h3>
+            <p class="text-gray-600">Жазылуулар, кардарлар жана катышуу боюнча маалыматтарды алыңыз — реалдуу статистика менен бизнесиңизди өстүрүңүз</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-24 bg-blue-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12">
+        <div class="text-center mb-16">
+          <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-blue-900 mb-4">Zappis көрсөткүчтөрү</h2>
+          <p class="text-lg sm:text-xl text-blue-600">Орто Азиядагы ондогон ишканалар бизге ишенет</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+          <div class="text-center bg-white border border-blue-100 rounded-2xl p-10 transition-all hover:shadow-xl group">
+            <div class="text-4xl sm:text-5xl font-extrabold text-blue-700 mb-2 group-hover:text-blue-900 transition-all">25+</div>
+            <p class="text-blue-700 group-hover:text-blue-900 transition-all">Бизнес биз менен</p>
+          </div>
+          <div class="text-center bg-white border border-blue-100 rounded-2xl p-10 transition-all hover:shadow-xl group">
+            <div class="text-4xl sm:text-5xl font-extrabold text-blue-700 mb-2 group-hover:text-blue-900 transition-all">400+</div>
+            <p class="text-blue-700 group-hover:text-blue-900 transition-all">Айына онлайн-жазылуулар</p>
+          </div>
+          <div class="text-center bg-white border border-blue-100 rounded-2xl p-10 transition-all hover:shadow-xl group">
+            <div class="text-4xl sm:text-5xl font-extrabold text-blue-700 mb-2 group-hover:text-blue-900 transition-all">2 000+</div>
+            <p class="text-blue-700 group-hover:text-blue-900 transition-all">Ай сайын баракча көрүүлөрү</p>
+          </div>
+          <div class="text-center bg-white border border-blue-100 rounded-2xl p-10 transition-all hover:shadow-xl group">
+            <div class="text-4xl sm:text-5xl font-extrabold text-blue-700 mb-2 group-hover:text-blue-900 transition-all">92%</div>
+            <p class="text-blue-700 group-hover:text-blue-900 transition-all">Кардарлардын канааттануу деңгээли</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mobile Booking Section -->
+    <section class="py-24 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+          <div class="flex justify-center">
+            <div class="bg-white border border-gray-200 rounded-3xl p-8 max-w-sm w-full shadow-md hover:shadow-xl transition-all duration-300 flex flex-col items-center">
+              <div class="w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center mb-6">
+                <i data-lucide="smartphone" class="text-blue-600" style="width: 44px; height: 44px;"></i>
+              </div>
+              <h3 class="text-xl font-bold text-gray-900 mb-2 text-center">Мобилдик жазылуу</h3>
+              <p class="text-gray-500 text-center mb-6">Кардарларыңыз үчүн телефон аркылуу тез жана ыңгайлуу жазылуу</p>
+              <div class="flex flex-col gap-3 w-full">
+                <button class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold text-lg shadow hover:bg-blue-700 transition-all" onclick="window.location.href='/demo/'">Жазылуу</button>
+                <div class="flex items-center justify-center text-sm text-gray-500 mt-2">
+                  <i data-lucide="clock" class="mr-2" style="width: 18px; height: 18px;"></i>
+                  <span>2 мүнөттө жазылуу</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 mb-6">Кардарларыңыз 2 баскычта жазыла алат</h2>
+            <p class="text-lg sm:text-xl text-gray-600 mb-8">Кардарларга ыңгайлуу сайт жана мобилдик интерфейс аркылуу тез жазылуу мүмкүнчүлүгү</p>
+            <ul class="space-y-4">
+              <li class="flex items-start gap-3">
+                <i data-lucide="check" class="text-blue-600 mt-1 flex-shrink-0" style="width: 20px; height: 20px;"></i>
+                <span class="text-gray-700">Кызматты жана убакытты секундаларда тандаңыз</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <i data-lucide="check" class="text-blue-600 mt-1 flex-shrink-0" style="width: 20px; height: 20px;"></i>
+                <span class="text-gray-700">Автоматтык эскертүүлөр</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <i data-lucide="check" class="text-blue-600 mt-1 flex-shrink-0" style="width: 20px; height: 20px;"></i>
+                <span class="text-gray-700">Онлайн төлөм жана коопсуздук</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WhatsApp Integration Section -->
+    <section class="py-24 bg-gray-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+          <div>
+            <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 mb-6">Мессенджерлер менен интеграция</h2>
+            <p class="text-lg sm:text-xl text-gray-600 mb-10">Zappis жазылуулар үчүн эскертүүлөрдү, ырастоолорду жана билдирүүлөрдү WhatsApp жана Telegram аркылуу жөнөтөт</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div class="bg-white border border-gray-200 rounded-2xl p-6 flex flex-col items-center transition-all hover:shadow-xl">
+                <i data-lucide="message-circle" class="text-green-500 mb-4" style="width: 36px; height: 36px;"></i>
+                <h3 class="font-semibold mb-1 text-lg">WhatsApp</h3>
+                <p class="text-gray-600 text-sm text-center">Жазылуулар үчүн автоматтык эскертүүлөр</p>
+              </div>
+              <div class="bg-white border border-gray-200 rounded-2xl p-6 flex flex-col items-center transition-all hover:shadow-xl">
+                <i data-lucide="message-circle" class="text-blue-500 mb-4" style="width: 36px; height: 36px;"></i>
+                <h3 class="font-semibold mb-1 text-lg">Telegram</h3>
+                <p class="text-gray-600 text-sm text-center">Эскертүүлөр жана ырастоолор</p>
+              </div>
+            </div>
+          </div>
+          <div class="flex justify-center">
+            <div class="bg-white border border-gray-200 rounded-2xl p-8 max-w-sm w-full shadow-md hover:shadow-xl transition-all duration-300">
+              <div class="flex items-center mb-6">
+                <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                  <i data-lucide="message-circle" class="text-white" style="width: 20px; height: 20px;"></i>
+                </div>
+                <span class="ml-3 font-medium text-gray-900">Zappis</span>
+              </div>
+              <div class="space-y-3">
+                <div class="bg-gray-100 p-3 rounded-lg">
+                  <p class="text-sm">Салам! Эртең саат 14:00дө "Аида" салонуна маникюрга жазылууңузду эскертебиз</p>
+                </div>
+                <div class="bg-blue-100 p-3 rounded-lg">
+                  <p class="text-sm">Кездешүүңүздү ырастоо үчүн "Ооба" деп жазыңыз же "Жок" деп</p>
+                  <p class="text-sm">Визитиңизди ырастоо үчүн "Ооба" же "Жок" деп жооп бериңиз</p>
+                </div>
+                <div class="flex space-x-2">
+                  <button class="bg-green-500 text-white px-4 py-2 rounded text-sm hover:bg-green-600 transition-all">Ооба</button>
+                  <button class="bg-gray-300 text-gray-700 px-4 py-2 rounded text-sm hover:bg-gray-400 transition-all">Жок</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="reviews" class="py-24 bg-gray-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12">
+        <div class="text-center mb-20">
+          <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 mb-4">Биздин кардарлар эмне дейт</h2>
+          <p class="text-lg sm:text-xl text-gray-600">Zappisты тандаган ишкерлердин ийгилик тарыхтары</p>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div class="bg-white border border-gray-200 rounded-2xl p-10 shadow-sm hover:shadow-xl transition-all">
+            <div class="flex items-center mb-6">
+              <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-2xl">А</div>
+              <div class="ml-4">
+                <h3 class="font-semibold text-lg">Айгерим Касымова</h3>
+                <p class="text-gray-600">"Аида" салонунун ээси, Алматы</p>
+              </div>
+            </div>
+            <div class="flex mb-4">
+              <i data-lucide="star" class="text-yellow-400 fill-current" style="width: 20px; height: 20px;"></i>
+              <i data-lucide="star" class="text-yellow-400 fill-current" style="width: 20px; height: 20px;"></i>
+              <i data-lucide="star" class="text-yellow-400 fill-current" style="width: 20px; height: 20px;"></i>
+              <i data-lucide="star" class="text-yellow-400 fill-current" style="width: 20px; height: 20px;"></i>
+              <i data-lucide="star" class="text-yellow-400 fill-current" style="width: 20px; height: 20px;"></i>
+            </div>
+            <blockquote class="text-gray-700 text-lg leading-relaxed">"Zappisге кошулгандан кийин жазылуулар 40% көбөйдү. Кардарлар каалаган убакта жазыла алышат, мен болсо телефон чалууларга убакыт коротпойм. Лоялдуулук системасы кайтып келген кардарлардын санын көбөйттү."</blockquote>
+          </div>
+          <div class="grid grid-cols-2 gap-6">
+            <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm hover:shadow-lg transition-all">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center">
+                  <i data-lucide="calendar" class="text-blue-600" style="width: 20px; height: 20px;"></i>
+                </div>
+              </div>
+              <h3 class="font-semibold mb-2 text-xl">+40%</h3>
+              <p class="text-gray-600 text-sm">Биринчи айда жазылуулар өсүшү</p>
+            </div>
+            <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm hover:shadow-lg transition-all">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center">
+                  <i data-lucide="clock" class="text-green-600" style="width: 20px; height: 20px;"></i>
+                </div>
+              </div>
+              <h3 class="font-semibold mb-2 text-xl">-60%</h3>
+              <p class="text-gray-600 text-sm">Админдик иштерге кеткен убакыт кыскарды</p>
+            </div>
+            <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm hover:shadow-lg transition-all">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-purple-50 rounded-full flex items-center justify-center">
+                  <i data-lucide="users" class="text-purple-600" style="width: 20px; height: 20px;"></i>
+                </div>
+              </div>
+              <h3 class="font-semibold mb-2 text-xl">+25%</h3>
+              <p class="text-gray-600 text-sm">Кайра кайтып келген кардарлар көбөйдү</p>
+            </div>
+            <div class="bg-white border border-gray-200 p-6 rounded-xl shadow-sm hover:shadow-lg transition-all">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-orange-50 rounded-full flex items-center justify-center">
+                  <i data-lucide="bar-chart-3" class="text-orange-600" style="width: 20px; height: 20px;"></i>
+                </div>
+              </div>
+              <h3 class="font-semibold mb-2 text-xl">+30%</h3>
+              <p class="text-gray-600 text-sm">Орточо чек өстү</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-24 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-20">
+          <div>
+            <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 mb-6">Биз менен байланышуу</h2>
+            <p class="text-lg sm:text-xl text-gray-600 mb-10">Баштоого даярсызбы? Биздин команда Zappisти бизнесиңизге ыңгайлаштырууга жардам берет</p>
+            <div class="space-y-6">
+              <div class="flex items-center gap-4">
+                <div class="bg-blue-50 w-12 h-12 rounded-full flex items-center justify-center">
+                  <i data-lucide="send" class="text-blue-600" style="width: 22px; height: 22px;"></i>
+                </div>
+                <div>
+                  <p class="font-semibold">Telegram</p>
+                  <a href="https://t.me/ZappisSupportBot" class="text-gray-600 hover:text-blue-600 transition-colors">@ZappisSupportBot</a>
+                </div>
+              </div>
+              <div class="flex items-center gap-4">
+                <div class="bg-green-50 w-12 h-12 rounded-full flex items-center justify-center">
+                  <i data-lucide="message-circle" class="text-green-600" style="width: 22px; height: 22px;"></i>
+                </div>
+                <div>
+                  <p class="font-semibold">WhatsApp</p>
+                  <a href="https://wa.me/77022589768" class="text-gray-600 hover:text-green-600 transition-colors">+7 702 258 9768</a>
+                </div>
+              </div>
+              <div class="flex items-center gap-4">
+                <div class="bg-purple-50 w-12 h-12 rounded-full flex items-center justify-center">
+                  <i data-lucide="mail" class="text-purple-600" style="width: 22px; height: 22px;"></i>
+                </div>
+                <div>
+                  <p class="font-semibold">Email</p>
+                  <a href="mailto:support@zappis.app" class="text-gray-600 hover:text-purple-600 transition-colors">support@zappis.app</a>
+                </div>
+              </div>
+            </div>
+            <div class="mt-10">
+              <p class="text-gray-600 mb-2">Колдоо кызматынын иш убактысы:</p>
+              <p class="font-semibold">Дш-Жк: 24/7</p>
+            </div>
+          </div>
+          <div class="bg-gray-50 border border-gray-200 rounded-2xl p-10 shadow-sm hover:shadow-lg transition-all">
+            <h3 class="text-xl font-bold mb-6">Демо алуу</h3>
+            <form class="space-y-5" id="demo-form">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Атыңыз *</label>
+                <input type="text" name="name" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Атыңызды жазыңыз" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Телефон *</label>
+                <input type="tel" name="phone" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="+996 (___) ___-__-__" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Бизнес түрү *</label>
+                <select name="business_type" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                  <option value="">Бизнес түрүн тандаңыз</option>
+                  <option>Сулуулук салону</option>
+                  <option>Барбершоп</option>
+                  <option>Стоматология</option>
+                  <option>Фитнес-клуб</option>
+                  <option>Ресторан/Кафе</option>
+                  <option>Башка</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Комментарий</label>
+                <textarea name="comment" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Бизнесиңиз тууралуу айтып бериңиз"></textarea>
+              </div>
+              <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 transition-all font-semibold text-lg">Демо алуу</button>
+              <p class="text-sm text-gray-600 text-center mt-2">Түймөнү басуу менен <a href="/privacy/" class="text-blue-600 hover:underline">купуялык саясатына</a> макул болосуз</p>
+            </form>
+            <!-- Success Modal -->
+            <div id="success-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50 hidden">
+              <div class="bg-white rounded-2xl shadow-xl p-8 max-w-sm w-full text-center">
+                <div class="flex items-center justify-center mb-4">
+                  <i data-lucide="check-circle" class="text-green-500" style="width: 48px; height: 48px;"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-2">Сураныч жөнөтүлдү!</h3>
+                <p class="text-gray-600 mb-6">Рахмат! Биз жакында сиз менен байланышабыз.</p>
+                <button id="close-success-modal" class="bg-blue-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-blue-700 transition-all">Жабуу</button>
+              </div>
+            </div>
+            <script>
+            document.getElementById('demo-form').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const form = e.target;
+                const data = new FormData(form);
+                const response = await fetch('/send_demo/', {
+                    method: 'POST',
+                    body: data,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                if (response.ok) {
+                    form.reset();
+                    document.getElementById('success-modal').classList.remove('hidden');
+                } else {
+                    alert('Жөнөтүүдө ката кетти. Кийинчерээк аракет кылыңыз.');
+                }
+            });
+            document.getElementById('close-success-modal').addEventListener('click', function() {
+                document.getElementById('success-modal').classList.add('hidden');
+            });
+            </script>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white pt-16 pb-8">
+      <div class="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12">
+        <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-10 mb-10">
+          <div>
+            <div class="text-2xl font-bold mb-3">Zappis</div>
+            <p class="text-gray-400 mb-4 max-w-xs">Кызмат көрсөтүү бизнеси үчүн онлайн-жазылуу жана автоматташтыруу платформасы</p>
+            <div class="flex space-x-3">
+              <a href="https://wa.me/77022589768" class="w-9 h-9 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors" aria-label="WhatsApp"><i data-lucide="message-circle" style="width: 18px; height: 18px;"></i></a>
+              <a href="tel:+77022589768" class="w-9 h-9 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors" aria-label="Телефон"><i data-lucide="phone" style="width: 18px; height: 18px;"></i></a>
+              <a href="mailto:support@zappis.app" class="w-9 h-9 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors" aria-label="Email"><i data-lucide="mail" style="width: 18px; height: 18px;"></i></a>
+            </div>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-10">
+            <div>
+              <h3 class="font-semibold mb-3">Продукт</h3>
+              <ul class="space-y-2 text-gray-400">
+                <li><a href="/dashboard/" class="hover:text-white transition-colors">Жеке кабинет</a></li>
+                <li><a href="/settings/" class="hover:text-white transition-colors">Орнотуулар</a></li>
+                <li><a href="/employees/" class="hover:text-white transition-colors">Кызматкерлер</a></li>
+                <li><a href="/clients/" class="hover:text-white transition-colors">Кардарлар</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="font-semibold mb-3">Колдоо</h3>
+              <ul class="space-y-2 text-gray-400">
+                <li><a href="/support/" class="hover:text-white transition-colors">База билимдери</a></li>
+                <li><a href="https://t.me/ZappisSupportBot" class="hover:text-white transition-colors">Telegram аркылуу колдоо</a></li>
+                <li><a href="https://wa.me/77022589768" class="hover:text-white transition-colors">WhatsApp аркылуу колдоо</a></li>
+                <li><a href="#contact" class="hover:text-white transition-colors">Биз менен байланышуу</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="font-semibold mb-3">Кызматкерлерге</h3>
+              <ul class="space-y-2 text-gray-400">
+                <li><a href="/employee/" class="hover:text-white transition-colors">Жеке кабинет</a></li>
+                <li><a href="/employee/clients/" class="hover:text-white transition-colors">Кардарлар</a></li>
+                <li><a href="/employee/settings/" class="hover:text-white transition-colors">Орнотуулар</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+          <p class="text-gray-400 text-sm">© 2025 Zappis. Бардык укуктар корголгон.</p>
+          <div class="flex space-x-6 text-sm text-gray-400 mt-4 md:mt-0">
+            <a href="/terms/" class="hover:text-white transition-colors">Колдонуу шарттары</a>
+            <a href="/privacy/" class="hover:text-white transition-colors">Купуялык саясаты</a>
+            <a href="/cookies/" class="hover:text-white transition-colors">Cookies</a>
+          </div>
+        </div>
+      </div>
+      <div class="mt-8 text-center text-gray-400 text-sm flex items-center justify-center gap-1 footer-made-with">
+        Zappis командасы тарабынан Ошто жасалды
+        <i data-lucide="heart" class="text-red-500 mx-1 heart-outline" style="width: 16px; height: 16px;"></i>
+        менен
+      </div>
+    </footer>
+  </div>
+
+  <!-- Initialize Lucide Icons -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+    });
+  </script>
+
+  <script>
+  document.addEventListener('alpine:init', () => {
+      Alpine.data('carousel', () => ({
+          activeFeature: 'elektronnyy-zhurnal',
+          featureNames: {
+              'elektronnyy-zhurnal': 'Электронный журнал',
+              'klientskaya-baza': 'Клиентская база',
+              'sistema-loyalnosti': 'Система лояльности',
+              'statistika-biznesa': 'Статистика бизнеса',
+              'sistema-opovescheniya': 'Система оповещения'
+          },
+          scrollToFeature(id) {
+              const featureElement = document.getElementById(id);
+              if (featureElement) {
+                  const carousel = this.$refs.carousel;
+                  const carouselRect = carousel.getBoundingClientRect();
+                  const elementRect = featureElement.getBoundingClientRect();
+                  
+                  // Calculate the center position of the carousel
+                  const carouselCenter = carouselRect.left + carouselRect.width / 2;
+                  
+                  // Calculate how far the element is from the center
+                  const elementCenter = elementRect.left + elementRect.width / 2;
+                  const offset = elementCenter - carouselCenter;
+                  
+                  // Calculate the new scroll position
+                  const newScrollLeft = carousel.scrollLeft + offset;
+                  
+                  // Ensure we don't scroll beyond boundaries
+                  const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+                  const targetScroll = Math.min(Math.max(0, newScrollLeft), maxScroll);
+                  
+                  carousel.scrollTo({
+                      left: targetScroll,
+                      behavior: 'smooth'
+                  });
+                  this.activeFeature = id;
+              }
+          },
+          nextSlide() {
+              const slides = Object.keys(this.featureNames);
+              const currentIndex = slides.indexOf(this.activeFeature);
+              if (currentIndex < slides.length - 1) {
+                  this.scrollToFeature(slides[currentIndex + 1]);
+              }
+          },
+          prevSlide() {
+              const slides = Object.keys(this.featureNames);
+              const currentIndex = slides.indexOf(this.activeFeature);
+              if (currentIndex > 0) {
+                  this.scrollToFeature(slides[currentIndex - 1]);
+              }
+          },
+          updateActiveFeature() {
+              const carousel = this.$refs.carousel;
+              if (!carousel) return;
+
+              const slides = Object.keys(this.featureNames);
+              let currentActive = this.activeFeature;
+              let minDistance = Infinity;
+              const carouselRect = carousel.getBoundingClientRect();
+              const carouselCenter = carouselRect.left + carouselRect.width / 2;
+
+              slides.forEach(id => {
+                  const el = document.getElementById(id);
+                  if (el) {
+                      const rect = el.getBoundingClientRect();
+                      const elementCenter = rect.left + rect.width / 2;
+                      const distance = Math.abs(elementCenter - carouselCenter);
+
+                      if (distance < minDistance) {
+                          minDistance = distance;
+                          currentActive = id;
+                      }
+                  }
+              });
+
+              if (this.activeFeature !== currentActive) {
+                  this.activeFeature = currentActive;
+                  // Snap to the active slide
+                  const activeElement = document.getElementById(currentActive);
+                  if (activeElement) {
+                      const elementRect = activeElement.getBoundingClientRect();
+                      const elementCenter = elementRect.left + elementRect.width / 2;
+                      const offset = elementCenter - carouselCenter;
+                      const newScrollLeft = carousel.scrollLeft + offset;
+                      const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+                      const targetScroll = Math.min(Math.max(0, newScrollLeft), maxScroll);
+                      
+                      carousel.scrollTo({
+                          left: targetScroll,
+                          behavior: 'smooth'
+                      });
+                  }
+              }
+          }
+      }));
+  });
+  </script>
+</body>
+</html>

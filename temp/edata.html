@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль сотрудника - Resso CRM</title>
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Alpine.js -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Custom gradients and effects */
+        .gradient-bg {
+            background: linear-gradient(135deg, #1E40AF 0%, #3B82F6 100%);
+        }
+        .hover-scale {
+            transition: transform 0.2s;
+        }
+        .hover-scale:hover {
+            transform: scale(1.02);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+        }
+        .stat-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col" style="font-family: system-ui, -apple-system, sans-serif;">
+    <div x-data="employeeProfile()">
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between fixed top-0 left-0 right-0 z-30">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">R</span>
+                    </div>
+                    <span class="font-semibold text-gray-900">Resso</span>
+                    <span class="text-gray-400">•</span>
+                    <span class="text-gray-600">Профиль сотрудника</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button @click="window.location.href='emploee.html'"
+                        class="text-gray-600 hover:text-gray-900 flex items-center space-x-2">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                    <span>Вернуться к списку</span>
+                </button>
+                <button @click="editEmployee"
+                        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2">
+                    <i data-lucide="edit" class="w-4 h-4"></i>
+                    <span>Редактировать</span>
+                </button>
+            </div>
+        </header>
+
+        <div class="flex flex-1 overflow-hidden pt-16">
+            <!-- Sidebar -->
+            <aside class="w-64 bg-white border-r border-gray-200 p-4 space-y-6 fixed left-0 top-16 bottom-0 overflow-y-auto no-scrollbar">
+                <div>
+                    <h3 class="text-sm font-medium text-gray-900 mb-3">Навигация</h3>
+                    <div class="space-y-1">
+                        <a href="emploee.html" class="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+                            <i data-lucide="users" class="w-4 h-4"></i>
+                            <span>Все сотрудники</span>
+                        </a>
+                        <a href="#" class="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+                            <i data-lucide="calendar" class="w-4 h-4"></i>
+                            <span>График работы</span>
+                        </a>
+                        <a href="#" class="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+                            <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+                            <span>Отчеты</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-sm font-medium text-gray-900 mb-3">Сотрудники</h3>
+                    <div class="space-y-1">
+                        <template x-for="emp in employees" :key="emp.id">
+                            <a :href="'edata.html?id=' + emp.id" 
+                               :class="{'bg-blue-50 text-blue-600': emp.id === employee.id, 'text-gray-600 hover:bg-gray-50': emp.id !== employee.id}"
+                               class="flex items-center space-x-2 px-3 py-2 rounded-lg">
+                                <div class="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center">
+                                    <span class="text-white text-xs" x-text="getInitials(emp.name)"></span>
+                                </div>
+                                <span x-text="emp.name"></span>
+                            </a>
+                        </template>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-sm font-medium text-gray-900 mb-3">Фильтры</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Должность</label>
+                            <select x-model="selectedPosition"
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="all">Все должности</option>
+                                <option value="master">Мастер</option>
+                                <option value="administrator">Администратор</option>
+                                <option value="manager">Менеджер</option>
+                                <option value="stylist">Стилист</option>
+                                <option value="cosmetologist">Косметолог</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
+                            <select x-model="selectedStatus"
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="all">Все статусы</option>
+                                <option value="active">Активный</option>
+                                <option value="inactive">Неактивный</option>
+                                <option value="vacation">В отпуске</option>
+                                <option value="sick">На больничном</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-sm font-medium text-gray-900 mb-3">Статистика</h3>
+                    <div class="space-y-4">
+                        <div class="stat-card p-4 rounded-lg border border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-sm text-gray-600">Всего сотрудников</div>
+                                    <div class="text-2xl font-semibold text-gray-900" x-text="employees.length"></div>
+                                </div>
+                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i data-lucide="users" class="w-5 h-5 text-blue-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card p-4 rounded-lg border border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-sm text-gray-600">Активных</div>
+                                    <div class="text-2xl font-semibold text-gray-900" x-text="getActiveEmployeesCount()"></div>
+                                </div>
+                                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                    <i data-lucide="user-check" class="w-5 h-5 text-green-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="flex-1 overflow-auto ml-64 p-6">
+                <div class="max-w-7xl mx-auto">
+                    <!-- Profile Header -->
+                    <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                        <div class="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6">
+                            <div class="h-24 w-24 rounded-full bg-blue-600 flex items-center justify-center shadow-lg">
+                                <span class="text-white text-3xl font-medium" x-text="getInitials(employee.name)"></span>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex flex-col md:flex-row md:items-center justify-between">
+                                    <div>
+                                        <h1 class="text-2xl font-bold text-gray-900" x-text="employee.name"></h1>
+                                        <p class="text-gray-500" x-text="getPositionName(employee.position)"></p>
+                                    </div>
+                                    <div class="mt-4 md:mt-0">
+                                        <span :class="getStatusClasses(employee.status)"
+                                              class="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full"
+                                              x-text="getStatusName(employee.status)">
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    <div class="stat-card p-4 rounded-lg">
+                                        <div class="text-sm text-gray-600">Клиентов</div>
+                                        <div class="text-xl font-semibold text-gray-900" x-text="employee.clientsCount"></div>
+                                    </div>
+                                    <div class="stat-card p-4 rounded-lg">
+                                        <div class="text-sm text-gray-600">Рейтинг</div>
+                                        <div class="text-xl font-semibold text-gray-900" x-text="employee.rating"></div>
+                                    </div>
+                                    <div class="stat-card p-4 rounded-lg">
+                                        <div class="text-sm text-gray-600">Опыт</div>
+                                        <div class="text-xl font-semibold text-gray-900" x-text="employee.experience + ' лет'"></div>
+                                    </div>
+                                    <div class="stat-card p-4 rounded-lg">
+                                        <div class="text-sm text-gray-600">Зарплата</div>
+                                        <div class="text-xl font-semibold text-gray-900" x-text="employee.salary + ' ₽'"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Content -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Left Column -->
+                        <div class="lg:col-span-2 space-y-6">
+                            <!-- Contact Information -->
+                            <div class="bg-white rounded-xl shadow-sm p-6">
+                                <h2 class="text-lg font-semibold text-gray-900 mb-4">Контактная информация</h2>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                            <i data-lucide="phone" class="w-5 h-5 text-blue-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm text-gray-500">Телефон</div>
+                                            <div class="text-gray-900" x-text="employee.phone"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                            <i data-lucide="mail" class="w-5 h-5 text-blue-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm text-gray-500">Email</div>
+                                            <div class="text-gray-900" x-text="employee.email"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                            <i data-lucide="map-pin" class="w-5 h-5 text-blue-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm text-gray-500">Адрес</div>
+                                            <div class="text-gray-900" x-text="employee.address"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                            <i data-lucide="calendar" class="w-5 h-5 text-blue-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm text-gray-500">Дата рождения</div>
+                                            <div class="text-gray-900" x-text="formatDate(employee.birthDate)"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Professional Information -->
+                            <div class="bg-white rounded-xl shadow-sm p-6">
+                                <h2 class="text-lg font-semibold text-gray-900 mb-4">Профессиональная информация</h2>
+                                <div class="space-y-6">
+                                    <div>
+                                        <h3 class="text-sm font-medium text-gray-900 mb-2">Образование</h3>
+                                        <p class="text-gray-600" x-text="employee.education"></p>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-sm font-medium text-gray-900 mb-2">Навыки</h3>
+                                        <div class="flex flex-wrap gap-2">
+                                            <template x-for="skill in employee.skills.split(',')" :key="skill">
+                                                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                                                    <span x-text="skill.trim()"></span>
+                                                </span>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-sm font-medium text-gray-900 mb-2">Сертификаты</h3>
+                                        <div class="flex flex-wrap gap-2">
+                                            <template x-for="cert in employee.certifications.split(',')" :key="cert">
+                                                <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
+                                                    <span x-text="cert.trim()"></span>
+                                                </span>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-sm font-medium text-gray-900 mb-2">Языки</h3>
+                                        <div class="flex flex-wrap gap-2">
+                                            <template x-for="lang in employee.languages.split(',')" :key="lang">
+                                                <span class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">
+                                                    <span x-text="lang.trim()"></span>
+                                                </span>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-sm font-medium text-gray-900 mb-2">Достижения</h3>
+                                        <div class="flex flex-wrap gap-2">
+                                            <template x-for="achievement in employee.achievements.split(',')" :key="achievement">
+                                                <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">
+                                                    <span x-text="achievement.trim()"></span>
+                                                </span>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Work Schedule -->
+                            <div class="bg-white rounded-xl shadow-sm p-6">
+                                <h2 class="text-lg font-semibold text-gray-900 mb-4">График работы</h2>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <span class="text-gray-600">Понедельник</span>
+                                        <span class="font-medium" x-text="employee.workSchedule.monday"></span>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <span class="text-gray-600">Вторник</span>
+                                        <span class="font-medium" x-text="employee.workSchedule.tuesday"></span>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <span class="text-gray-600">Среда</span>
+                                        <span class="font-medium" x-text="employee.workSchedule.wednesday"></span>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <span class="text-gray-600">Четверг</span>
+                                        <span class="font-medium" x-text="employee.workSchedule.thursday"></span>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <span class="text-gray-600">Пятница</span>
+                                        <span class="font-medium" x-text="employee.workSchedule.friday"></span>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <span class="text-gray-600">Суббота</span>
+                                        <span class="font-medium" x-text="employee.workSchedule.saturday"></span>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <span class="text-gray-600">Воскресенье</span>
+                                        <span class="font-medium" x-text="employee.workSchedule.sunday"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Performance Reviews -->
+                            <div class="bg-white rounded-xl shadow-sm p-6">
+                                <h2 class="text-lg font-semibold text-gray-900 mb-4">Оценки эффективности</h2>
+                                <div class="space-y-4">
+                                    <template x-for="review in employee.performanceReviews" :key="review.date">
+                                        <div class="border border-gray-200 rounded-lg p-4">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <div class="text-sm text-gray-500" x-text="formatDate(review.date)"></div>
+                                                <div class="flex items-center">
+                                                    <template x-for="i in 5" :key="i">
+                                                        <i data-lucide="star" 
+                                                           :class="{'text-yellow-400': i <= review.rating, 'text-gray-300': i > review.rating}"
+                                                           class="w-4 h-4"></i>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                            <p class="text-gray-600" x-text="review.comments"></p>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <!-- Training History -->
+                            <div class="bg-white rounded-xl shadow-sm p-6">
+                                <h2 class="text-lg font-semibold text-gray-900 mb-4">История обучения</h2>
+                                <div class="space-y-4">
+                                    <template x-for="training in employee.trainingHistory" :key="training.date">
+                                        <div class="border border-gray-200 rounded-lg p-4">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <div class="text-sm text-gray-500" x-text="formatDate(training.date)"></div>
+                                                <div class="text-sm text-gray-600" x-text="training.provider"></div>
+                                            </div>
+                                            <p class="text-gray-900 font-medium" x-text="training.course"></p>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="space-y-6">
+                            <!-- Emergency Contact -->
+                            <div class="bg-white rounded-xl shadow-sm p-6">
+                                <h2 class="text-lg font-semibold text-gray-900 mb-4">Контакт для экстренной связи</h2>
+                                <div class="space-y-4">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                                            <i data-lucide="phone" class="w-5 h-5 text-red-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm text-gray-500">Телефон</div>
+                                            <div class="text-gray-900" x-text="employee.emergencyContact"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                                            <i data-lucide="user" class="w-5 h-5 text-red-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm text-gray-500">Имя контактного лица</div>
+                                            <div class="text-gray-900" x-text="employee.emergencyContactName"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                                            <i data-lucide="users" class="w-5 h-5 text-red-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm text-gray-500">Отношение</div>
+                                            <div class="text-gray-900" x-text="employee.emergencyContactRelation"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Documents -->
+                            <div class="bg-white rounded-xl shadow-sm p-6">
+                                <h2 class="text-lg font-semibold text-gray-900 mb-4">Документы</h2>
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <div>
+                                            <div class="text-sm text-gray-500">Паспорт</div>
+                                            <div class="text-gray-900" x-text="employee.passportNumber"></div>
+                                        </div>
+                                        <div class="text-sm text-gray-500" x-text="formatDate(employee.passportExpiry)"></div>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <div>
+                                            <div class="text-sm text-gray-500">ИНН</div>
+                                            <div class="text-gray-900" x-text="employee.taxId"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <div>
+                                            <div class="text-sm text-gray-500">Страховка</div>
+                                            <div class="text-gray-900" x-text="employee.insuranceNumber"></div>
+                                        </div>
+                                        <div class="text-sm text-gray-500" x-text="formatDate(employee.insuranceExpiry)"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Bank Information -->
+                            <div class="bg-white rounded-xl shadow-sm p-6">
+                                <h2 class="text-lg font-semibold text-gray-900 mb-4">Банковская информация</h2>
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <div>
+                                            <div class="text-sm text-gray-500">Номер счета</div>
+                                            <div class="text-gray-900" x-text="employee.bankAccount"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <div>
+                                            <div class="text-sm text-gray-500">Банк</div>
+                                            <div class="text-gray-900" x-text="employee.bankName"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Salary History -->
+                            <div class="bg-white rounded-xl shadow-sm p-6">
+                                <h2 class="text-lg font-semibold text-gray-900 mb-4">История зарплаты</h2>
+                                <div class="space-y-4">
+                                    <template x-for="salary in employee.salaryHistory" :key="salary.date">
+                                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                            <div>
+                                                <div class="text-sm text-gray-500" x-text="formatDate(salary.date)"></div>
+                                                <div class="text-gray-900 font-medium" x-text="salary.amount + ' ₽'"></div>
+                                            </div>
+                                            <div class="text-sm text-gray-600" x-text="salary.reason"></div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <!-- Notes -->
+                            <div class="bg-white rounded-xl shadow-sm p-6">
+                                <h2 class="text-lg font-semibold text-gray-900 mb-4">Примечания</h2>
+                                <p class="text-gray-600" x-text="employee.notes"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Alpine.js Logic -->
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('employeeProfile', () => ({
+                employee: {
+                    id: 1,
+                    name: 'Анна Петрова',
+                    position: 'master',
+                    phone: '+996 500 123 456',
+                    email: 'anna@example.com',
+                    status: 'active',
+                    experience: 5,
+                    birthDate: '1990-05-15',
+                    education: 'Высшее',
+                    skills: 'Стрижка, Окрашивание, Укладка, Кератиновое выпрямление, Ботокс, Ламинирование, Наращивание ресниц',
+                    address: 'г. Бишкек, ул. Примерная, 123',
+                    salary: 85000,
+                    schedule: 'Полный день',
+                    clientsCount: 250,
+                    rating: 4.9,
+                    passportNumber: 'AN1234567',
+                    passportIssued: '2020-01-15',
+                    passportExpiry: '2030-01-15',
+                    taxId: '123456789012',
+                    bankAccount: 'KG1234567890123456',
+                    bankName: 'Демир Банк',
+                    emergencyContact: '+996 500 987 654',
+                    emergencyContactName: 'Иван Петров',
+                    emergencyContactRelation: 'Муж',
+                    startDate: '2018-06-01',
+                    contractNumber: 'EMP-2023-001',
+                    contractExpiry: '2025-12-31',
+                    vacationDaysTotal: 28,
+                    vacationDaysUsed: 14,
+                    sickDaysTotal: 30,
+                    sickDaysUsed: 5,
+                    certifications: 'Мастер-стилист, Косметолог-эстетист, Мастер по наращиванию ресниц',
+                    languages: 'Русский, Английский, Кыргызский',
+                    achievements: 'Лучший мастер 2023, Топ-10 стилистов города',
+                    notes: 'Отличные навыки работы с клиентами, регулярно проходит повышение квалификации',
+                    equipment: 'Профессиональный набор инструментов, Косметичка',
+                    insuranceNumber: 'INS-123456',
+                    insuranceExpiry: '2024-12-31',
+                    performanceReviews: [
+                        {
+                            date: '2023-12-15',
+                            rating: 5,
+                            comments: 'Отличная работа, высокий уровень клиентского сервиса'
+                        }
+                    ],
+                    trainingHistory: [
+                        {
+                            date: '2023-10-01',
+                            course: 'Новые техники окрашивания',
+                            provider: 'L\'Oreal Professional'
+                        }
+                    ],
+                    workSchedule: {
+                        monday: '09:00-18:00',
+                        tuesday: '09:00-18:00',
+                        wednesday: '09:00-18:00',
+                        thursday: '09:00-18:00',
+                        friday: '09:00-18:00',
+                        saturday: '10:00-16:00',
+                        sunday: 'Выходной'
+                    },
+                    salaryHistory: [
+                        {
+                            date: '2023-01-01',
+                            amount: 75000,
+                            reason: 'Ежегодное повышение'
+                        },
+                        {
+                            date: '2023-07-01',
+                            amount: 85000,
+                            reason: 'Повышение квалификации'
+                        }
+                    ],
+                    documents: [
+                        {
+                            type: 'Паспорт',
+                            number: 'AN1234567',
+                            expiry: '2030-01-15'
+                        },
+                        {
+                            type: 'Медицинская книжка',
+                            number: 'MED-123456',
+                            expiry: '2024-12-31'
+                        }
+                    ]
+                },
+                employees: [
+                    {
+                        id: 1,
+                        name: 'Анна Петрова',
+                        position: 'master',
+                        status: 'active'
+                    },
+                    {
+                        id: 2,
+                        name: 'Мария Иванова',
+                        position: 'administrator',
+                        status: 'active'
+                    },
+                    {
+                        id: 3,
+                        name: 'Елена Сидорова',
+                        position: 'manager',
+                        status: 'vacation'
+                    }
+                ],
+                selectedPosition: 'all',
+                selectedStatus: 'all',
+
+                getActiveEmployeesCount() {
+                    return this.employees.filter(e => e.status === 'active').length;
+                },
+
+                getInitials(name) {
+                    return name.split(' ')
+                        .map(word => word[0])
+                        .join('')
+                        .toUpperCase();
+                },
+
+                getPositionName(position) {
+                    const positions = {
+                        'master': 'Мастер',
+                        'administrator': 'Администратор',
+                        'manager': 'Менеджер',
+                        'stylist': 'Стилист',
+                        'cosmetologist': 'Косметолог'
+                    };
+                    return positions[position] || position;
+                },
+
+                getStatusName(status) {
+                    const statuses = {
+                        'active': 'Активный',
+                        'inactive': 'Неактивный',
+                        'vacation': 'В отпуске',
+                        'sick': 'На больничном'
+                    };
+                    return statuses[status] || status;
+                },
+
+                getStatusClasses(status) {
+                    const classes = {
+                        'active': 'bg-green-100 text-green-800',
+                        'inactive': 'bg-red-100 text-red-800',
+                        'vacation': 'bg-yellow-100 text-yellow-800',
+                        'sick': 'bg-orange-100 text-orange-800'
+                    };
+                    return classes[status] || 'bg-gray-100 text-gray-800';
+                },
+
+                formatDate(date) {
+                    if (!date) return '';
+                    return new Date(date).toLocaleDateString('ru-RU', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                },
+
+                editEmployee() {
+                    window.location.href = 'emploee.html';
+                }
+            }));
+        });
+
+        // Initialize Lucide Icons
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>

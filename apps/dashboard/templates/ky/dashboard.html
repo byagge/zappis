@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zappis - Башкы меню</title>
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Alpine.js -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .menu-card {
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(10px);
+        }
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #1E40AF 0%, #3B82F6 100%);
+        }
+        .ai-insight {
+            background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+        }
+        .trend-up {
+            color: #059669;
+        }
+        .trend-down {
+            color: #DC2626;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        .spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3B82F6;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+            animation: spin 1.2s linear infinite;
+        }
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fade-in 0.3s cubic-bezier(.4,2,.6,1);
+        }
+        .dot-flashing {
+            position: relative;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #6366f1;
+            color: #6366f1;
+            animation: dotFlashing 1s infinite linear alternate;
+            margin-right: 6px;
+        }
+        @keyframes dotFlashing {
+            0% { background-color: #6366f1; }
+            50%, 100% { background-color: #e0e7ff; }
+        }
+        .typing-dots {
+            display: inline-block;
+            width: 32px;
+            height: 12px;
+            background: none;
+            position: relative;
+        }
+        .typing-dots:before, .typing-dots:after, .typing-dots span {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #a5b4fc;
+            position: absolute;
+            top: 2px;
+            animation: typing-bounce 1.2s infinite;
+        }
+        .typing-dots:before { left: 0; animation-delay: 0s; }
+        .typing-dots span { left: 12px; animation-delay: 0.2s; }
+        .typing-dots:after { left: 24px; animation-delay: 0.4s; }
+        @keyframes typing-bounce {
+            0%, 80%, 100% { transform: scale(0.8); opacity: 0.7; }
+            40% { transform: scale(1.2); opacity: 1; }
+        }
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 6px;
+            background: transparent;
+        }
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background: #e0e7ef;
+            border-radius: 4px;
+        }
+        aside::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100" style="font-family: system-ui, -apple-system, sans-serif;">
+    {% csrf_token %}
+    {% if not is_tarifed %}
+    <div id="tariff-modal" style="position:fixed;z-index:99999;top:0;left:0;width:100vw;height:100vh;background:rgba(30,41,59,0.85);display:flex;align-items:center;justify-content:center;">
+        <div class="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center flex flex-col items-center animate-fade-in">
+            <div class="mb-4">
+                <span class="inline-block bg-blue-100 text-blue-700 rounded-full px-4 py-2 text-lg font-bold mb-2">Zappis'ти тандаганыңыз үчүн рахмат!</span>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-900 mb-2">Сиздин сыноо мөөнөтүңүз аяктады</h2>
+            <p class="text-gray-700 mb-4">Zappis'ти колдонууңузду улантуу жана маалыматтарыңызды жоготпоо үчүн тариф тандаңыз.</p>
+            <div class="flex items-center justify-center mb-2">
+                <i data-lucide="zap" class="w-5 h-5 text-indigo-500 mr-1"></i>
+                <span class="text-sm text-indigo-700 font-semibold">24 саат ичинде төлөңүз жана 10% арзандатуу алыңыз.</span>
+            </div>
+            <div class="mb-4">
+                <span class="block text-lg font-semibold text-indigo-700">Тариф — 990 сом/ай</span>
+            </div>
+            <button class="mt-4 px-6 py-3 bg-indigo-600 text-white rounded-xl text-lg font-semibold shadow hover:bg-indigo-700 transition">Тариф сатып алуу</button>
+            <p class="mt-6 text-xs text-gray-400">Суроолоруңуз болсо — <a href="mailto:support@zappis.app" class="underline">бизге жазыңыз</a></p>
+        </div>
+    </div>
+    {% endif %}
+    {% if show_demo_offer %}
+    <div id="demo-offer-modal" style="position:fixed;z-index:99999;top:0;left:0;width:100vw;height:100vh;background:rgba(30,41,59,0.85);display:flex;align-items:center;justify-content:center;">
+        <div class="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center flex flex-col items-center animate-fade-in">
+            <div class="mb-4">
+                <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="eye" class="w-8 h-8 text-white"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">Zappis'ке кош келиңиз!</h2>
+                <p class="text-gray-700 mb-6">Биздин системада өнүккөн бизнес кандай көрүнгөнүн көргүңүз келеби?</p>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-3 w-full">
+                <button onclick="window.location.href='/dashboard/demo/'" class="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-lg font-semibold shadow hover:from-blue-700 hover:to-purple-700 transition">
+                    Демону көрүү
+                </button>
+                <button onclick="skipDemo()" class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-xl text-lg font-semibold hover:bg-gray-50 transition">
+                    Өткөрүп жиберүү
+                </button>
+            </div>
+            <p class="mt-4 text-xs text-gray-500">Сиз ар дайым жөндөөлөрдө демону кийинчерээк көрө аласыз</p>
+        </div>
+    </div>
+    {% endif %}
+    <div x-data="ressoCRM()">
+        <!-- Top Info Bar (над header) -->
+        <div class="w-full border-b border-blue-200 py-2 px-6 flex items-center justify-between text-sm fixed top-0 left-0 right-0 z-40 shadow-sm" style="min-height: 40px; background-color: #e0edff !important;">
+            <div class="flex items-center gap-2">
+                <div class="relative" x-data="{ helpOpen: false }">
+                    <button @click="helpOpen = !helpOpen" class="flex items-center text-blue-700 hover:underline font-medium hover:bg-blue-50 px-3 py-1.5 rounded-lg transition-colors">
+                    <i data-lucide="headphones" class="w-4 h-4 mr-1"></i>
+                    Нужна помощь? Свяжитесь с нами
+                        <i data-lucide="chevron-down" class="w-4 h-4 ml-1 transition-transform" :class="helpOpen ? 'rotate-180' : ''"></i>
+                    </button>
+                    
+                    <!-- Dropdown Menu -->
+                    <div x-show="helpOpen" 
+                         @click.away="helpOpen = false"
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 scale-95"
+                         x-transition:enter-end="opacity-100 scale-100"
+                         x-transition:leave="transition ease-in duration-150"
+                         x-transition:leave-start="opacity-100 scale-100"
+                         x-transition:leave-end="opacity-0 scale-95"
+                         class="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
+                        
+                        <div class="px-4 py-3 border-b border-gray-100">
+                            <h3 class="text-sm font-semibold text-gray-900">Биз менен байланышыңыз</h3>
+                            <p class="text-xs text-gray-500 mt-1">24/7 колдоо кызматы</p>
+                        </div>
+                        
+                        <div class="py-2">
+                            <a href="https://t.me/zappis_support" target="_blank" 
+                               class="flex items-center px-4 py-3 hover:bg-blue-50 transition-colors group">
+                                <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-600 transition-colors">
+                                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="text-sm font-medium text-gray-900">Telegram</div>
+                                    <div class="text-xs text-gray-500">@zappis_support</div>
+                                </div>
+                                <i data-lucide="external-link" class="w-4 h-4 text-gray-400 group-hover:text-blue-500 transition-colors"></i>
+                            </a>
+                            
+                            <a href="https://wa.me/996700123456" target="_blank" 
+                               class="flex items-center px-4 py-3 hover:bg-green-50 transition-colors group">
+                                <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center mr-3 group-hover:bg-green-600 transition-colors">
+                                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="text-sm font-medium text-gray-900">WhatsApp</div>
+                                    <div class="text-xs text-gray-500">+996 700 123 456</div>
+                                </div>
+                                <i data-lucide="external-link" class="w-4 h-4 text-gray-400 group-hover:text-green-500 transition-colors"></i>
+                            </a>
+                        </div>
+                        
+                        <div class="px-4 py-2 border-t border-gray-100">
+                            <a href="mailto:support@zappis.app" class="flex items-center text-sm text-gray-600 hover:text-blue-600 transition-colors">
+                                <i data-lucide="mail" class="w-4 h-4 mr-2"></i>
+                                Email аркылуу жазуу
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                {% if days_left is not None and days_left > 0 %}
+                    <span class="text-gray-600">{{ days_left }} күн сыноо мөөнөтү калды</span>
+                {% elif days_left == 0 %}
+                    <span class="text-red-600">Сыноо мөөнөтү аяктады</span>
+                {% endif %}
+                {% if not is_tarifed %}
+                    <a href="/buy/" class="bg-blue-900 text-white px-4 py-1.5 rounded font-semibold hover:bg-blue-800 transition" style="font-size: 15px;">Тариф сатып алуу</a>
+                {% endif %}
+                <!-- Языковой переключатель -->
+                <div class="ml-2 flex items-center gap-1">
+                    <a href="?lang=ru" class="inline-flex items-center px-2 py-1 rounded hover:bg-blue-100 transition {% if current_language == 'ru' %}font-bold text-blue-600{% endif %}">
+                        <img src="https://flagcdn.com/16x12/ru.png" class="mr-1" width="16" height="12" alt="Русский"> Рус
+                    </a>
+                    <a href="?lang=ky" class="inline-flex items-center px-2 py-1 rounded hover:bg-blue-100 transition {% if current_language == 'ky' %}font-bold text-blue-600{% endif %}">
+                        <img src="https://flagcdn.com/16x12/kg.png" class="mr-1" width="16" height="12" alt="Кыргызча"> Кырг
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-200 py-4 fixed top-10 left-0 right-0 z-30">
+            <div class="flex items-center justify-between px-4 sm:px-6">
+                <div class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-xl">Z</span>
+                    </div>
+                    <span class="text-xl font-semibold text-gray-900">Zappis</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/notifications/" class="text-gray-600 hover:text-gray-900 relative">
+                        <i data-lucide="bell" class="w-5 h-5"></i>
+                    </a>
+                    <a href="/settings/" class="text-gray-600 hover:text-gray-900">
+                        <i data-lucide="settings" class="w-5 h-5"></i>
+                    </a>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                            <span class="text-white text-sm" x-text="(overview.user_name || 'П').charAt(0).toUpperCase()"></span>
+                        </div>
+                        <!-- Username removed -->
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white border-r border-gray-200 p-4 space-y-6 fixed left-0 top-28 bottom-0 overflow-y-auto scrollbar-none z-20" style="scrollbar-width: none; -ms-overflow-style: none;">
+            <!-- Навигация -->
+            <div>
+                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Навигация</h3>
+                <nav class="space-y-1">
+                    <a href="/dashboard/" class="flex items-center space-x-3 px-3 py-2 rounded-lg bg-blue-50 text-blue-600">
+                        <i data-lucide="home" class="w-5 h-5"></i>
+                        <span>Башкы бет</span>
+                    </a>
+                    <a href="/employees/" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50">
+                        <i data-lucide="users" class="w-5 h-5"></i>
+                        <span>Кызматкерлер</span>
+                    </a>
+                    <a href="/clients/" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50">
+                        <i data-lucide="user-plus" class="w-5 h-5"></i>
+                        <span>Клиенттер</span>
+                    </a>
+                    <a href="/schedules/" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50">
+                        <i data-lucide="calendar" class="w-5 h-5"></i>
+                        <span>Жазылуулар</span>
+                    </a>
+                    <a href="/services/" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50">
+                        <i data-lucide="scissors" class="w-5 h-5"></i>
+                        <span>Кызматтар</span>
+                    </a>
+                    <a href="/settings/" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50">
+                        <i data-lucide="settings" class="w-5 h-5"></i>
+                        <span>Жөндөөлөр</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Статистика -->
+            <div>
+                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Статистика</h3>
+                <div class="space-y-3">
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-sm text-gray-600">Бүгүнкү жазылуулар</span>
+                            <span class="text-sm font-medium text-gray-900" x-text="overview.appointments_today || '0'"></span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-1.5">
+                            <div class="bg-blue-600 h-1.5 rounded-full" :style="`width: ${Math.min((overview.appointments_today || 0) / 40 * 100, 100)}%`"></div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-sm text-gray-600">Жалпы клиенттер</span>
+                            <span class="text-sm font-medium text-gray-900" x-text="overview.total_clients || '0'"></span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-1.5">
+                            <div class="bg-green-600 h-1.5 rounded-full" :style="`width: ${Math.min((overview.total_clients || 0) / 200 * 100, 100)}%`"></div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-sm text-gray-600">Кызматкерлер</span>
+                            <span class="text-sm font-medium text-gray-900" x-text="overview.total_employees || '0'"></span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-1.5">
+                            <div class="bg-purple-600 h-1.5 rounded-full" :style="`width: ${Math.min((overview.total_employees || 0) / 20 * 100, 100)}%`"></div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-sm text-gray-600">Кызматтар</span>
+                            <span class="text-sm font-medium text-gray-900" x-text="overview.total_services || '0'"></span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-1.5">
+                            <div class="bg-yellow-600 h-1.5 rounded-full" :style="`width: ${Math.min((overview.total_services || 0) / 50 * 100, 100)}%`"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Фильтры -->
+            <div>
+                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Фильтры</h3>
+                <div class="space-y-2">
+                    <button class="w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50">
+                        <i data-lucide="filter" class="w-4 h-4"></i>
+                        <span>Бардык жазуулар</span>
+                    </button>
+                    <button class="w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50">
+                        <i data-lucide="clock" class="w-4 h-4"></i>
+                        <span>Бүгүн</span>
+                    </button>
+                    <button class="w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50">
+                        <i data-lucide="calendar" class="w-4 h-4"></i>
+                        <span>Бир жумага</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-auto ml-64 p-6 pt-36">
+            <!-- Welcome Section -->
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 mb-2" x-text="`Кош келиңиз, ${overview.user_name || 'Колдонуучу'}!`"></h1>
+                    <p class="text-gray-600">Бүгүн бизнесиңизде болуп жаткан окуялар</p>
+                </div>
+                <div class="flex space-x-4">
+                    <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        <span>Жаңы жазуу</span>
+                    </button>
+                    <button class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center space-x-2">
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                        <span>Отчет</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl p-6 border border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600">Жалпы клиенттер</p>
+                            <p class="text-2xl font-semibold text-gray-900" x-text="overview.total_clients || '0'"></p>
+                            <p class="text-sm trend-up flex items-center" :class="overview.clients_growth >= 0 ? 'trend-up' : 'trend-down'">
+                                <i :data-lucide="overview.clients_growth >= 0 ? 'trending-up' : 'trending-down'" class="w-4 h-4 mr-1"></i>
+                                <span x-text="`${Math.abs(overview.clients_growth || 0)}% ай ичинде`"></span>
+                            </p>
+                        </div>
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i data-lucide="users" class="w-6 h-6 text-blue-600"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-6 border border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600">Бүгүнкү жазылуулар</p>
+                            <p class="text-2xl font-semibold text-gray-900" x-text="overview.appointments_today || '0'"></p>
+                            <p class="text-sm trend-up flex items-center" :class="overview.appointments_growth >= 0 ? 'trend-up' : 'trend-down'">
+                                <i :data-lucide="overview.appointments_growth >= 0 ? 'trending-up' : 'trending-down'" class="w-4 h-4 mr-1"></i>
+                                <span x-text="`${Math.abs(overview.appointments_growth || 0)}% кечээки күнгө салыштырмалуу`"></span>
+                            </p>
+                        </div>
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                            <i data-lucide="calendar" class="w-6 h-6 text-green-600"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-6 border border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600">Айлык киреше</p>
+                            <p class="text-2xl font-semibold text-gray-900" x-text="`⃀ ${(overview.monthly_revenue || 0).toLocaleString()}`"></p>
+                            <p class="text-sm trend-up flex items-center" :class="overview.revenue_growth >= 0 ? 'trend-up' : 'trend-down'">
+                                <i :data-lucide="overview.revenue_growth >= 0 ? 'trending-up' : 'trending-down'" class="w-4 h-4 mr-1"></i>
+                                <span x-text="`${Math.abs(overview.revenue_growth || 0)}% өткөн айга салыштырмалуу`"></span>
+                            </p>
+                        </div>
+                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                            <i data-lucide="dollar-sign" class="w-6 h-6 text-purple-600"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-6 border border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600">Орточо чек</p>
+                            <p class="text-2xl font-semibold text-gray-900" x-text="`⃀ ${(overview.avg_ticket || 0).toLocaleString()}`"></p>
+                            <p class="text-sm trend-down flex items-center" :class="overview.avg_ticket_change >= 0 ? 'trend-up' : 'trend-down'">
+                                <i :data-lucide="overview.avg_ticket_change >= 0 ? 'trending-up' : 'trending-down'" class="w-4 h-4 mr-1"></i>
+                                <span x-text="`${Math.abs(overview.avg_ticket_change || 0)}% өткөн айга салыштырмалуу`"></span>
+                            </p>
+                        </div>
+                        <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                            <i data-lucide="receipt" class="w-6 h-6 text-yellow-600"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Insights and Analytics -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <!-- AI Insights -->
+                <div class="lg:col-span-1 space-y-6 flex flex-col h-full min-h-[500px]">
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-gray-900">AI кеңештер</h3>
+                            <button 
+                                @click="updateAIInsights()" 
+                                :disabled="updatingInsights"
+                                class="px-4 py-2 bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-500 text-white rounded-xl shadow-md hover:from-purple-700 hover:to-blue-600 hover:shadow-lg transition-all duration-200 flex items-center space-x-2 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2"
+                                :class="{ 'opacity-60 cursor-not-allowed': updatingInsights }"
+                            >
+                                <i data-lucide="refresh-cw" class="w-5 h-5" :class="updatingInsights ? 'animate-spin-slow' : ''"></i>
+                                <span x-text="updatingInsights ? 'Жаңыртуу...' : 'Жаңыртуу'"></span>
+                            </button>
+                        </div>
+                        <div class="space-y-4">
+                            <div x-show="aiInsightsLoading" class="text-center py-8 text-gray-500">
+                                <div class="flex flex-col items-center">
+                                    <div class="spinner mb-2"></div>
+                                    <p>AI кеңештер жүктөлүүдө...</p>
+                                </div>
+                            </div>
+                            <div x-show="!aiInsightsLoading && aiInsightsError && aiInsights.length === 0" class="text-center py-8 text-gray-500">
+                                <i data-lucide="alert-circle" class="w-12 h-12 mx-auto mb-2 text-gray-300"></i>
+                                <p>AI кеңештер убактылуу жеткиликсиз</p>
+                            </div>
+                            <template x-for="(insight, idx) in aiInsights" :key="idx">
+                                <div class="ai-insight text-white rounded-lg p-4">
+                                    <div class="flex items-start space-x-3">
+                                        <i :data-lucide="insight.icon" class="w-5 h-5 flex-shrink-0"></i>
+                                        <div>
+                                            <p class="font-medium" x-text="insight.title"></p>
+                                            <span class="text-sm opacity-90 inline" x-text="insight.description"></span>
+                                            <a href="#" class="underline ml-2 text-white/80 text-sm">Толугураак</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                            <!-- Кнопка 'Больше советов?' -->
+                            <div class="mt-6 flex justify-center">
+                                <button 
+                                    class="px-4 py-2 bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-400 text-white rounded-xl shadow hover:from-purple-600 hover:to-blue-500 transition-all duration-200 flex items-center space-x-2 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-purple-400 focus:ring-offset-2"
+                                    @click="alert('Жакында жеткиликтүү болот!')"
+                                >
+                                    <i data-lucide="lightbulb" class="w-5 h-5"></i>
+                                    <span>Дагы кеңештер?</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white/70 backdrop-blur-md rounded-3xl border border-gray-200 p-0 flex flex-col flex-1 min-h-0">
+                        <div class="flex items-center px-8 pt-6 pb-3">
+                            <div class="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center border border-gray-300 mr-3">
+                                <i data-lucide="bot" class="w-4 h-4 text-indigo-500"></i>
+                            </div>
+                            <span class="text-lg font-bold text-gray-900 tracking-tight">AI Ассистент</span>
+                        </div>
+                        <div class="flex-1 min-h-0 max-h-96 overflow-y-auto px-6 pb-3 bg-transparent rounded-3xl scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent" x-ref="scroll" style="min-height:120px;">
+                            <template x-if="chat.length === 0">
+                                <div class="flex items-center justify-center h-full">
+                                    <div class="bg-white/80 rounded-2xl px-8 py-6 text-gray-400 text-center font-medium">Ассистентке суроо бериңиз!</div>
+                                </div>
+                            </template>
+                            <template x-for="(msg, idx) in chat" :key="idx">
+                                <div class="mb-4 flex items-end transition-all duration-200" :class="msg.role === 'user' ? 'justify-end' : 'justify-start'">
+                                    <template x-if="msg.role === 'assistant'">
+                                        <div class="flex items-end">
+                                            <div class="w-6 h-6 bg-indigo-50 rounded-full flex items-center justify-center border border-gray-300 mr-2">
+                                                <i data-lucide='sparkles' class='w-4 h-4 text-indigo-700'></i>
+                                            </div>
+                                            <div class="bg-white text-gray-900 rounded-xl rounded-bl-md border border-gray-200 px-5 py-3 max-w-md text-base animate-fade-in font-normal">
+                                                <span x-text="msg.text"></span>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <template x-if="msg.role === 'user'">
+                                        <div class="flex items-end flex-row-reverse">
+                                            <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center border border-gray-300 ml-2">
+                                                <span class="text-indigo-600 font-bold text-base select-none" x-text="(overview.user_name || 'U').charAt(0).toUpperCase()"></span>
+                                            </div>
+                                            <div class="bg-indigo-50 text-indigo-900 rounded-xl rounded-br-md px-5 py-3 max-w-md text-base animate-fade-in font-normal border border-indigo-100">
+                                                <span x-text="msg.text"></span>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                            <template x-if="typing">
+                                <div class="mb-4 flex items-end justify-start">
+                                    <div class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center border border-gray-300 mr-2">
+                                        <i data-lucide='bot' class='w-4 h-4 text-indigo-500'></i>
+                                    </div>
+                                    <div class="bg-white text-gray-400 rounded-xl rounded-bl-md border border-gray-200 px-5 py-3 max-w-md text-base animate-fade-in flex items-center gap-2">
+                                        <span class="typing-dots"></span>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                        <form class="w-full flex gap-3 p-6 border-t border-gray-200 bg-white/60 rounded-b-3xl" @submit.prevent="send()">
+                            <div class="relative flex-1">
+                                <input type="text" x-model="input" placeholder="Билдирүү жазыңыз..." class="w-full pl-4 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-200 outline-none bg-white text-base" autocomplete="off" x-ref="input" @keydown.enter.exact.prevent="send()" @keydown.enter.shift="" />
+                            </div>
+                            <button type="submit" class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full hover:bg-indigo-200 active:bg-indigo-300 transition-all flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-indigo-200">
+                                <i data-lucide="send" class="w-5 h-5"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Analytics Charts -->
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-lg font-semibold text-gray-900">Киреше, жазылуулар жана клиенттердин динамикасы</h3>
+                            <div class="flex space-x-2">
+                                <button 
+                                    @click="updateChart()" 
+                                    class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 text-sm"
+                                >
+                                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                                    <span>Жаңыртуу</span>
+                                </button>
+                                <select class="border border-gray-300 rounded-lg px-3 py-1 text-sm" x-model="period" @change="updateChart()">
+                                    <option value="week">Бир жумага</option>
+                                    <option value="month">Бир айга</option>
+                                    <option value="year">Бир жылга</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <div x-show="loading" class="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10">
+                                <div class="flex items-center space-x-2">
+                                    <div class="spinner"></div>
+                                    <span class="text-gray-600">Маалымат жүктөлүүдө...</span>
+                                </div>
+                            </div>
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Популярные услуги и топ клиенты -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Популярные услуги -->
+                        <div class="bg-white rounded-xl p-6 border border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Популярдуу кызматтар</h3>
+                            <div class="space-y-3">
+                                <template x-for="service in popularServices" :key="service.id">
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                                <i data-lucide="scissors" class="w-4 h-4 text-blue-600"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-900" x-text="service.name"></p>
+                                                <p class="text-xs text-gray-500" x-text="service.category"></p>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-sm font-medium text-gray-900" x-text="`⃀${service.price?.toLocaleString() || 0}`"></p>
+                                            <p class="text-xs text-gray-500" x-text="`${service.booking_count || 0} записей`"></p>
+                                        </div>
+                                    </div>
+                                </template>
+                                <div x-show="popularServices.length === 0" class="text-center py-4 text-gray-500">
+                                    <p class="text-sm">Популярдуу кызматтар боюнча маалымат жок</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Топ клиенты -->
+                        <div class="bg-white rounded-xl p-6 border border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Топ клиенттер</h3>
+                            <div class="space-y-3">
+                                <template x-for="client in topClients" :key="client.id">
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                                <i data-lucide="user" class="w-4 h-4 text-green-600"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-medium text-gray-900" x-text="client.name"></p>
+                                                <p class="text-xs text-gray-500" x-text="client.phone"></p>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-sm font-medium text-gray-900" x-text="`⃀${client.total_spent?.toLocaleString() || 0}`"></p>
+                                            <p class="text-xs text-gray-500" x-text="`${client.booking_count || 0} визитов`"></p>
+                                        </div>
+                                    </div>
+                                </template>
+                                <div x-show="topClients.length === 0" class="text-center py-4 text-gray-500">
+                                    <p class="text-sm">Клиенттер боюнча маалымат жок</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Menu Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Сотрудники -->
+                <a href="/employees/" class="menu-card bg-white rounded-xl p-6 border border-gray-200 hover:border-blue-500">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <i data-lucide="users" class="w-6 h-6 text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Кызматкерлер</h3>
+                            <p class="text-gray-600">Персоналды жана графиктерди башкаруу</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center text-sm text-gray-500">
+                        <i data-lucide="user-check" class="w-4 h-4 mr-1"></i>
+                        <span x-text="`${overview.total_employees || 0} активдүү кызматкер`"></span>
+                    </div>
+                </a>
+
+                <!-- Клиенты -->
+                <a href="/clients/" class="menu-card bg-white rounded-xl p-6 border border-gray-200 hover:border-blue-500">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                            <i data-lucide="user-plus" class="w-6 h-6 text-green-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Клиенттер</h3>
+                            <p class="text-gray-600">Клиенттер базасы жана баруулар тарыхы</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center text-sm text-gray-500">
+                        <i data-lucide="trending-up" class="w-4 h-4 mr-1"></i>
+                        <span x-text="`${overview.total_clients || 0} клиент базада`"></span>
+                    </div>
+                </a>
+
+                <!-- Записи -->
+                <a href="/schedules/" class="menu-card bg-white rounded-xl p-6 border border-gray-200 hover:border-blue-500">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                            <i data-lucide="calendar" class="w-6 h-6 text-purple-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Жазылуулар</h3>
+                            <p class="text-gray-600">Жазылууларды жана расписаниени башкаруу</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center text-sm text-gray-500">
+                        <i data-lucide="clock" class="w-4 h-4 mr-1"></i>
+                        <span x-text="`${overview.appointments_today || 0} жазылуу бүгүн`"></span>
+                    </div>
+                </a>
+
+                <!-- Услуги -->
+                <a href="/services/" class="menu-card bg-white rounded-xl p-6 border border-gray-200 hover:border-blue-500">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                            <i data-lucide="scissors" class="w-6 h-6 text-yellow-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Кызматтар</h3>
+                            <p class="text-gray-600">Кызматтар каталогу жана прайс-лист</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center text-sm text-gray-500">
+                        <i data-lucide="star" class="w-4 h-4 mr-1"></i>
+                        <span x-text="`${overview.total_services || 0} активдүү кызмат`"></span>
+                    </div>
+                </a>
+
+                <!-- Настройки -->
+                <a href="/settings/" class="menu-card bg-white rounded-xl p-6 border border-gray-200 hover:border-blue-500">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                            <i data-lucide="settings" class="w-6 h-6 text-red-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Жөндөөлөр</h3>
+                            <p class="text-gray-600">Системанын жана профилдин жөндөөлөрү</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center text-sm text-gray-500">
+                        <i data-lucide="trending-up" class="w-4 h-4 mr-1"></i>
+                        <span x-text="`Киреше: ⃀ ${(overview.monthly_revenue || 0).toLocaleString()} ай ичинде`"></span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="mt-8 bg-white rounded-xl p-6 border border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Акыркы аракеттер</h3>
+                <div class="space-y-4">
+                    <template x-for="activity in recentActivities" :key="activity.id">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center" 
+                                 :class="{
+                                     'bg-blue-100': activity.action.includes('клиент'),
+                                     'bg-green-100': activity.action.includes('запись'),
+                                     'bg-purple-100': activity.action.includes('сотрудник'),
+                                     'bg-yellow-100': activity.action.includes('платеж')
+                                 }">
+                                <i :data-lucide="activity.action.includes('клиент') ? 'user-plus' : 
+                                               activity.action.includes('запись') ? 'calendar' : 
+                                               activity.action.includes('сотрудник') ? 'users' : 
+                                               'dollar-sign'" 
+                                   class="w-5 h-5"
+                                   :class="{
+                                       'text-blue-600': activity.action.includes('клиент'),
+                                       'text-green-600': activity.action.includes('запись'),
+                                       'text-purple-600': activity.action.includes('сотрудник'),
+                                       'text-yellow-600': activity.action.includes('платеж')
+                                   }"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm text-gray-900" x-text="activity.action"></p>
+                                <p class="text-xs text-gray-500" x-text="activity.time_ago"></p>
+                                <template x-if="activity.extra">
+                                    <div class="mt-1 text-xs text-gray-400">
+                                        <template x-if="activity.extra.client">
+                                            <span x-text="`Клиент: ${activity.extra.client}`"></span>
+                                        </template>
+                                        <template x-if="activity.extra.amount">
+                                            <span x-text="` | Сумма: ⃀${activity.extra.amount.toLocaleString()}`"></span>
+                                        </template>
+                                        <template x-if="activity.extra.date">
+                                            <span x-text="` | ${activity.extra.date} ${activity.extra.time || ''}`"></span>
+                                        </template>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                    <div x-show="recentActivities.length === 0" class="text-center py-8 text-gray-500">
+                        <i data-lucide="activity" class="w-12 h-12 mx-auto mb-2 text-gray-300"></i>
+                        <p>Акыркы аракеттер жок</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Initialize Lucide Icons -->
+    <script>
+        // Alpine.js Component
+        function ressoCRM() {
+            return {
+                overview: {},
+                aiInsights: [],
+                aiInsightsError: false,
+                aiInsightsLoading: true,
+                aiInsightsPolling: null,
+                recentActivities: [],
+                popularServices: [],
+                topClients: [],
+                revenueChart: null,
+                loading: false,
+                updatingInsights: false,
+                period: 'week',
+                chartRequestId: 0,
+                chat: [],
+                input: '',
+                typing: false,
+                placeholderReplies: [
+                    'Эта функция находится в разработке.',
+                    'Скоро я смогу ответить на ваш вопрос!',
+                    'AI Ассистент скоро будет доступен.',
+                    'Спасибо за вопрос! Я скоро научусь отвечать.',
+                    'Функция в процессе разработки.'
+                ],
+
+                async init() {
+                    await this.loadDashboardData();
+                    await this.initChart();
+                    lucide.createIcons();
+                },
+
+                async loadDashboardData() {
+                    try {
+                        this.loading = true;
+                        
+                        // Загружаем общую статистику
+                        const overviewResponse = await fetch('/dashboard/overview/', {
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Content-Type': 'application/json',
+                            }
+                        });
+                        if (overviewResponse.ok) {
+                            this.overview = await overviewResponse.json();
+                            console.log('DEBUG: Данные overview получены:', this.overview);
+                            console.log('DEBUG: Имя пользователя:', this.overview.user_name);
+                        } else {
+                            console.error('Ошибка загрузки overview:', overviewResponse.status);
+                        }
+
+                        // Загружаем ИИ-советы через новую функцию
+                        this.loadAIInsights();
+
+                        // Загружаем последние действия
+                        const activityResponse = await fetch('/dashboard/recent-activity/', {
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Content-Type': 'application/json',
+                            }
+                        });
+                        if (activityResponse.ok) {
+                            const activityData = await activityResponse.json();
+                            this.recentActivities = activityData.activities || [];
+                        }
+
+                        // Загружаем популярные услуги
+                        const servicesResponse = await fetch('/dashboard/popular-services/', {
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Content-Type': 'application/json',
+                            }
+                        });
+                        if (servicesResponse.ok) {
+                            this.popularServices = await servicesResponse.json();
+                        }
+
+                        // Загружаем топ клиентов
+                        const clientsResponse = await fetch('/dashboard/top-clients/', {
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Content-Type': 'application/json',
+                            }
+                        });
+                        if (clientsResponse.ok) {
+                            this.topClients = await clientsResponse.json();
+                        }
+
+                    } catch (error) {
+                        console.error('Ошибка загрузки данных:', error);
+                        // Устанавливаем значения по умолчанию
+                        this.overview = {
+                            total_clients: 0,
+                            appointments_today: 0,
+                            monthly_revenue: 0,
+                            avg_ticket: 0,
+                            clients_growth: 0,
+                            revenue_growth: 0,
+                            appointments_growth: 0,
+                            avg_ticket_change: 0,
+                            total_employees: 0,
+                            total_services: 0,
+                            active_businesses: 0
+                        };
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                async initChart() {
+                    this.loading = true;
+                    this.chartRequestId++;
+                    const currentRequestId = this.chartRequestId;
+                    let chartData = {
+                        labels: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
+                        revenue: [0, 0, 0, 0, 0, 0, 0],
+                        bookings: [0, 0, 0, 0, 0, 0, 0],
+                        clients: [0, 0, 0, 0, 0, 0, 0]
+                    };
+                    try {
+                        const chartResponse = await fetch(`/dashboard/revenue-chart/?period=${this.period}`, {
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Content-Type': 'application/json',
+                            }
+                        });
+                        if (currentRequestId !== this.chartRequestId) return;
+                        if (chartResponse.ok) {
+                            const responseData = await chartResponse.json();
+                            if (responseData.labels && responseData.revenue) {
+                                chartData = {
+                                    labels: responseData.labels,
+                                    revenue: responseData.revenue,
+                                    bookings: responseData.bookings,
+                                    clients: responseData.clients
+                                };
+                            }
+                        } else {
+                            // Ошибка, но всё равно создаём пустой график
+                            console.error('Ошибка загрузки данных графика:', chartResponse.status);
+                        }
+                    } catch (error) {
+                        if (currentRequestId !== this.chartRequestId) return;
+                        console.error('Ошибка создания графика:', error);
+                        // Даже при ошибке создаём пустой график
+                    } finally {
+                        if (currentRequestId === this.chartRequestId) {
+                            // Уничтожаем только если график существует
+                            if (this.revenueChart) {
+                                this.revenueChart.destroy();
+                            }
+                            const ctx = document.getElementById('revenueChart');
+                            if (ctx) {
+                                this.revenueChart = new Chart(ctx, {
+                                    type: 'line',
+                                    data: {
+                                        labels: chartData.labels,
+                                        datasets: [
+                                            {
+                                                label: 'Киреше (⃀)',
+                                                data: chartData.revenue,
+                                                borderColor: '#3B82F6',
+                                                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                                borderWidth: 2,
+                                                tension: 0.4,
+                                                fill: false,
+                                                yAxisID: 'y',
+                                                pointBackgroundColor: '#3B82F6',
+                                                pointBorderColor: '#ffffff',
+                                                pointBorderWidth: 2,
+                                                pointRadius: 4,
+                                                pointHoverRadius: 6
+                                            },
+                                            {
+                                                label: 'Жазылуулар',
+                                                data: chartData.bookings,
+                                                borderColor: '#10B981',
+                                                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                                borderWidth: 2,
+                                                tension: 0.4,
+                                                fill: false,
+                                                yAxisID: 'y1',
+                                                pointBackgroundColor: '#10B981',
+                                                pointBorderColor: '#ffffff',
+                                                pointBorderWidth: 2,
+                                                pointRadius: 4,
+                                                pointHoverRadius: 6
+                                            },
+                                            {
+                                                label: 'Жаңы кардарлар',
+                                                data: chartData.clients,
+                                                borderColor: '#F59E0B',
+                                                backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                                                borderWidth: 2,
+                                                tension: 0.4,
+                                                fill: false,
+                                                yAxisID: 'y1',
+                                                pointBackgroundColor: '#F59E0B',
+                                                pointBorderColor: '#ffffff',
+                                                pointBorderWidth: 2,
+                                                pointRadius: 4,
+                                                pointHoverRadius: 6
+                                            }
+                                        ]
+                                    },
+                                    options: {
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                        interaction: {
+                                            mode: 'index',
+                                            intersect: false,
+                                        },
+                                        plugins: {
+                                            legend: {
+                                                display: true,
+                                                position: 'top',
+                                                labels: {
+                                                    usePointStyle: true,
+                                                    padding: 20
+                                                }
+                                            },
+                                            tooltip: {
+                                                callbacks: {
+                                                    label: function(context) {
+                                                        if (context.dataset.label === 'Киреше (⃀)') {
+                                                            return 'Киреше: ⃀' + context.parsed.y.toLocaleString('ru-RU');
+                                                        } else if (context.dataset.label === 'Жазылуулар') {
+                                                            return 'Жазылуулар: ' + context.parsed.y + ' даана';
+                                                        } else {
+                                                            return 'Жаңы кардарлар: ' + context.parsed.y + ' адам';
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        scales: {
+                                            x: {
+                                                grid: {
+                                                    display: false
+                                                }
+                                            },
+                                            y: {
+                                                type: 'linear',
+                                                display: true,
+                                                position: 'left',
+                                                title: {
+                                                    display: true,
+                                                    text: 'Киреше (⃀)'
+                                                },
+                                                grid: {
+                                                    display: true,
+                                                    drawBorder: false,
+                                                    color: 'rgba(0, 0, 0, 0.1)'
+                                                },
+                                                ticks: {
+                                                    callback: function(value) {
+                                                        return '⃀' + value.toLocaleString('ru-RU');
+                                                    }
+                                                }
+                                            },
+                                            y1: {
+                                                type: 'linear',
+                                                display: true,
+                                                position: 'right',
+                                                title: {
+                                                    display: true,
+                                                    text: 'Саны'
+                                                },
+                                                grid: {
+                                                    drawOnChartArea: false,
+                                                },
+                                                ticks: {
+                                                    callback: function(value) {
+                                                        return value + ' шт.';
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                            this.loading = false;
+                        }
+                    }
+                },
+
+                formatCurrency(amount) {
+                    return new Intl.NumberFormat('ru-RU', {
+                        style: 'currency',
+                        currency: 'RUB'
+                    }).format(amount);
+                },
+
+                async loadAIInsights() {
+                    try {
+                        this.aiInsightsLoading = true;
+                        this.aiInsightsError = false;
+                        const response = await fetch('/dashboard/ai-insights/', {
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Content-Type': 'application/json',
+                            }
+                        });
+                        if (!response.ok) throw new Error('Network error');
+                        const data = await response.json();
+                        if (data.pending) {
+                            this.aiInsights = [];
+                            this.aiInsightsLoading = true;
+                            if (!this.aiInsightsPolling) {
+                                this.aiInsightsPolling = setInterval(() => {
+                                    this.loadAIInsights();
+                                }, 3000);
+                            }
+                        } else {
+                            this.aiInsights = data.advices;
+                            this.aiInsightsLoading = false;
+                            this.aiInsightsError = false;
+                            if (this.aiInsightsPolling) {
+                                clearInterval(this.aiInsightsPolling);
+                                this.aiInsightsPolling = null;
+                            }
+                            this.$nextTick(() => lucide.createIcons());
+                        }
+                    } catch (error) {
+                        this.aiInsightsError = true;
+                        this.aiInsightsLoading = false;
+                        if (this.aiInsightsPolling) {
+                            clearInterval(this.aiInsightsPolling);
+                            this.aiInsightsPolling = null;
+                        }
+                    }
+                },
+
+                async updateAIInsights() {
+                    this.updatingInsights = true;
+                    this.aiInsightsError = false;
+                    this.aiInsightsLoading = true;
+                    if (this.aiInsightsPolling) {
+                        clearInterval(this.aiInsightsPolling);
+                        this.aiInsightsPolling = null;
+                    }
+                    try {
+                        const insightsResponse = await fetch('/dashboard/ai-insights/?force_update=true', {
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Content-Type': 'application/json',
+                            }
+                        });
+                        if (insightsResponse.ok) {
+                            const data = await insightsResponse.json();
+                            this.aiInsights = data.advices;
+                            this.aiInsightsError = false;
+                            this.aiInsightsLoading = false;
+                            this.$nextTick(() => lucide.createIcons());
+                        } else {
+                            this.aiInsightsError = true;
+                            this.aiInsightsLoading = false;
+                        }
+                    } catch (error) {
+                        this.aiInsightsError = true;
+                        this.aiInsightsLoading = false;
+                    } finally {
+                        this.updatingInsights = false;
+                    }
+                },
+
+                async updateChart() {
+                    try {
+                        console.log('Обновление графика...');
+                        this.loading = true;
+                        await this.initChart();
+                        console.log('График успешно обновлен');
+                    } catch (error) {
+                        console.error('Ошибка обновления графика:', error);
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                async refreshAllData() {
+                    try {
+                        this.loading = true;
+                        await this.loadDashboardData();
+                        await this.updateChart();
+                        console.log('Все данные успешно обновлены');
+                    } catch (error) {
+                        console.error('Ошибка обновления данных:', error);
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                send() {
+                    if (this.input.trim() === '') return;
+                    this.chat.push({role: 'user', text: this.input});
+                    this.input = '';
+                    this.typing = true;
+                    setTimeout(() => {
+                        const reply = this.placeholderReplies[Math.floor(Math.random() * this.placeholderReplies.length)];
+                        this.chat.push({role: 'assistant', text: reply});
+                        this.typing = false;
+                        this.$nextTick(() => {
+                            const el = this.$refs.scroll;
+                            if (el) el.scrollTop = el.scrollHeight;
+                            if (window.lucide && window.lucide.createIcons) {
+                                window.lucide.createIcons();
+                            }
+                        });
+                    }, 700);
+                }
+            }
+        }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+        });
+        
+        function skipDemo() {
+            // Отправляем POST запрос для установки флага
+            fetch('/dashboard/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            }).then(() => {
+                // Скрываем модальное окно
+                document.getElementById('demo-offer-modal').style.display = 'none';
+                // Перезагружаем страницу для обновления состояния
+                window.location.reload();
+            }).catch(error => {
+                console.error('Ошибка:', error);
+                // В случае ошибки просто скрываем модальное окно
+                document.getElementById('demo-offer-modal').style.display = 'none';
+            });
+        }
+    </script>
+</body>
+</html> 

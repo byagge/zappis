@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zappis — Жөндөөлөр</title>
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Alpine.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.10.2/dist/cdn.min.js" defer></script>
+    <!-- Lucide Icons (for icons used in the React component) -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+    <script>
+        // CSRF helper
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('toast', {
+                show: false,
+                message: '',
+                type: 'success', // 'success' or 'error'
+                timeout: null,
+                showToast(message, type = 'success') {
+                    this.message = message;
+                    this.type = type;
+                    this.show = true;
+                    clearTimeout(this.timeout);
+                    this.timeout = setTimeout(() => { this.show = false; }, 3000);
+                }
+            });
+            Alpine.data('app', () => ({
+                sidebarOpen: false,
+                activeSection: 'profile',
+                notifications: {
+                    email: false,
+                    sms: false,
+                    whatsapp: true,
+                    telegram: false
+                },
+                notificationsBlocked: true,
+                workingHours: {
+                    monday: { start: '09:00', end: '17:00', enabled: true },
+                    tuesday: { start: '09:00', end: '17:00', enabled: true },
+                    wednesday: { start: '09:00', end: '17:00', enabled: true },
+                    thursday: { start: '09:00', end: '17:00', enabled: true },
+                    friday: { start: '09:00', end: '17:00', enabled: true },
+                    saturday: { start: '10:00', end: '16:00', enabled: false },
+                    sunday: { start: '10:00', end: '16:00', enabled: false }
+                },
+                sidebarItems: [
+                    { id: 'dashboard', label: 'Башкы бет', isSettings: false, href: '/employee/' },
+                    { id: 'schedules', label: 'Жазылуулар', isSettings: false, href: '/employee/schedules/' },
+                    { id: 'clients', label: 'Клиенттер', isSettings: false, href: '/employee/clients/' },
+                    { id: 'notifications', label: 'Билдирмелер', isSettings: false, href: '/employee/notifications/' },
+                    { type: 'divider' },
+                    { id: 'profile', label: 'Профиль', isSettings: true },
+                    { id: 'notifications-settings', label: 'Билдирмелер', isSettings: true },
+                ],
+                full_name: '',
+                originalFullName: '',
+                email: '',
+                originalEmail: '',
+                emailConfirmed: true,
+                showEmailModal: false,
+                emailError: '',
+                emailCode: '',
+                emailCodeError: '',
+                emailTouched: false,
+                phone: '',
+                originalPhone: '',
+                code: '',
+                phoneConfirmed: true,
+                showModal: false,
+                phoneError: '',
+                codeSent: false,
+                codeError: '',
+                validCodes: ['700','701','702','703','704','705','706','707','708','709','750','770','771','772','773','774','775','776','777','778','779','500','501','502','504','505','506','507','508','509','550','551','552','553','554','555','556','557','558','559','600','601','602','603','604','605','606','607','608','609','900','901','902','903','904','905','906','907','908','909'],
+                showPasswordModal: false,
+                oldPassword: '',
+                newPassword: '',
+                confirmPassword: '',
+                passwordError: '',
+                passwordSuccess: '',
+                experience: 0,
+                birthDate: '',
+                education: '',
+                skills: '',
+                address: '',
+                salary: 0,
+                schedule: '',
+                clientsCount: 0,
+                rating: 0,
+                photo: '',
+                is_master: false,
+                workSchedule: {},
+                languages: '',
+                achievements: '',
+                notes: '',
+                equipment: '',
+                certifications: '',
+                emergencyContact: '',
+                emergencyContactName: '',
+                emergencyContactRelation: '',
+                passportNumber: '',
+                passportIssued: '',
+                passportExpiry: '',
+                taxId: '',
+                bankAccount: '',
+                bankName: '',
+                startDate: '',
+                contractNumber: '',
+                contractExpiry: '',
+                vacationDaysTotal: 0,
+                vacationDaysUsed: 0,
+                sickDaysTotal: 0,
+                sickDaysUsed: 0,
+                insuranceNumber: '',
+                insuranceExpiry: '',
+                performanceReviews: [],
+                trainingHistory: [],
+                salaryHistory: [],
+                documents: [],
+                user: null,
+                business: null,
+                position: null,
+                async init() {
+                    try {
+                        const resp = await fetch('/employee/api/profile/', {credentials: 'same-origin'});
+                        if (resp.ok) {
+                            const data = await resp.json();
+                            this.full_name = data.name || '';
+                            this.originalFullName = data.name || '';
+                            this.email = data.email || '';
+                            this.originalEmail = data.email || '';
+                            this.phone = data.phone || '';
+                            this.originalPhone = data.phone || '';
+                            this.status = data.status || '';
+                            this.experience = data.experience || 0;
+                            this.birthDate = data.birthDate || '';
+                            this.education = data.education || '';
+                            this.skills = data.skills || '';
+                            this.address = data.address || '';
+                            this.salary = data.salary || 0;
+                            this.schedule = data.schedule || '';
+                            this.clientsCount = data.clientsCount || 0;
+                            this.rating = data.rating || 0;
+                            this.photo = data.photo || '';
+                            this.is_master = data.is_master || false;
+                            this.workSchedule = data.workSchedule || {};
+                            this.languages = data.languages || '';
+                            this.achievements = data.achievements || '';
+                            this.notes = data.notes || '';
+                            this.equipment = data.equipment || '';
+                            this.certifications = data.certifications || '';
+                            this.emergencyContact = data.emergencyContact || '';
+                            this.emergencyContactName = data.emergencyContactName || '';
+                            this.emergencyContactRelation = data.emergencyContactRelation || '';
+                            this.passportNumber = data.passportNumber || '';
+                            this.passportIssued = data.passportIssued || '';
+                            this.passportExpiry = data.passportExpiry || '';
+                            this.taxId = data.taxId || '';
+                            this.bankAccount = data.bankAccount || '';
+                            this.bankName = data.bankName || '';
+                            this.startDate = data.startDate || '';
+                            this.contractNumber = data.contractNumber || '';
+                            this.contractExpiry = data.contractExpiry || '';
+                            this.vacationDaysTotal = data.vacationDaysTotal || 0;
+                            this.vacationDaysUsed = data.vacationDaysUsed || 0;
+                            this.sickDaysTotal = data.sickDaysTotal || 0;
+                            this.sickDaysUsed = data.sickDaysUsed || 0;
+                            this.insuranceNumber = data.insuranceNumber || '';
+                            this.insuranceExpiry = data.insuranceExpiry || '';
+                            this.performanceReviews = data.performanceReviews || [];
+                            this.trainingHistory = data.trainingHistory || [];
+                            this.salaryHistory = data.salaryHistory || [];
+                            this.documents = data.documents || [];
+                            this.user = data.user || null;
+                            this.business = data.business || null;
+                            this.position = data.position || null;
+                        }
+                    } catch (e) {
+                        console.error('Ошибка загрузки профиля', e);
+                    }
+                },
+                get onlyDigits() {
+                    return this.phone.replace(/\D/g, '').slice(3, 12);
+                },
+                get isFull() {
+                    return this.onlyDigits.length === 9;
+                },
+                get isValid() {
+                    if (this.onlyDigits.length !== 9) return false;
+                    let code = this.onlyDigits.slice(0,3);
+                    return this.validCodes.includes(code);
+                },
+                get phoneChanged() {
+                    return this.phone !== this.originalPhone;
+                },
+                confirmPhone() {
+                    if (!this.isValid) {
+                        this.phoneError = 'Неверный номер телефона';
+                        return;
+                    }
+                    this.phoneError = '';
+                    this.showModal = true;
+                    this.codeSent = true;
+                    this.code = '';
+                    this.codeError = '';
+                },
+                checkCode() {
+                    if (this.code === '1234') { // demo
+                        this.phoneConfirmed = true;
+                        this.showModal = false;
+                    } else {
+                        this.codeError = 'Неверный код';
+                    }
+                },
+                resetConfirm() {
+                    this.phoneConfirmed = !this.phoneChanged;
+                },
+                get emailChanged() {
+                    return this.email !== this.originalEmail;
+                },
+                get isEmailValid() {
+                    return /^[\w-.]+@[\w-]+\.[a-z]{2,}$/i.test(this.email);
+                },
+                confirmEmail() {
+                    if (!this.isEmailValid) {
+                        this.emailError = 'Этот email неверный';
+                        return;
+                    }
+                    this.emailError = '';
+                    this.showEmailModal = true;
+                    this.emailCode = '';
+                    this.emailCodeError = '';
+                },
+                checkEmailCode() {
+                    if (this.emailCode === '1234') { // demo
+                        this.emailConfirmed = true;
+                        this.showEmailModal = false;
+                    } else {
+                        this.emailCodeError = 'Неверный код';
+                    }
+                },
+                resetEmailConfirm() {
+                    this.emailConfirmed = !this.emailChanged;
+                },
+                openModal() { this.showPasswordModal = true; this.oldPassword=''; this.newPassword=''; this.confirmPassword=''; this.passwordError=''; this.passwordSuccess=''; },
+                closeModal() { this.showPasswordModal = false; },
+                changePassword() {
+                    if (!this.oldPassword || !this.newPassword || !this.confirmPassword) {
+                        this.passwordError = 'Пожалуйста, заполните все поля';
+                        this.passwordSuccess = '';
+                        return;
+                    }
+                    if (this.newPassword.length < 6) {
+                        this.passwordError = 'Новый пароль должен быть не менее 6 символов';
+                        this.passwordSuccess = '';
+                        return;
+                    }
+                    if (this.newPassword !== this.confirmPassword) {
+                        this.passwordError = 'Пароли не совпадают';
+                        this.passwordSuccess = '';
+                        return;
+                    }
+                    this.passwordError = '';
+                    this.passwordSuccess = '';
+                    // TODO: реализовать API смены пароля для мастера
+                    // fetch('/employee/api/change-password/', ...)
+                    setTimeout(() => {
+                        this.passwordSuccess = 'Пароль успешно изменён!';
+                        Alpine.store('toast').showToast('Пароль успешно изменён. Пожалуйста, войдите заново.', 'success');
+                        this.closeModal();
+                    }, 1000);
+                },
+                toast: {
+                    show: false,
+                    message: '',
+                    type: 'success',
+                },
+                showToast(message, type = 'success') {
+                    this.toast.message = message;
+                    this.toast.type = type;
+                    this.toast.show = true;
+                    setTimeout(() => {
+                        this.toast.show = false;
+                    }, 3000);
+                },
+                toggleNotification(type) {
+                    // Всегда заблокировано — ничего не делать
+                    return;
+                },
+                blockAllNotifications() {
+                    // Всегда заблокировано — ничего не делать
+                    return;
+                },
+            }));
+        });
+    </script>
+</head>
+<body class="font-inter">
+    <div class="flex h-screen bg-slate-50" x-data="app">
+        <!-- Sidebar -->
+        <div :class="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen}" 
+             class="fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0">
+            <div class="flex items-center justify-between p-6 border-b border-slate-100">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">Z</span>
+                    </div>
+                    <span class="text-xl font-semibold text-slate-900">Zappis</span>
+                </div>
+                <button @click="sidebarOpen = false" class="lg:hidden p-1 hover:bg-slate-100 rounded-md">
+                    <i data-lucide="x" class="w-5 h-5 text-slate-500"></i>
+                </button>
+            </div>
+            <nav class="p-4 space-y-1">
+                <template x-for="item in sidebarItems" :key="item.id || item.type">
+                    <div>
+                        <div x-show="item.type === 'divider'" class="h-px bg-slate-200 my-4"></div>
+                        <template x-if="item.href">
+                            <a :href="item.href"
+                               @click="sidebarOpen = false"
+                               :class="{'bg-indigo-50 text-indigo-700 border border-indigo-200': activeSection === item.id, 'text-slate-600 hover:bg-slate-50 hover:text-slate-900': activeSection !== item.id}"
+                               class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors">
+                                <i :data-lucide="item.id === 'dashboard' ? 'layout-dashboard' : item.id === 'schedules' ? 'clock' : item.id === 'clients' ? 'users' : item.id === 'notifications' ? 'bell' : item.id === 'profile' ? 'user' : item.id === 'notifications-settings' ? 'bell' : 'user'"
+                                   class="w-5 h-5"></i>
+                                <span class="font-medium" x-text="item.label"></span>
+                                <i data-lucide="chevron-right" class="w-4 h-4 ml-auto" x-show="!item.isSettings"></i>
+                            </a>
+                        </template>
+                        <template x-if="!item.href && item.type !== 'divider'">
+                            <button
+                                @click="if (item.isSettings) { activeSection = item.id; } sidebarOpen = false;"
+                                :class="{'bg-indigo-50 text-indigo-700 border border-indigo-200': activeSection === item.id, 'text-slate-600 hover:bg-slate-50 hover:text-slate-900': activeSection !== item.id}"
+                                class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors">
+                                <i :data-lucide="item.id === 'dashboard' ? 'layout-dashboard' : item.id === 'schedules' ? 'clock' : item.id === 'clients' ? 'users' : item.id === 'notifications' ? 'bell' : item.id === 'profile' ? 'user' : item.id === 'notifications-settings' ? 'bell' : 'user'"
+                                   class="w-5 h-5"></i>
+                                <span class="font-medium" x-text="item.label"></span>
+                                <i data-lucide="chevron-right" class="w-4 h-4 ml-auto" x-show="!item.isSettings"></i>
+                            </button>
+                        </template>
+                    </div>
+                </template>
+            </nav>
+        </div>
+        <!-- Mobile Overlay -->
+        <div @click="sidebarOpen = false" 
+             class="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" 
+             x-show="sidebarOpen"></div>
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <header class="bg-white border-b border-slate-200 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <button @click="sidebarOpen = true" class="lg:hidden p-2 hover:bg-slate-100 rounded-md">
+                            <i data-lucide="menu" class="w-5 h-5 text-slate-600"></i>
+                        </button>
+                        <div>
+                            <h1 class="text-2xl font-bold text-slate-900">Жөндөөлөр</h1>
+                            <p class="text-slate-600">Аккаунтуңузду жана тандоолоруңузду башкарыңыз</p>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <main class="flex-1 overflow-auto p-6">
+                <div class="max-w-4xl mx-auto">
+                    <!-- Profile Section -->
+                    <div x-show="activeSection === 'profile'" class="bg-white rounded-xl border border-slate-200 shadow-sm">
+                        <div class="p-6 border-b border-slate-100">
+                            <h2 class="text-lg font-semibold text-slate-900">Профиль</h2>
+                        </div>
+                        <div class="p-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">Аты-жөнү</label>
+                                    <input type="text" x-model="full_name" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">Купуя сөздү өзгөртүү</label>
+                                    <button class="w-full px-3 py-2 border border-slate-300 rounded-lg text-left text-slate-500 hover:bg-slate-50" @click="showPasswordModal = true">••••••••</button>
+                                    <!-- Модальное окно смены пароля -->
+                                    <div x-show="showPasswordModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-40" style="display: none;">
+                                        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl flex overflow-hidden animate-fade-in relative">
+                                            <!-- Левая часть: баннер и информация -->
+                                            <div class="hidden md:flex flex-col justify-center items-center bg-gradient-to-br from-indigo-500 to-blue-600 w-1/2 p-10 text-white relative">
+                                                <div class="flex flex-col items-center">
+                                                    <i data-lucide="lock" class="w-14 h-14 mb-4 text-white opacity-90"></i>
+                                                    <h3 class="text-2xl font-bold mb-2">Безопасность аккаунта</h3>
+                                                    <p class="text-base mb-4 text-indigo-100 text-center">После смены пароля будет выполнен выход из аккаунта <span class="font-semibold">на всех устройствах</span>, включая это. Для продолжения потребуется повторный вход.</p>
+                                                    <div class="bg-white bg-opacity-10 rounded-xl px-4 py-3 text-sm text-indigo-100 border border-white border-opacity-20">
+                                                        <ul class="list-disc pl-4 space-y-1">
+                                                            <li>Выход из всех браузеров и приложений</li>
+                                                            <li>Даже если кто-то знал ваш старый пароль — доступ будет потерян</li>
+                                                            <li>Это важно для вашей безопасности</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Правая часть: форма -->
+                                            <div class="flex-1 p-8 relative flex flex-col justify-center">
+                                                <button @click="showPasswordModal = false" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                                                    <i data-lucide="x" class="h-6 w-6"></i>
+                                                </button>
+                                                <h3 class="text-xl font-bold mb-4 text-slate-900">Купуя сөздү алмаштыруу</h3>
+                                                <div class="mb-3">
+                                                    <label class="block text-sm text-slate-700 mb-1">Эски купуя сөз</label>
+                                                    <input type="password" x-model="oldPassword" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Эски купуя сөздү киргизиңиз" />
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="block text-sm text-slate-700 mb-1">Жаңы купуя сөз</label>
+                                                    <input type="password" x-model="newPassword" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Жаңы купуя сөздү киргизиңиз" />
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="block text-sm text-slate-700 mb-1">Жаңы купуя сөздү ырастаңыз</label>
+                                                    <input type="password" x-model="confirmPassword" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Жаңы купуя сөздү кайталаңыз" />
+                                                </div>
+                                                <template x-if="passwordError">
+                                                    <div class="text-red-600 text-sm mb-2" x-text="passwordError"></div>
+                                                </template>
+                                                <template x-if="passwordSuccess">
+                                                    <div class="text-green-600 text-sm mb-2" x-text="passwordSuccess"></div>
+                                                </template>
+                                                <button @click="changePassword"
+                                                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-colors mt-2"
+                                                        :disabled="!oldPassword && !newPassword && !confirmPassword"
+                                                        :class="{ 'opacity-50 cursor-not-allowed': !oldPassword && !newPassword && !confirmPassword }">
+                                                    Сактоо
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">Электрондук почта</label>
+                                    <input type="email"
+                                        x-model="email"
+                                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                        @input="resetEmailConfirm()"
+                                        @blur="emailTouched = true"
+                                    />
+                                    <template x-if="emailError && emailTouched">
+                                        <div class="text-red-600 text-sm mt-1" x-text="emailError"></div>
+                                    </template>
+                                    <template x-if="emailChanged && !isEmailValid && emailTouched">
+                                        <div class="text-red-600 text-sm mt-1">Бул email туура эмес</div>
+                                    </template>
+                                    <template x-if="emailChanged && isEmailValid && !emailConfirmed && emailTouched">
+                                        <div class="mt-2 flex items-center gap-2 animate-fade-in">
+                                            <button type="button" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-indigo-200 bg-indigo-50 text-indigo-700 font-medium shadow-sm hover:bg-indigo-100 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2" @click="confirmEmail" x-init="$nextTick(() => { lucide.createIcons(); })">
+                                                <i data-lucide="mail-check" class="h-5 w-5 text-indigo-500"></i>
+                                                <span>Жаңы email'ди ырастаңыз — бул жерди басыңыз</span>
+                                            </button>
+                                        </div>
+                                    </template>
+                                    <!-- Модальное окно email -->
+                                    <div x-show="showEmailModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-40" style="display: none;">
+                                        <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-sm relative animate-fade-in">
+                                            <button @click="showEmailModal=false" class="absolute top-3 right-3 text-slate-400 hover:text-slate-600">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                            </button>
+                                            <h3 class="text-lg font-semibold mb-2 text-slate-900">Email'ди ырастаңыз</h3>
+                                            <p class="text-slate-600 mb-4">Кодду киргизиңиз, ал <span class="font-medium" x-text="email"></span> дарегине жөнөтүлдү</p>
+                                            <input type="text" maxlength="4" x-model="emailCode" class="w-full px-3 py-2 border border-slate-300 rounded-lg mb-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-center tracking-widest text-lg" placeholder="Код" />
+                                            <template x-if="emailCodeError">
+                                                <div class="text-red-600 text-sm mb-2" x-text="emailCodeError"></div>
+                                            </template>
+                                            <button @click="checkEmailCode" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">Ырастоо</button>
+                                        </div>
+                                    </div>
+                                    <style>
+                                        .animate-fade-in { animation: fadeIn .2s cubic-bezier(.4,0,.2,1); }
+                                        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px);} to { opacity: 1; transform: none;} }
+                                    </style>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">Телефон</label>
+                                    <input type="tel"
+                                        x-model="phone"
+                                        pattern="\\+996\\s?\\d{3}\\s?\\d{3}\\s?\\d{3}"
+                                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                        onfocus="if(this.value==='')this.value='+996 ';"
+                                        oninput="if(!this.value.startsWith('+996')){this.value='+996 ';this.setSelectionRange(this.value.length, this.value.length);} let digits=this.value.replace(/\D/g,'').slice(3,12); if(digits.length>9) digits=digits.slice(0,9); let formatted=digits.replace(/(\d{3})(\d{3})(\d{0,3})/,function(_,a,b,c){return a+(b?' '+b:'')+(c?' '+c:'');}); this.value='+996'+(formatted.length?' '+formatted:''); this.setSelectionRange(this.value.length, this.value.length); $dispatch('input');"
+                                        @input="resetConfirm()"
+                                    />
+                                    <template x-if="phoneError">
+                                        <div class="text-red-600 text-sm mt-1" x-text="phoneError"></div>
+                                    </template>
+                                    <template x-if="isFull && !phoneConfirmed && isValid && phoneChanged">
+                                        <div class="mt-2 flex items-center gap-2 animate-fade-in">
+                                            <button type="button" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-indigo-200 bg-indigo-50 text-indigo-700 font-medium shadow-sm hover:bg-indigo-100 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2" @click="confirmPhone">
+                                                <svg xmlns='http://www.w3.org/2000/svg' class='h-5 w-5 text-indigo-500' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9' /></svg>
+                                                <span>Жаңы номерди ырастаңыз — бул жерди басыңыз</span>
+                                            </button>
+                                        </div>
+                                    </template>
+                                    <template x-if="isFull && !isValid">
+                                        <div class="text-red-600 text-sm mt-1">Телефон номери туура эмес</div>
+                                    </template>
+                                    <!-- Модальное окно -->
+                                    <div x-show="showModal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-40" style="display: none;">
+                                        <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-sm relative animate-fade-in">
+                                            <button @click="showModal=false" class="absolute top-3 right-3 text-slate-400 hover:text-slate-600">
+                                                <i data-lucide="x" class="h-6 w-6"></i>
+                                            </button>
+                                            <h3 class="text-lg font-semibold mb-2 text-slate-900">Номерди ырастаңыз</h3>
+                                            <p class="text-slate-600 mb-4">SMSтен келген кодду киргизиңиз <span class="font-medium" x-text="phone"></span></p>
+                                            <input type="text" maxlength="4" x-model="code" class="w-full px-3 py-2 border border-slate-300 rounded-lg mb-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-center tracking-widest text-lg" placeholder="Код" />
+                                            <template x-if="codeError">
+                                                <div class="text-red-600 text-sm mb-2" x-text="codeError"></div>
+                                            </template>
+                                            <button @click="checkCode" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">Ырастоо</button>
+                                        </div>
+                                    </div>
+                                    <style>
+                                        .animate-fade-in { animation: fadeIn .2s cubic-bezier(.4,0,.2,1); }
+                                        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px);} to { opacity: 1; transform: none;} }
+                                    </style>
+                                </div>
+                            </div>
+                            <div class="flex justify-end pt-6 border-t border-slate-100 mt-6">
+                                <button class="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-colors" @click="saveProfile">
+                                    <i data-lucide="save" class="w-4 h-4"></i>
+                                    <span>Өзгөртүүлөрдү сактоо</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Notifications Section -->
+                    <div x-show="activeSection === 'notifications-settings'" class="bg-white rounded-xl border border-slate-200 shadow-sm">
+                        <div class="p-6 border-b border-slate-100">
+                            <h2 class="text-lg font-semibold text-slate-900">Билдирмелер жөндөөлөрү</h2>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-6 opacity-60 pointer-events-none select-none">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h3 class="font-medium text-slate-900">Email аркылуу билдирмелер</h3>
+                                        <p class="text-sm text-slate-500">Брондоолор тууралуу ырастоолорду жана эскертмелерди почта аркылуу алыңыз</p>
+                                    </div>
+                                    <button disabled
+                                        :class="notifications.email ? 'bg-indigo-600' : 'bg-red-500 border border-red-700'"
+                                        class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 opacity-60 cursor-not-allowed">
+                                        <span :class="notifications.email ? 'translate-x-6' : 'translate-x-1'"
+                                            class="inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform duration-200 flex items-center justify-center">
+                                            <template x-if="notifications.email">
+                                                <svg class="w-3 h-3 text-green-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                                            </template>
+                                            <template x-if="!notifications.email">
+                                                <svg class="w-3 h-3 text-red-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                                            </template>
+                                        </span>
+                                    </button>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h3 class="font-medium text-slate-900">WhatsApp-билдирмелер</h3>
+                                        <p class="text-sm text-slate-500">Жаңы брондоолор тууралуу WhatsApp аркылуу заматта билдирмелер алыңыз</p>
+                                    </div>
+                                    <button @click="toggleNotification('sms')" 
+                                        :class="notifications.sms ? 'bg-indigo-600' : 'bg-red-500 border border-red-700'"
+                                        class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200">
+                                        <span :class="notifications.sms ? 'translate-x-6' : 'translate-x-1'"
+                                            class="inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform duration-200 flex items-center justify-center">
+                                            <template x-if="notifications.sms">
+                                                <svg class="w-3 h-3 text-green-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                                            </template>
+                                            <template x-if="!notifications.sms">
+                                                <svg class="w-3 h-3 text-red-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                                            </template>
+                                        </span>
+                                    </button>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h3 class="font-medium text-slate-900">Telegram билдирмелери</h3>
+                                        <p class="text-sm text-slate-500">Telegram-бот аркылуу билдирмелерди алыңыз</p>
+                                    </div>
+                                    <button disabled
+                                        :class="notifications.telegram ? 'bg-indigo-600' : 'bg-red-500 border border-red-700'"
+                                        class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 opacity-60 cursor-not-allowed">
+                                        <span :class="notifications.telegram ? 'translate-x-6' : 'translate-x-1'"
+                                            class="inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform duration-200 flex items-center justify-center">
+                                            <template x-if="notifications.telegram">
+                                                <svg class="w-3 h-3 text-green-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                                            </template>
+                                            <template x-if="!notifications.telegram">
+                                                <svg class="w-3 h-3 text-red-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                                            </template>
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <!-- Toast Notification (Alpine.store, вне всех x-data) -->
+    <!-- ... (toast notification code as in settings.html) ... -->
+    <!-- Initialize Lucide Icons -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+        document.addEventListener('alpine:init', () => {
+            Alpine.effect(() => {
+                lucide.createIcons();
+            });
+        });
+    </script>
+</body>
+</html> 

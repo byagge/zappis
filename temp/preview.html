@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resso - Предпросмотр сайта</title>
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            overflow-x: hidden;
+        }
+        .preview-content {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+        /* Адаптивные стили */
+        @media (max-width: 768px) {
+            .mobile-menu {
+                display: none;
+            }
+            .mobile-menu.active {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.9);
+                z-index: 50;
+                padding: 2rem;
+            }
+            .mobile-menu.active nav {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 100%;
+            }
+            .mobile-menu.active a {
+                font-size: 1.5rem;
+                margin: 1rem 0;
+            }
+            .grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+            .grid-cols-3 {
+                grid-template-columns: 1fr;
+            }
+            .grid-cols-4 {
+                grid-template-columns: 1fr;
+            }
+            .py-16 {
+                padding-top: 3rem;
+                padding-bottom: 3rem;
+            }
+            .text-4xl {
+                font-size: 2rem;
+            }
+            .text-3xl {
+                font-size: 1.75rem;
+            }
+            .text-xl {
+                font-size: 1.25rem;
+            }
+            .h-96 {
+                height: 16rem;
+            }
+            .space-x-8 {
+                margin-left: 0;
+            }
+            .space-x-8 > * {
+                margin-left: 0;
+                margin-top: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50" style="font-family: system-ui, -apple-system, sans-serif;">
+    <div x-data="previewPage()">
+        <!-- Шапка -->
+        <template x-if="sections.find(s => s.id === 'header')?.visible">
+            <header class="shadow-sm backdrop-blur-sm bg-opacity-95" :style="`background-color: ${sections.find(s => s.id === 'header').content.backgroundColor};`">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex justify-between items-center py-6">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-lg overflow-hidden">
+                                <img x-show="sections.find(s => s.id === 'header').content.logo" :src="sections.find(s => s.id === 'header').content.logo" class="w-full h-full object-cover">
+                                <div x-show="!sections.find(s => s.id === 'header').content.logo" class="w-full h-full bg-blue-600 flex items-center justify-center">
+                                    <span class="text-white font-bold">R</span>
+                                </div>
+                            </div>
+                            <span class="ml-3 text-xl font-semibold" :style="`color: ${sections.find(s => s.id === 'header').content.textColor};`" x-text="sections.find(s => s.id === 'header').content.title"></span>
+                        </div>
+                        <!-- Мобильное меню -->
+                        <div class="md:hidden">
+                            <button @click="mobileMenuOpen = !mobileMenuOpen" class="p-2">
+                                <i data-lucide="menu" class="w-6 h-6" :style="`color: ${sections.find(s => s.id === 'header').content.textColor};`"></i>
+                            </button>
+                        </div>
+                        <!-- Десктопное меню -->
+                        <nav class="hidden md:flex space-x-8">
+                            <a href="#" class="hover:text-gray-900" :style="`color: ${sections.find(s => s.id === 'header').content.textColor};`">Главная</a>
+                            <a href="#" class="hover:text-gray-900" :style="`color: ${sections.find(s => s.id === 'header').content.textColor};`">Портфолио</a>
+                            <a href="#" class="hover:text-gray-900" :style="`color: ${sections.find(s => s.id === 'header').content.textColor};`">Контакты</a>
+                        </nav>
+                    </div>
+                </div>
+                <!-- Мобильное меню (выпадающее) -->
+                <div class="mobile-menu md:hidden" :class="{ 'active': mobileMenuOpen }" @click.self="mobileMenuOpen = false">
+                    <nav class="flex flex-col items-center">
+                        <a href="#" class="text-white hover:text-gray-300 transition-colors" @click="mobileMenuOpen = false">Главная</a>
+                        <a href="#" class="text-white hover:text-gray-300 transition-colors" @click="mobileMenuOpen = false">Портфолио</a>
+                        <a href="#" class="text-white hover:text-gray-300 transition-colors" @click="mobileMenuOpen = false">Контакты</a>
+                    </nav>
+                </div>
+            </header>
+        </template>
+
+        <!-- Главный блок -->
+        <template x-if="sections.find(s => s.id === 'main')?.visible">
+            <section class="relative" :style="`background-color: ${sections.find(s => s.id === 'main').content.backgroundColor};`">
+                <div class="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none"></div>
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
+                        <div class="text-center md:text-left">
+                            <h1 class="text-3xl md:text-4xl font-bold mb-4" :style="`color: ${sections.find(s => s.id === 'main').content.textColor};`" x-text="sections.find(s => s.id === 'main').content.title"></h1>
+                            <p class="text-lg md:text-xl mb-8" :style="`color: ${sections.find(s => s.id === 'main').content.textColor};`" x-text="sections.find(s => s.id === 'main').content.description"></p>
+                            <button class="px-6 py-3 rounded-lg hover:opacity-90 transition-opacity" :style="`background-color: ${sections.find(s => s.id === 'main').content.buttonBackgroundColor}; color: ${sections.find(s => s.id === 'main').content.buttonTextColor};`">
+                                Записаться
+                            </button>
+                        </div>
+                        <div class="rounded-lg h-64 md:h-96" :class="{'bg-gray-200': !sections.find(s => s.id === 'main').content.image}" :style="sections.find(s => s.id === 'main').content.image ? { 'background-image': 'url(' + sections.find(s => s.id === 'main').content.image + ')', 'background-size': 'cover', 'background-position': 'center' } : {}"></div>
+                    </div>
+                </div>
+            </section>
+        </template>
+
+        <!-- Услуги -->
+        <template x-if="sections.find(s => s.id === 'services')?.visible">
+            <section class="relative" :style="`background-color: ${sections.find(s => s.id === 'services').content.backgroundColor};`">
+                <div class="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none"></div>
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                    <h2 class="text-2xl md:text-3xl font-bold mb-6 md:mb-8 text-center" :style="`color: ${sections.find(s => s.id === 'services').content.textColor};`" x-text="sections.find(s => s.id === 'services').content.title"></h2>
+                    <p class="text-lg md:text-xl mb-8 md:mb-12 text-center" :style="`color: ${sections.find(s => s.id === 'services').content.textColor};`" x-text="sections.find(s => s.id === 'services').content.description"></p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                        <template x-for="(service, index) in sections.find(s => s.id === 'services').content.services" :key="index">
+                            <div class="rounded-lg p-6 shadow-sm" :style="`background-color: ${sections.find(s => s.id === 'services').content.cardBackgroundColor};`">
+                                <h3 class="text-lg md:text-xl font-semibold mb-3" :style="`color: ${sections.find(s => s.id === 'services').content.cardTextColor};`" x-text="service.title"></h3>
+                                <p :style="`color: ${sections.find(s => s.id === 'services').content.cardTextColor};`" x-text="service.description"></p>
+                            </div>
+                        </template>
+                    </div>
+                    <div class="mt-8 md:mt-12 text-center">
+                        <a href="#" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg hover:opacity-90 transition-opacity" :style="`background-color: ${sections.find(s => s.id === 'services').content.buttonBackgroundColor}; color: ${sections.find(s => s.id === 'services').content.buttonTextColor};`">
+                            <span>Все услуги</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                        </a>
+                    </div>
+                    <div class="mt-6 md:mt-8 text-center text-sm text-gray-500">
+                        <p>* Услуги автоматически синхронизируются с разделом услуг в личном кабинете</p>
+                    </div>
+                </div>
+            </section>
+        </template>
+
+        <!-- Портфолио -->
+        <template x-if="sections.find(s => s.id === 'portfolio')?.visible">
+            <section class="relative" :style="`background-color: ${sections.find(s => s.id === 'portfolio').content.backgroundColor};`">
+                <div class="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none"></div>
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                    <h2 class="text-2xl md:text-3xl font-bold mb-6 md:mb-8 text-center" :style="`color: ${sections.find(s => s.id === 'portfolio').content.textColor};`" x-text="sections.find(s => s.id === 'portfolio').content.title"></h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                        <template x-for="(work, index) in sections.find(s => s.id === 'portfolio').content.works" :key="index">
+                            <div class="rounded-lg overflow-hidden shadow-sm" :style="`background-color: ${sections.find(s => s.id === 'portfolio').content.cardBackgroundColor};`">
+                                <div class="h-48 md:h-64" :class="{'bg-gray-200': !work.image}" :style="work.image ? { 'background-image': 'url(' + work.image + ')', 'background-size': 'cover', 'background-position': 'center' } : {}"></div>
+                                <div class="p-4">
+                                    <h3 class="font-semibold" :style="`color: ${sections.find(s => s.id === 'portfolio').content.cardTextColor};`" x-text="work.title"></h3>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </section>
+        </template>
+
+        <!-- Контакты -->
+        <template x-if="sections.find(s => s.id === 'contacts')?.visible">
+            <section class="relative" :style="`background-color: ${sections.find(s => s.id === 'contacts').content.backgroundColor};`">
+                <div class="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none"></div>
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                    <h2 class="text-2xl md:text-3xl font-bold mb-6 md:mb-8 text-center" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor};`" x-text="sections.find(s => s.id === 'contacts').content.title"></h2>
+                    <div class="max-w-2xl mx-auto text-center">
+                        <p class="text-lg md:text-xl mb-6 md:mb-8" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor};`" x-text="sections.find(s => s.id === 'contacts').content.description"></p>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-center space-x-2">
+                                <i data-lucide="phone" class="w-5 h-5 text-gray-400" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor}80;`"></i>
+                                <span :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor};`" x-text="sections.find(s => s.id === 'contacts').content.phone"></span>
+                            </div>
+                            <div class="flex items-center justify-center space-x-2">
+                                <i data-lucide="map-pin" class="w-5 h-5 text-gray-400" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor}80;`"></i>
+                                <span :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor};`" x-text="sections.find(s => s.id === 'contacts').content.address"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </template>
+
+        <!-- Футер -->
+        <footer class="text-white relative" :style="`background-color: ${sections.find(s => s.id === 'contacts').content.backgroundColor};`">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none"></div>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor};`">О компании</h3>
+                        <p class="text-gray-400" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor}CC;`">Мы создаем красивые и функциональные сайты для вашего бизнеса</p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor};`">Контакты</h3>
+                        <div class="space-y-2 text-gray-400" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor}CC;`">
+                            <p x-text="sections.find(s => s.id === 'contacts').content.phone"></p>
+                            <p x-text="sections.find(s => s.id === 'contacts').content.address"></p>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor};`">Навигация</h3>
+                        <div class="space-y-2 flex flex-col">
+                            <a href="#" class="hover:text-white transition-colors duration-200" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor}CC;`">Главная</a>
+                            <a href="#" class="hover:text-white transition-colors duration-200" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor}CC;`">Портфолио</a>
+                            <a href="#" class="hover:text-white transition-colors duration-200" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor}CC;`">Услуги</a>
+                            <a href="#" class="hover:text-white transition-colors duration-200" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor}CC;`">Контакты</a>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor};`">Социальные сети</h3>
+                        <div class="flex flex-wrap gap-4 justify-center md:justify-start">
+                            <template x-for="(social, index) in sections.find(s => s.id === 'contacts').content.socials" :key="index">
+                                <a :href="social.link" target="_blank" class="transition-colors duration-200">
+                                    <img :src="`https://cdn.simpleicons.org/${socialNetworks.find(n => n.value === social.icon)?.si || 'globe'}/${socialNetworks.find(n => n.value === social.icon)?.color || '000000'}`" class="w-5 h-5" :alt="getSocialNetworkName(social.icon)">
+                                </a>
+                            </template>
+                            <div x-show="sections.find(s => s.id === 'contacts').content.socials.length === 0" class="text-sm" :style="`color: ${sections.find(s => s.id === 'contacts').content.textColor}99;`">
+                                Нет добавленных социальных сетей
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="border-t border-gray-800 mt-8 pt-8 text-center" :style="`border-color: ${sections.find(s => s.id === 'contacts').content.textColor}33; color: ${sections.find(s => s.id === 'contacts').content.textColor}CC;`">
+                    <p>© <span x-text="sections.find(s => s.id === 'header').content.title"></span>. Все права защищены.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Alpine.js -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('previewPage', () => ({
+                mobileMenuOpen: false,
+                sections: [
+                    {
+                        id: 'header',
+                        name: 'Шапка',
+                        visible: true,
+                        content: {
+                            title: 'Resso',
+                            backgroundColor: '#ffffff',
+                            textColor: '#1f2937',
+                            logo: ''
+                        }
+                    },
+                    {
+                        id: 'main',
+                        name: 'Главный блок',
+                        visible: true,
+                        content: {
+                            title: 'Создавайте красивые сайты',
+                            description: 'Простой конструктор сайтов для вашего бизнеса',
+                            backgroundColor: '#f3f4f6',
+                            textColor: '#1f2937',
+                            buttonBackgroundColor: '#3b82f6',
+                            buttonTextColor: '#ffffff',
+                            image: ''
+                        }
+                    },
+                    {
+                        id: 'services',
+                        name: 'Услуги',
+                        visible: true,
+                        content: {
+                            title: 'Наши услуги',
+                            description: 'Мы предлагаем широкий спектр услуг для вашего бизнеса',
+                            backgroundColor: '#ffffff',
+                            textColor: '#1f2937',
+                            cardBackgroundColor: '#f9fafb',
+                            cardTextColor: '#1f2937',
+                            buttonBackgroundColor: '#3b82f6',
+                            buttonTextColor: '#ffffff',
+                            services: [
+                                {
+                                    title: 'Веб-разработка',
+                                    description: 'Создание современных и функциональных веб-сайтов'
+                                },
+                                {
+                                    title: 'Дизайн',
+                                    description: 'Разработка уникального дизайна для вашего бренда'
+                                },
+                                {
+                                    title: 'Маркетинг',
+                                    description: 'Продвижение вашего бизнеса в интернете'
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        id: 'portfolio',
+                        name: 'Портфолио',
+                        visible: true,
+                        content: {
+                            title: 'Наши работы',
+                            backgroundColor: '#f3f4f6',
+                            textColor: '#1f2937',
+                            cardBackgroundColor: '#ffffff',
+                            cardTextColor: '#1f2937',
+                            works: [
+                                {
+                                    title: 'Проект 1',
+                                    image: ''
+                                },
+                                {
+                                    title: 'Проект 2',
+                                    image: ''
+                                },
+                                {
+                                    title: 'Проект 3',
+                                    image: ''
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        id: 'contacts',
+                        name: 'Контакты',
+                        visible: true,
+                        content: {
+                            title: 'Свяжитесь с нами',
+                            description: 'Мы всегда готовы ответить на ваши вопросы',
+                            backgroundColor: '#1f2937',
+                            textColor: '#ffffff',
+                            phone: '+7 (999) 123-45-67',
+                            address: 'г. Москва, ул. Примерная, д. 1',
+                            socials: []
+                        }
+                    }
+                ],
+                socialNetworks: [
+                    { value: 'vk', label: 'ВКонтакте', si: 'vk', color: '4C75A3' },
+                    { value: 'telegram', label: 'Telegram', si: 'telegram', color: '26A5E4' },
+                    { value: 'whatsapp', label: 'WhatsApp', si: 'whatsapp', color: '25D366' },
+                    { value: 'instagram', label: 'Instagram', si: 'instagram', color: 'E4405F' },
+                    { value: 'facebook', label: 'Facebook', si: 'facebook', color: '1877F2' },
+                    { value: 'twitter', label: 'Twitter', si: 'twitter', color: '1DA1F2' },
+                    { value: 'youtube', label: 'YouTube', si: 'youtube', color: 'FF0000' },
+                    { value: 'tiktok', label: 'TikTok', si: 'tiktok', color: '000000' }
+                ],
+                getSocialNetworkName(icon) {
+                    return this.socialNetworks.find(n => n.value === icon)?.label || 'Социальная сеть';
+                }
+            }))
+        })
+    </script>
+</body>
+</html> 

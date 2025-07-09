@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zappis — Кызматкерлер</title>
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Alpine.js -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .gradient-bg {
+            background: linear-gradient(135deg, #1E40AF 0%, #3B82F6 100%);
+        }
+        .hover-scale {
+            transition: transform 0.2s;
+        }
+        .hover-scale:hover {
+            transform: scale(1.02);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+        }
+        .stat-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(10px);
+        }
+        .error-highlight {
+            animation: error-blink 1s 2;
+            border-color: #f87171 !important;
+            box-shadow: 0 0 0 2px #f87171;
+        }
+        @keyframes error-blink {
+            0%, 100% { border-color: #f87171; }
+            50% { border-color: #fff; }
+        }
+    </style>
+</head>
+<body class="h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col" style="font-family: system-ui, -apple-system, sans-serif;">
+    <div x-data="ressoEmployees()">
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between fixed top-0 left-0 right-0 z-30">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">Z</span>
+                    </div>
+                    <span class="font-semibold text-gray-900">Zappis</span>
+                    <span class="text-gray-400">•</span>
+                    <span class="text-gray-600">Кызматкерлерди башкаруу</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button @click="showEmployeeModal = true; showProfileModal = false; selectedEmployee = null; setEmployeeForm(); $nextTick(() => lucide.createIcons())"
+                        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    <span>Жаңы кызматкер</span>
+                </button>
+                <div class="flex bg-gray-100 rounded-lg p-1">
+                    <button @click="view = 'list'; $nextTick(() => lucide.createIcons())"
+                            :class="{'bg-white shadow-sm text-blue-600': view === 'list', 'text-gray-600 hover:text-gray-900': view !== 'list'}"
+                            class="px-3 py-1 rounded-md text-sm transition-colors">
+                        <i data-lucide="list" class="w-4 h-4 inline-block mr-1"></i>
+                        Тизме
+                    </button>
+                    <button @click="view = 'grid'; $nextTick(() => lucide.createIcons())"
+                            :class="{'bg-white shadow-sm text-blue-600': view === 'grid', 'text-gray-600 hover:text-gray-900': view !== 'grid'}"
+                            class="px-3 py-1 rounded-md text-sm transition-colors">
+                        <i data-lucide="grid" class="w-4 h-4 inline-block mr-1"></i>
+                        Тор
+                    </button>
+                </div>
+                <div class="relative">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                    <input type="text" 
+                           placeholder="Кызматкерлерди издөө..."
+                           class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-64"
+                           x-model="searchQuery"
+                           @input="searchEmployees">
+                </div>
+                <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                    <i data-lucide="user" class="w-4 h-4 text-white"></i>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex flex-1 overflow-hidden pt-16">
+            <!-- Sidebar -->
+            <aside class="w-64 bg-white border-r border-gray-200 p-4 space-y-6 fixed left-0 top-16 bottom-0 overflow-y-auto no-scrollbar">
+                <!-- Navigation Menu -->
+                <div>
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Навигация</h3>
+                    <nav class="space-y-1">
+                        <a href="/dashboard/" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50">
+                            <i data-lucide="home" class="w-5 h-5"></i>
+                            <span>Башкы бет</span>
+                        </a>
+                        <a href="/employees/" class="flex items-center space-x-3 px-3 py-2 rounded-lg bg-blue-50 text-blue-600">
+                            <i data-lucide="users" class="w-5 h-5"></i>
+                            <span>Кызматкерлер</span>
+                        </a>
+                        <a href="/clients/" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50">
+                            <i data-lucide="user-plus" class="w-5 h-5"></i>
+                            <span>Кардарлар</span>
+                        </a>
+                        <a href="/schedules/" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50">
+                            <i data-lucide="calendar" class="w-5 h-5"></i>
+                            <span>Жазуулар</span>
+                        </a>
+                        <a href="/services/" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50">
+                            <i data-lucide="scissors" class="w-5 h-5"></i>
+                            <span>Кызматтар</span>
+                        </a>
+                        <a href="/settings/" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50">
+                            <i data-lucide="settings" class="w-5 h-5"></i>
+                            <span>Жөндөөлөр</span>
+                        </a>
+                    </nav>
+                </div>
+
+                <!-- Quick Stats -->
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-sm font-medium text-gray-900">Статистика</h3>
+                        <button @click="isStatsCollapsed = !isStatsCollapsed" 
+                                class="text-gray-500 hover:text-blue-600 transition-colors duration-200 p-1 rounded-lg hover:bg-blue-50">
+                            <i data-lucide="chevron-down" 
+                               class="w-5 h-5 transition-all duration-300 ease-in-out"
+                               :class="{'rotate-180': isStatsCollapsed}"></i>
+                        </button>
+                    </div>
+                    <div class="space-y-4 overflow-hidden transition-all duration-300 ease-in-out"
+                         :class="{'max-h-0 opacity-0': isStatsCollapsed, 'max-h-[500px] opacity-100': !isStatsCollapsed}">
+                        <div class="stat-card p-4 rounded-lg border border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-sm text-gray-600">Бардык кызматкерлер</div>
+                                    <div class="text-2xl font-semibold text-gray-900" x-text="employees.length"></div>
+                                </div>
+                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i data-lucide="users" class="w-5 h-5 text-blue-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card p-4 rounded-lg border border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-sm text-gray-600">Активдүү</div>
+                                    <div class="text-2xl font-semibold text-gray-900" x-text="getActiveEmployeesCount()"></div>
+                                </div>
+                                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                    <i data-lucide="user-check" class="w-5 h-5 text-green-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card p-4 rounded-lg border border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-sm text-gray-600">Эс алууда</div>
+                                    <div class="text-2xl font-semibold text-gray-900" x-text="getVacationEmployeesCount()"></div>
+                                </div>
+                                <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                                    <i data-lucide="umbrella" class="w-5 h-5 text-yellow-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-sm font-medium text-gray-900">Сүзгүчтөр</h3>
+                        <button @click="isFiltersCollapsed = !isFiltersCollapsed" 
+                                class="text-gray-500 hover:text-blue-600 transition-colors duration-200 p-1 rounded-lg hover:bg-blue-50">
+                            <i data-lucide="chevron-down" 
+                               class="w-5 h-5 transition-all duration-300 ease-in-out"
+                               :class="{'rotate-180': isFiltersCollapsed}"></i>
+                        </button>
+                    </div>
+                    <div class="space-y-4 overflow-hidden transition-all duration-300 ease-in-out"
+                         :class="{'max-h-0 opacity-0': isFiltersCollapsed, 'max-h-[500px] opacity-100': !isFiltersCollapsed}">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Кызматы</label>
+                            <select x-model="selectedPosition"
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="all">Бардык кызматы</option>
+                                <template x-for="pos in positions" :key="pos.id">
+                                    <option :value="String(pos.id)" x-text="pos.name"></option>
+                                </template>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Статус</label>
+                            <select x-model="selectedStatus"
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="all">Бардык статус</option>
+                                <option value="active">Активдүү</option>
+                                <option value="inactive">Иштен чыккан</option>
+                                <option value="vacation">Эс алууда</option>
+                                <option value="sick">Ооруган</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Иш тажрыйбасы</label>
+                            <select x-model="selectedExperience"
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="all">Каалаган тажрыйба</option>
+                                <option value="junior">1 жылга чейин</option>
+                                <option value="middle">1-3 жыл</option>
+                                <option value="senior">3 жылдан ашык</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="flex-1 overflow-auto ml-64 p-6">
+                <!-- List View -->
+                <div x-show="view === 'list'" class="space-y-4">
+                    <template x-if="filteredEmployees.length === 0">
+                        <div class="flex flex-col items-center justify-center py-16 text-gray-400">
+                            <i data-lucide="users" class="w-16 h-16 mb-4"></i>
+                            <div class="text-2xl font-semibold mb-2">Кызматкер жок</div>
+                            <div class="mb-4">Биринчи кызматкерди кошуу үчүн баштаңыз</div>
+                            <div class="flex justify-center w-full mt-8">
+                                <button @click="showEmployeeModal = true; showProfileModal = false; selectedEmployee = null; setEmployeeForm(); $nextTick(() => lucide.createIcons())" class="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center space-x-2 text-lg shadow-md">
+                                    <i data-lucide='plus' class='w-6 h-6'></i>
+                                    <span>Кызматкер кошуу</span>
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+                    <div x-show="filteredEmployees.length > 0" class="bg-white rounded-lg shadow-sm overflow-hidden">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Кызматкер</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Кызматы</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Байланыштар</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Статистика</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Статус</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Аракеттер</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <template x-for="employee in filteredEmployees" :key="employee.id">
+                                    <tr class="hover:bg-gray-50 cursor-pointer" @click="window.location.href = '/employees/profile/?id=' + employee.id">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="flex-shrink-0 h-10 w-10">
+                                                    <div class="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center shadow-sm">
+                                                        <span class="text-white font-medium" x-text="getInitials(employee.name)"></span>
+                                                    </div>
+                                                </div>
+                                                <div class="ml-4">
+                                                    <div class="text-sm font-medium text-gray-900" x-text="displayValue(employee.name)"></div>
+                                                    <div class="text-sm text-gray-500" x-text="displayValue(getPositionName(employee.position))"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900" x-text="displayValue(getPositionName(employee.position))"></div>
+                                            <div class="text-xs text-gray-500" x-text="employee.experience !== undefined && employee.experience !== null && employee.experience !== '' ? employee.experience + ' жыл тажрыйба' : '—'"></div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900" x-text="displayValue(employee.phone)"></div>
+                                            <div class="text-sm text-gray-500" x-text="displayValue(employee.email)"></div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center space-x-4">
+                                                <div class="text-center">
+                                                    <div class="text-sm font-medium text-gray-900" x-text="displayValue(employee.clientsCount)"></div>
+                                                    <div class="text-xs text-gray-500">Клиенттер</div>
+                                                </div>
+                                                <div class="text-center">
+                                                    <div class="text-sm font-medium text-gray-900" x-text="displayValue(employee.rating)"></div>
+                                                    <div class="text-xs text-gray-500">Рейтинг</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span :class="getStatusClasses(employee.status)"
+                                                  class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                                                  x-text="displayValue(getStatusName(employee.status))">
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                            <button @click.stop="viewEmployeeProfile(employee)" class="text-blue-600 hover:text-blue-900 mr-3">
+                                                <i data-lucide="eye" class="w-4 h-4"></i>
+                                            </button>
+                                            <button @click.stop="editEmployee(employee)" class="text-blue-600 hover:text-blue-900 mr-3">
+                                                <i data-lucide="edit" class="w-4 h-4"></i>
+                                            </button>
+                                            <button @click.stop="deleteEmployee(employee.id)" class="text-red-600 hover:text-red-900">
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Grid View -->
+                <div x-show="view === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <template x-if="filteredEmployees.length === 0">
+                        <div class="col-span-full flex flex-col items-center justify-center py-16 text-gray-400">
+                            <i data-lucide="users" class="w-16 h-16 mb-4"></i>
+                            <div class="text-2xl font-semibold mb-2">Кызматкер жок</div>
+                            <div class="mb-4">Биринчи кызматкерди кошуу үчүн баштаңыз</div>
+                            <div class="flex justify-center w-full mt-8">
+                                <button @click="showEmployeeModal = true; showProfileModal = false; selectedEmployee = null; setEmployeeForm(); $nextTick(() => lucide.createIcons())" class="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center space-x-2 text-lg shadow-md">
+                                    <i data-lucide='plus' class='w-6 h-6'></i>
+                                    <span>Кызматкер кошуу</span>
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+                    <template x-for="employee in filteredEmployees" :key="employee.id">
+                        <div class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-lg transition-all hover-scale cursor-pointer" @click="window.location.href = '/employees/profile/?id=' + employee.id">
+                            <div class="p-6">
+                                <div class="flex items-center space-x-4">
+                                    <div class="h-16 w-16 rounded-full bg-blue-600 flex items-center justify-center shadow-sm" style="border-radius: 100%; width: 120px; height: 60px;">
+                                        <span class="text-white text-xl font-medium" x-text="getInitials(employee.name)"></span>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-medium text-gray-900" x-text="displayValue(employee.name)"></h3>
+                                        <p class="text-sm text-gray-500" x-text="displayValue(getPositionName(employee.position))"></p>
+                                    </div>
+                                </div>
+                                <div class="mt-4 space-y-3">
+                                    <div class="flex items-center text-sm text-gray-500">
+                                        <i data-lucide="phone" class="w-4 h-4 mr-2"></i>
+                                        <span x-text="displayValue(employee.phone)"></span>
+                                    </div>
+                                    <div class="flex items-center text-sm text-gray-500">
+                                        <i data-lucide="mail" class="w-4 h-4 mr-2"></i>
+                                        <span x-text="displayValue(employee.email)"></span>
+                                    </div>
+                                    <div class="flex items-center text-sm text-gray-500">
+                                        <i data-lucide="briefcase" class="w-4 h-4 mr-2"></i>
+                                        <span x-text="employee.experience !== undefined && employee.experience !== null && employee.experience !== '' ? employee.experience + ' жыл тажрыйба' : '—'"></span>
+                                    </div>
+                                </div>
+                                <div class="mt-4 grid grid-cols-2 gap-4">
+                                    <div class="bg-gray-50 rounded-lg p-3 text-center">
+                                        <div class="text-sm font-medium text-gray-900" x-text="displayValue(employee.clientsCount)"></div>
+                                        <div class="text-xs text-gray-500">Клиенттер</div>
+                                    </div>
+                                    <div class="bg-gray-50 rounded-lg p-3 text-center">
+                                        <div class="text-sm font-medium text-gray-900" x-text="displayValue(employee.rating)"></div>
+                                        <div class="text-xs text-gray-500">Рейтинг</div>
+                                    </div>
+                                </div>
+                                <div class="mt-4 flex items-center justify-between">
+                                    <span :class="getStatusClasses(employee.status)"
+                                          class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                                          x-text="displayValue(getStatusName(employee.status))">
+                                    </span>
+                                    <div class="flex space-x-2">
+                                        <button @click.stop="viewEmployeeProfile(employee)" class="text-blue-600 hover:text-blue-900">
+                                            <i data-lucide="eye" class="w-4 h-4"></i>
+                                        </button>
+                                        <button @click.stop="editEmployee(employee)" class="text-blue-600 hover:text-blue-900">
+                                            <i data-lucide="edit" class="w-4 h-4"></i>
+                                        </button>
+                                        <button @click.stop="deleteEmployee(employee.id)" class="text-red-600 hover:text-red-900">
+                                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </main>
+        </div>
+
+        <!-- Employee Modal -->
+        <div x-show="showEmployeeModal" class="fixed inset-0 z-50">
+            <div class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm"></div>
+            <div class="fixed inset-0 flex items-center justify-center p-4">
+                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-5xl flex flex-col relative" style="max-height: calc(100vh - 2rem); min-height: 400px;">
+                    <!-- Error summary top-right -->
+                    <template x-if="Object.keys(errors).length > 0">
+                        <div class="fixed top-6 right-6 z-50 bg-red-50 border border-red-200 text-red-800 rounded-lg px-6 py-4 shadow-xl flex flex-col items-start space-y-2 max-w-xs animate-fade-in">
+                            <div class="font-bold text-base flex items-center space-x-2">
+                                <i data-lucide="alert-circle" class="w-5 h-5"></i>
+                                <span>Маалыматтарды текшериңиз!</span>
+                            </div>
+                            <template x-for="(msg, field) in errors" :key="field">
+                                <div class="text-sm">
+                                    <span class="font-semibold" x-text="getFieldLabel(field) + ':'"></span>
+                                    <span x-text="Array.isArray(msg) ? msg[0] : msg"></span>
+                                </div>
+                            </template>
+                            <div class="text-xs text-gray-500 mt-2">Сураныч, белгиленген талааларды оңдоп, кайра аракет кылыңыз.</div>
+                        </div>
+                    </template>
+                    <!-- Header -->
+                    <div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 flex-shrink-0">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                                    <i data-lucide="user-plus" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-semibold" x-text="selectedEmployee ? 'Кызматкерди түзөтүү' : 'Жаңы кызматкер' "></h3>
+                                    <p class="text-blue-100 text-sm">Кызматкер тууралуу маалыматты толтуруңуз</p>
+                                </div>
+                            </div>
+                            <button @click="showEmployeeModal = false" 
+                                    class="text-white hover:bg-white hover:bg-opacity-20 p-2 rounded-full transition-all">
+                                <i data-lucide="x" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Tabs -->
+                    <div class="border-b border-gray-200 bg-gray-50 flex-shrink-0">
+                        <div class="flex">
+                            <button @click="activeTab = 'basic'; $nextTick(() => lucide.createIcons())"
+                                    :class="{'bg-white text-blue-600 border-b-2 border-blue-600': activeTab === 'basic', 'text-gray-600 hover:text-gray-900': activeTab !== 'basic'}"
+                                    class="flex-1 px-4 py-4 text-sm font-medium transition-all">
+                                <div class="flex items-center justify-center space-x-2">
+                                    <i data-lucide="user" class="w-4 h-4"></i>
+                                    <span>Негизги</span>
+                                </div>
+                            </button>
+                            <button @click="activeTab = 'additional'; $nextTick(() => lucide.createIcons())"
+                                    :class="{'bg-white text-blue-600 border-b-2 border-blue-600': activeTab === 'additional', 'text-gray-600 hover:text-gray-900': activeTab !== 'additional'}"
+                                    class="flex-1 px-4 py-4 text-sm font-medium transition-all">
+                                <div class="flex items-center justify-center space-x-2">
+                                    <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                                    <span>Кошумча</span>
+                                </div>
+                            </button>
+                            <button @click="activeTab = 'documents'; $nextTick(() => lucide.createIcons())"
+                                    :class="{'bg-white text-blue-600 border-b-2 border-blue-600': activeTab === 'documents', 'text-gray-600 hover:text-gray-900': activeTab !== 'documents'}"
+                                    class="flex-1 px-4 py-4 text-sm font-medium transition-all">
+                                <div class="flex items-center justify-center space-x-2">
+                                    <i data-lucide="file-text" class="w-4 h-4"></i>
+                                    <span>Документтер</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="flex-1 overflow-y-auto min-h-0">
+                        <div class="p-6">
+                            <!-- Basic Information Tab -->
+                            <div x-show="activeTab === 'basic'" class="space-y-6">
+                                <!-- Info Card -->
+                                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                            <i data-lucide="info" class="w-3 h-3 text-white"></i>
+                                        </div>
+                                        <div class="text-sm text-blue-800">
+                                            <p class="font-medium mb-1">Аккаунт автоматтык түрдө түзүлөт</p>
+                                            <p>Кызматкер түзүлгөндө, убактылуу сырсөзү менен аккаунт автоматтык түрдө түзүлөт. Кызматкер системага өзүнүн телефон номери менен кире алат.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Personal Info Section -->
+                                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100">
+                                    <div class="flex items-center space-x-3 mb-4">
+                                        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                                            <i data-lucide="user" class="w-4 h-4 text-white"></i>
+                                        </div>
+                                        <h4 class="text-lg font-semibold text-gray-900">Жеке маалымат</h4>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="space-y-2">
+                                            <label class="block text-sm font-medium text-gray-700">
+                                                <span class="text-red-500">*</span> Аты-жөнү
+                                            </label>
+                                            <div class="relative">
+                                                <i data-lucide="user" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                                                <input type="text" 
+                                                       class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                       :class="{'border-red-500 ring-red-200': errors.name}"
+                                               x-model="employeeForm.name"
+                                                       placeholder="Аты-жөнүн киргизиңиз">
+                                            </div>
+                                            <div x-show="errors.name" class="text-sm text-red-600 flex items-center space-x-1">
+                                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                                <span x-text="errors.name"></span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="space-y-2">
+                                            <label class="block text-sm font-medium text-gray-700">
+                                                <span class="text-red-500">*</span> Кызматы
+                                            </label>
+                                            <div class="relative">
+                                                <i data-lucide="briefcase" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                                                <select class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all appearance-none"
+                                                        :class="{'border-red-500 ring-red-200': errors.position}"
+                                                x-model="employeeForm.position">
+                                                    <option value="">Кызматты тандаңыз</option>
+                                                    <template x-for="pos in positions" :key="pos.id">
+                                                        <option :value="String(pos.id)" x-text="pos.name"></option>
+                                                    </template>
+                                                </select>
+                                                <i data-lucide="chevron-down" class="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"></i>
+                                            </div>
+                                            <div x-show="errors.position" class="text-sm text-red-600 flex items-center space-x-1">
+                                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                                <span x-text="errors.position"></span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="space-y-2">
+                                            <label class="block text-sm font-medium text-gray-700">Иш тажрыйбасы</label>
+                                            <div class="relative">
+                                                <i data-lucide="clock" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                                                <input type="number" 
+                                                       class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                       :class="{'border-red-500 ring-red-200': errors.experience}"
+                                               x-model="employeeForm.experience"
+                                               min="0"
+                                                       max="50"
+                                                       placeholder="0">
+                                                <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">жыл</span>
+                                            </div>
+                                            <div x-show="errors.experience" class="text-sm text-red-600 flex items-center space-x-1">
+                                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                                <span x-text="errors.experience"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="space-y-2">
+                                            <label class="block text-sm font-medium text-gray-700">Айлык акы</label>
+                                            <div class="relative">
+                                                <i data-lucide="credit-card" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                                                <input type="number" 
+                                                       class="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                       :class="{'border-red-500 ring-red-200': errors.salary}"
+                                                       x-model="employeeForm.salary"
+                                                       min="0"
+                                                       placeholder="0">
+                                                <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">сом</span>
+                                            </div>
+                                            <div x-show="errors.salary" class="text-sm text-red-600 flex items-center space-x-1">
+                                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                                <span x-text="errors.salary"></span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="space-y-2">
+                                            <label class="block text-sm font-medium text-gray-700 flex items-center space-x-2">
+                                                <span>Кызматкер адис болуп эсептелеби?</span>
+                                                <button type="button" 
+                                                        @click="showMasterInfo = !showMasterInfo"
+                                                        class="text-gray-400 hover:text-blue-600 transition-colors">
+                                                    <i data-lucide="help-circle" class="w-4 h-4"></i>
+                                                </button>
+                                            </label>
+                                            <div x-show="showMasterInfo" 
+                                                 x-transition
+                                                 class="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-3 text-sm text-blue-800">
+                                                <div class="flex items-start space-x-2">
+                                                    <i data-lucide="info" class="w-4 h-4 mt-0.5 flex-shrink-0"></i>
+                                                    <div>
+                                                        <p class="font-medium mb-1">Адис ким?</p>
+                                                        <p>Адис — бул кардарларды кабыл ала алган кызматкер. Эгер бул параметрди кошсоңуз, кызматкер бизнес сайтында көрүнөт, кардарлар жана башка кызматкерлер аны адис катары тандай алышат. Бул кызмат көрсөтүүчү адистер үчүн (мисалы, косметолог, стилист, маникюрчу, массажист ж.б.). Администратор, менеджер жана кызмат көрсөтпөгөн кызматкерлер үчүн бул параметрди кошпоңуз.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center space-x-3">
+                                                <div class="relative inline-block w-12 align-middle select-none transition duration-200 ease-in">
+                                                    <input type="checkbox" 
+                                                           x-model="employeeForm.isMaster"
+                                                           class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer transition-all duration-200 ease-in-out"
+                                                           :class="{'border-blue-500': employeeForm.isMaster, 'border-gray-300': !employeeForm.isMaster, 'right-0': employeeForm.isMaster, 'left-0': !employeeForm.isMaster}">
+                                                    <label class="toggle-label block overflow-hidden h-6 rounded-full cursor-pointer transition-all duration-200 ease-in-out"
+                                                           :class="{'bg-blue-500': employeeForm.isMaster, 'bg-gray-300': !employeeForm.isMaster}"></label>
+                                                </div>
+                                                <span class="text-sm text-gray-600" x-text="employeeForm.isMaster ? 'Ооба' : 'Жок'"></span>
+                                            </div>
+                                            <div x-show="errors.isMaster" class="text-sm text-red-600 flex items-center space-x-1">
+                                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                                <span x-text="errors.isMaster"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Contact Info Section -->
+                                <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-100">
+                                    <div class="flex items-center space-x-3 mb-4">
+                                        <div class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
+                                            <i data-lucide="phone" class="w-4 h-4 text-white"></i>
+                                        </div>
+                                        <h4 class="text-lg font-semibold text-gray-900">Байланыш маалыматтары</h4>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="space-y-2">
+                                            <label class="block text-sm font-medium text-gray-700">
+                                                <span class="text-red-500">*</span> Телефон
+                                            </label>
+                                            <div class="relative">
+                                                <i data-lucide="phone" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                                                <input type="tel" 
+                                                       class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                       :class="{'border-red-500 ring-red-200': errors.phone}"
+                                               x-model="employeeForm.phone"
+                                               @input="formatPhoneNumber"
+                                               placeholder="Телефон номерин киргизиңиз">
+                                            </div>
+                                            <div x-show="errors.phone" class="text-sm text-red-600 flex items-center space-x-1">
+                                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                                <span x-text="errors.phone"></span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="space-y-2">
+                                            <label class="block text-sm font-medium text-gray-700">
+                                                <span class="text-red-500">*</span> Email
+                                            </label>
+                                            <div class="relative">
+                                                <i data-lucide="mail" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                                                <input type="email" 
+                                                       class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                       :class="{'border-red-500 ring-red-200': errors.email}"
+                                               x-model="employeeForm.email"
+                                               placeholder="Email дарегин киргизиңиз">
+                                            </div>
+                                            <div x-show="errors.email" class="text-sm text-red-600 flex items-center space-x-1">
+                                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                                <span x-text="errors.email"></span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="md:col-span-2 space-y-2">
+                                            <label class="block text-sm font-medium text-gray-700">Дарек</label>
+                                            <div class="relative">
+                                                <i data-lucide="map-pin" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                                                <input type="text" 
+                                                       class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                       :class="{'border-red-500 ring-red-200': errors.address}"
+                                               x-model="employeeForm.address"
+                                                       placeholder="Толук даректи киргизиңиз">
+                                            </div>
+                                            <div x-show="errors.address" class="text-sm text-red-600 flex items-center space-x-1">
+                                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                                <span x-text="errors.address"></span>
+                                            </div>
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+
+                            <!-- Additional Information Tab -->
+                            <div x-show="activeTab === 'additional'" class="space-y-6">
+                                <!-- Info Card -->
+                                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                            <i data-lucide="info" class="w-3 h-3 text-white"></i>
+                                        </div>
+                                        <div class="text-sm text-blue-800">
+                                            <p class="font-medium mb-1">Аккаунт автоматтык түрдө түзүлөт</p>
+                                            <p>Кызматкер түзүлгөндө, убактылуу сырсөзү менен аккаунт автоматтык түрдө түзүлөт. Кызматкер системага өзүнүн телефон номери менен кире алат.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Personal Details Section -->
+                                <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-100">
+                                    <div class="flex items-center space-x-3 mb-4">
+                                        <div class="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
+                                            <i data-lucide="calendar" class="w-4 h-4 text-white"></i>
+                                        </div>
+                                        <h4 class="text-lg font-semibold text-gray-900">Жеке маалыматтар</h4>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="space-y-2">
+                                            <label class="block text-sm font-medium text-gray-700">Туулган күнү</label>
+                                            <div class="relative">
+                                                <i data-lucide="calendar" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                                                <input type="date" 
+                                                       class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                       :class="{'border-red-500 ring-red-200': errors.birthDate}"
+                                                       x-model="employeeForm.birthDate">
+                                            </div>
+                                            <div x-show="errors.birthDate" class="text-sm text-red-600 flex items-center space-x-1">
+                                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                                <span x-text="errors.birthDate"></span>
+                                            </div>
+                                        </div>
+                                        <div class="space-y-2">
+                                            <label class="block text-sm font-medium text-gray-700">Билими</label>
+                                            <div class="relative">
+                                                <i data-lucide="graduation-cap" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                                                <input type="text" 
+                                                       class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                       :class="{'border-red-500 ring-red-200': errors.education}"
+                                                       x-model="employeeForm.education"
+                                                       placeholder="Мисалы: Жогорку медициналык">
+                                            </div>
+                                            <div x-show="errors.education" class="text-sm text-red-600 flex items-center space-x-1">
+                                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                                <span x-text="errors.education"></span>
+                                            </div>
+                                        </div>
+                                        <div class="space-y-2">
+                                            <label class="block text-sm font-medium text-gray-700">Көндүмдөрү</label>
+                                            <div class="relative">
+                                                <i data-lucide="award" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                                                <input type="text" 
+                                                       class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                       :class="{'border-red-500 ring-red-200': errors.skills}"
+                                                       x-model="employeeForm.skills"
+                                                       placeholder="Мисалы: чач кыркуу, боёо, жасалгалоо">
+                                            </div>
+                                            <div x-show="errors.skills" class="text-sm text-red-600 flex items-center space-x-1">
+                                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                                <span x-text="errors.skills"></span>
+                                            </div>
+                                        </div>
+                                        <div class="space-y-2">
+                                            <label class="block text-sm font-medium text-gray-700">Тилдери</label>
+                                            <div class="relative">
+                                                <i data-lucide="globe" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                                                <input type="text" 
+                                                       class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                       :class="{'border-red-500 ring-red-200': errors.languages}"
+                                                       x-model="employeeForm.languages"
+                                                       placeholder="Мисалы: кыргызча, орусча, англисче">
+                                            </div>
+                                            <div x-show="errors.languages" class="text-sm text-red-600 flex items-center space-x-1">
+                                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                                <span x-text="errors.languages"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Work Details Section -->
+                                <div class="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-6 border border-orange-100">
+                                    <div class="flex items-center space-x-3 mb-4">
+                                        <div class="w-8 h-8 bg-orange-600 rounded-lg flex items-center justify-center">
+                                            <i data-lucide="briefcase" class="w-4 h-4 text-white"></i>
+                                        </div>
+                                        <h4 class="text-lg font-semibold text-gray-900">Иш тууралуу маалымат</h4>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="space-y-2">
+                                            <label class="block text-sm font-medium text-gray-700">Ишке кирген күнү</label>
+                                            <div class="relative">
+                                                <i data-lucide="calendar-days" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                                                <input type="date" 
+                                                       class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                       :class="{'border-red-500 ring-red-200': errors.startDate}"
+                                                       x-model="employeeForm.startDate">
+                                            </div>
+                                            <div x-show="errors.startDate" class="text-sm text-red-600 flex items-center space-x-1">
+                                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                                <span x-text="errors.startDate"></span>
+                                            </div>
+                                        </div>
+                                        <div class="space-y-2">
+                                            <label class="block text-sm font-medium text-gray-700">Сертификаттар</label>
+                                            <div class="relative">
+                                                <i data-lucide="award" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                                                <input type="text" 
+                                                       class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                       :class="{'border-red-500 ring-red-200': errors.certifications}"
+                                                       x-model="employeeForm.certifications"
+                                                       placeholder="Мисалы: Колористика сертификаты">
+                                            </div>
+                                            <div x-show="errors.certifications" class="text-sm text-red-600 flex items-center space-x-1">
+                                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                                <span x-text="errors.certifications"></span>
+                                            </div>
+                                        </div>
+                                        <div class="space-y-2">
+                                            <label class="block text-sm font-medium text-gray-700">Жетишкендиктер</label>
+                                            <div class="relative">
+                                                <i data-lucide="star" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                                                <input type="text" 
+                                                       class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                       :class="{'border-red-500 ring-red-200': errors.achievements}"
+                                                       x-model="employeeForm.achievements"
+                                                       placeholder="Жетишкендиктер жана сыйлыктар">
+                                            </div>
+                                            <div x-show="errors.achievements" class="text-sm text-red-600 flex items-center space-x-1">
+                                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                                <span x-text="errors.achievements"></span>
+                                            </div>
+                                        </div>
+                                        <div class="space-y-2">
+                                            <label class="block text-sm font-medium text-gray-700">Жабдуулар</label>
+                                            <div class="relative">
+                                                <i data-lucide="wrench" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                                                <input type="text" 
+                                                       class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                       :class="{'border-red-500 ring-red-200': errors.equipment}"
+                                                       x-model="employeeForm.equipment"
+                                                       placeholder="Берилген жабдуулар">
+                                            </div>
+                                            <div x-show="errors.equipment" class="text-sm text-red-600 flex items-center space-x-1">
+                                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                                <span x-text="errors.equipment"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Documents Tab -->
+                        <div x-show="activeTab === 'documents'" class="space-y-6">
+                            <!-- Info Card -->
+                            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                        <i data-lucide="info" class="w-3 h-3 text-white"></i>
+                                    </div>
+                                    <div class="text-sm text-blue-800">
+                                        <p class="font-medium mb-1">Аккаунт автоматтык түрдө түзүлөт</p>
+                                        <p>Кызматкер түзүлгөндө, убактылуу сырсөзү менен аккаунт автоматтык түрдө түзүлөт. Кызматкер системага өзүнүн телефон номери менен кире алат.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Documents Section -->
+                            <div class="bg-gradient-to-r from-pink-50 to-red-50 rounded-xl p-6 border border-pink-100">
+                                <div class="flex items-center space-x-3 mb-4">
+                                    <div class="w-8 h-8 bg-pink-600 rounded-lg flex items-center justify-center">
+                                        <i data-lucide="file-text" class="w-4 h-4 text-white"></i>
+                                    </div>
+                                    <h4 class="text-lg font-semibold text-gray-900">Документтер</h4>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="space-y-2">
+                                        <label class="block text-sm font-medium text-gray-700">Паспорт</label>
+                                        <div class="relative">
+                                            <i data-lucide="file-text" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                                            <input type="text" 
+                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                   :class="{'border-red-500 ring-red-200': errors.passportNumber}"
+                                                   x-model="employeeForm.passportNumber"
+                                                   placeholder="Паспорт номери">
+                                        </div>
+                                        <div x-show="errors.passportNumber" class="text-sm text-red-600 flex items-center space-x-1">
+                                            <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                            <span x-text="errors.passportNumber"></span>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="block text-sm font-medium text-gray-700">Берилген күнү</label>
+                                        <div class="relative">
+                                            <i data-lucide="calendar" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                                            <input type="date" 
+                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                   :class="{'border-red-500 ring-red-200': errors.passportIssued}"
+                                                   x-model="employeeForm.passportIssued">
+                                        </div>
+                                        <div x-show="errors.passportIssued" class="text-sm text-red-600 flex items-center space-x-1">
+                                            <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                            <span x-text="errors.passportIssued"></span>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="block text-sm font-medium text-gray-700">Жарактуу мөөнөтү</label>
+                                        <div class="relative">
+                                            <i data-lucide="calendar" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                                            <input type="date" 
+                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                   :class="{'border-red-500 ring-red-200': errors.passportExpiry}"
+                                                   x-model="employeeForm.passportExpiry">
+                                        </div>
+                                        <div x-show="errors.passportExpiry" class="text-sm text-red-600 flex items-center space-x-1">
+                                            <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                            <span x-text="errors.passportExpiry"></span>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="block text-sm font-medium text-gray-700">Салык номери (ИНН)</label>
+                                        <div class="relative">
+                                            <i data-lucide="file-text" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                                            <input type="text" 
+                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                   :class="{'border-red-500 ring-red-200': errors.taxId}"
+                                                   x-model="employeeForm.taxId"
+                                                   placeholder="ИНН">
+                                        </div>
+                                        <div x-show="errors.taxId" class="text-sm text-red-600 flex items-center space-x-1">
+                                            <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                            <span x-text="errors.taxId"></span>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="block text-sm font-medium text-gray-700">Банк эсеби</label>
+                                        <div class="relative">
+                                            <i data-lucide="file-text" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                                            <input type="text" 
+                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                   :class="{'border-red-500 ring-red-200': errors.bankAccount}"
+                                                   x-model="employeeForm.bankAccount"
+                                                   placeholder="Банк эсебинин номери">
+                                        </div>
+                                        <div x-show="errors.bankAccount" class="text-sm text-red-600 flex items-center space-x-1">
+                                            <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                            <span x-text="errors.bankAccount"></span>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="block text-sm font-medium text-gray-700">Банктын аталышы</label>
+                                        <div class="relative">
+                                            <i data-lucide="file-text" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                                            <input type="text" 
+                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                   :class="{'border-red-500 ring-red-200': errors.bankName}"
+                                                   x-model="employeeForm.bankName"
+                                                   placeholder="Банктын аталышы">
+                                        </div>
+                                        <div x-show="errors.bankName" class="text-sm text-red-600 flex items-center space-x-1">
+                                            <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                            <span x-text="errors.bankName"></span>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="block text-sm font-medium text-gray-700">Байланыш үчүн номер</label>
+                                        <div class="relative">
+                                            <i data-lucide="phone" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                                            <input type="text" 
+                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                   :class="{'border-red-500 ring-red-200': errors.emergencyContact}"
+                                                   x-model="employeeForm.emergencyContact"
+                                                   placeholder="Байланыш үчүн номер">
+                                        </div>
+                                        <div x-show="errors.emergencyContact" class="text-sm text-red-600 flex items-center space-x-1">
+                                            <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                            <span x-text="errors.emergencyContact"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="space-y-2">
+                                        <label class="block text-sm font-medium text-gray-700">Байланыштын аты-жөнү</label>
+                                        <div class="relative">
+                                            <i data-lucide="user" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                                            <input type="text" 
+                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                   :class="{'border-red-500 ring-red-200': errors.emergencyContactName}"
+                                                   x-model="employeeForm.emergencyContactName"
+                                                   placeholder="Байланыштын аты-жөнү">
+                                        </div>
+                                        <div x-show="errors.emergencyContactName" class="text-sm text-red-600 flex items-center space-x-1">
+                                            <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                            <span x-text="errors.emergencyContactName"></span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="space-y-2">
+                                        <label class="block text-sm font-medium text-gray-700">Байланыштын туугандыгы</label>
+                                        <div class="relative">
+                                            <i data-lucide="users" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                                            <input type="text" 
+                                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                                   :class="{'border-red-500 ring-red-200': errors.emergencyContactRelation}"
+                                                   x-model="employeeForm.emergencyContactRelation"
+                                                   placeholder="Байланыштын туугандыгы">
+                                        </div>
+                                        <div x-show="errors.emergencyContactRelation" class="text-sm text-red-600 flex items-center space-x-1">
+                                            <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                                            <span x-text="errors.emergencyContactRelation"></span>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    <!-- Footer -->
+                    <div class="bg-gray-50 px-6 py-4 border-t border-gray-200 flex-shrink-0">
+                        <div class="flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0 sm:space-x-4">
+                            <div class="flex items-center space-x-2 text-sm text-gray-600">
+                                <i data-lucide="info" class="w-4 h-4"></i>
+                                <span>Жылдызча (*) менен белгиленген талаалар милдеттүү</span>
+                            </div>
+                            <div class="flex space-x-3">
+                                <button @click="showEmployeeModal = false"
+                                        class="px-6 py-2.5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all flex items-center space-x-2">
+                                    <i data-lucide="x" class="w-4 h-4"></i>
+                                    <span>Жокко чыгаруу</span>
+                                </button>
+                                <button @click="saveEmployee"
+                                        class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all flex items-center space-x-2 shadow-lg">
+                                    <i data-lucide="save" class="w-4 h-4"></i>
+                                    <span x-text="selectedEmployee ? 'Сактоо' : 'Түзүү'"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Employee Profile Modal -->
+        <div x-show="showProfileModal" class="fixed inset-0 z-50">
+            <div class="fixed inset-0 bg-black bg-opacity-50"></div>
+            <div class="fixed inset-0 flex items-center justify-center p-4 overflow-y-auto">
+                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl md:max-w-4xl flex flex-col" style="max-height: calc(100vh - 2rem); min-height: 400px;">
+                            <!-- Profile Header -->
+                    <div class="flex flex-col md:flex-row items-center md:items-start p-8 pb-4 border-b border-gray-200 relative">
+                        <div class="h-24 w-24 rounded-full bg-blue-600 flex items-center justify-center shadow-lg text-4xl font-bold text-white">
+                            <span x-text="getInitials(selectedEmployee?.name)"></span>
+                                    </div>
+                        <div class="md:ml-8 flex-1 w-full mt-4 md:mt-0">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between w-full">
+                                    <div>
+                                    <h2 class="text-2xl font-bold text-gray-900 mb-1" x-text="selectedEmployee?.name"></h2>
+                                    <div class="flex items-center space-x-2 mb-2">
+                                        <span class="text-gray-500 text-base" x-text="getPositionName(selectedEmployee?.position)"></span>
+                                        <span :class="getStatusClasses(selectedEmployee?.status) + ' px-3 py-1 rounded-full text-xs font-semibold ml-2'" x-text="getStatusName(selectedEmployee?.status)"></span>
+                                    </div>
+                                </div>
+                                <div class="flex space-x-2 mt-4 md:mt-0">
+                                    <button @click="editEmployee(selectedEmployee)" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center space-x-2 text-base shadow">
+                                        <i data-lucide="edit" class="w-5 h-5"></i>
+                                        <span>Түзөтүү</span>
+                                    </button>
+                                    <button @click="showProfileModal = false" class="bg-gray-100 text-gray-600 px-4 py-2 rounded-lg hover:bg-gray-200 flex items-center space-x-2 text-base shadow">
+                                        <i data-lucide="x" class="w-5 h-5"></i>
+                                        <span>Жабуу</span>
+                                    </button>
+                            </div>
+                                </div>
+                            <div class="flex space-x-6 mt-6">
+                                <div class="text-center">
+                                    <div class="text-xs text-gray-500">Клиенттер</div>
+                                    <div class="text-lg font-semibold text-gray-900" x-text="selectedEmployee?.clientsCount ?? '—'"></div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-xs text-gray-500">Рейтинг</div>
+                                    <div class="text-lg font-semibold text-gray-900" x-text="selectedEmployee?.rating ?? '—'"></div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-xs text-gray-500">Опыт</div>
+                                    <div class="text-lg font-semibold text-gray-900" x-text="(selectedEmployee?.experience ? selectedEmployee.experience + ' лет' : '—')"></div>
+                                </div>
+                            </div>
+                                    </div>
+                                    </div>
+                    <!-- Info Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 p-8 pt-4">
+                        <!-- Контакты -->
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                            <h4 class="text-sm font-semibold text-gray-900 mb-2 flex items-center"><i data-lucide="phone" class="w-4 h-4 mr-2"></i>Контакты</h4>
+                            <div class="flex items-center text-sm text-gray-700 mb-1"><i data-lucide="phone" class="w-4 h-4 mr-2"></i><span x-text="selectedEmployee?.phone || '—'"></span></div>
+                            <div class="flex items-center text-sm text-gray-700 mb-1"><i data-lucide="mail" class="w-4 h-4 mr-2"></i><span x-text="selectedEmployee?.email || '—'"></span></div>
+                            <div class="flex items-center text-sm text-gray-700"><i data-lucide="map-pin" class="w-4 h-4 mr-2"></i><span x-text="selectedEmployee?.address || '—'"></span></div>
+                                    </div>
+                        <!-- Личная информация -->
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                            <h4 class="text-sm font-semibold text-gray-900 mb-2 flex items-center"><i data-lucide="user" class="w-4 h-4 mr-2"></i>Личная информация</h4>
+                            <div class="flex items-center text-sm text-gray-700 mb-1"><i data-lucide="calendar" class="w-4 h-4 mr-2"></i><span x-text="formatDate(selectedEmployee?.birthDate) || '—'"></span></div>
+                            <div class="flex items-center text-sm text-gray-700 mb-1"><i data-lucide="graduation-cap" class="w-4 h-4 mr-2"></i><span x-text="selectedEmployee?.education || '—'"></span></div>
+                            <div class="flex items-center text-sm text-gray-700"><i data-lucide="globe" class="w-4 h-4 mr-2"></i>
+                                <template x-if="selectedEmployee?.languages">
+                                    <div class="flex flex-wrap gap-1">
+                                        <template x-for="lang in selectedEmployee.languages.split(',')" :key="lang">
+                                            <span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs" x-text="lang.trim()"></span>
+                                        </template>
+                                </div>
+                                </template>
+                                <template x-if="!selectedEmployee?.languages">
+                                    <span>—</span>
+                                </template>
+                            </div>
+                                    </div>
+                        <!-- Рабочая информация -->
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                            <h4 class="text-sm font-semibold text-gray-900 mb-2 flex items-center"><i data-lucide="briefcase" class="w-4 h-4 mr-2"></i>Работа</h4>
+                            <div class="flex items-center text-sm text-gray-700 mb-1"><i data-lucide="clock" class="w-4 h-4 mr-2"></i><span x-text="selectedEmployee?.schedule || '—'"></span></div>
+                            <div class="flex items-center text-sm text-gray-700 mb-1"><i data-lucide="credit-card" class="w-4 h-4 mr-2"></i><span x-text="selectedEmployee?.salary ? selectedEmployee.salary + ' ₽' : '—'"></span></div>
+                            <div class="flex items-center text-sm text-gray-700"><i data-lucide="award" class="w-4 h-4 mr-2"></i>
+                                <template x-if="selectedEmployee?.certifications">
+                                    <div class="flex flex-wrap gap-1">
+                                        <template x-for="cert in selectedEmployee.certifications.split(',')" :key="cert">
+                                            <span class="px-2 py-0.5 bg-green-100 text-green-800 rounded-full text-xs" x-text="cert.trim()"></span>
+                                        </template>
+                                    </div>
+                                </template>
+                                <template x-if="!selectedEmployee?.certifications">
+                                    <span>—</span>
+                                </template>
+                                </div>
+                            </div>
+                                    </div>
+                    <!-- Навыки и достижения -->
+                    <div class="px-8 pb-8">
+                        <div class="flex flex-col md:flex-row md:space-x-8">
+                            <div class="flex-1 mb-4 md:mb-0">
+                                <h4 class="text-sm font-semibold text-gray-900 mb-2 flex items-center"><i data-lucide="zap" class="w-4 h-4 mr-2"></i>Навыки</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <template x-if="selectedEmployee?.skills">
+                                        <template x-for="skill in selectedEmployee.skills.split(',')" :key="skill">
+                                            <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm" x-text="skill.trim()"></span>
+                                        </template>
+                                    </template>
+                                    <template x-if="!selectedEmployee?.skills">
+                                        <span class="text-gray-400">—</span>
+                                    </template>
+                                    </div>
+                                </div>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-semibold text-gray-900 mb-2 flex items-center"><i data-lucide="star" class="w-4 h-4 mr-2"></i>Достижения</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    <template x-if="selectedEmployee?.achievements">
+                                        <template x-for="ach in selectedEmployee.achievements.split(',')" :key="ach">
+                                            <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm" x-text="ach.trim()"></span>
+                                        </template>
+                                    </template>
+                                    <template x-if="!selectedEmployee?.achievements">
+                                        <span class="text-gray-400">—</span>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification (Fixed, Top-Right) -->
+        <div 
+            x-show="toast" 
+            x-transition
+            :class="{'bg-green-500': toast?.type === 'success', 'bg-red-500': toast?.type === 'error'}"
+            class="fixed top-6 right-6 z-50 px-6 py-4 rounded-xl shadow-2xl text-white text-base font-medium flex items-center space-x-3"
+            style="min-width: 280px; max-width: 400px;"
+        >
+            <template x-if="toast?.type === 'success'">
+                <i data-lucide="check-circle" class="w-5 h-5 text-white"></i>
+            </template>
+            <template x-if="toast?.type === 'error'">
+                <i data-lucide="alert-circle" class="w-5 h-5 text-white"></i>
+            </template>
+            <span x-text="toast?.message"></span>
+            <button @click="toast = null" class="ml-2 p-1 rounded-full hover:bg-white hover:bg-opacity-20 transition-all">
+                <i data-lucide="x" class="w-5 h-5 text-white"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Alpine.js Logic -->
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('ressoEmployees', () => ({
+                view: 'list',
+                showEmployeeModal: false,
+                showProfileModal: false,
+                selectedEmployee: null,
+                searchQuery: '',
+                selectedPosition: 'all',
+                selectedStatus: 'all',
+                selectedExperience: 'all',
+                toast: null,
+                errors: {},
+                showAdditionalFields: false,
+                activeTab: 'basic',
+                isNavCollapsed: false,
+                isStatsCollapsed: false,
+                isFiltersCollapsed: false,
+                showMasterInfo: false,
+                employeeForm: {
+                    name: '',
+                    position: '',
+                    phone: '',
+                    email: '',
+                    status: 'active',
+                    experience: 0,
+                    isMaster: false,
+                    birthDate: '',
+                    education: '',
+                    skills: '',
+                    address: '',
+                    salary: 0,
+                    schedule: 'full',
+                    clientsCount: 0,
+                    rating: 0,
+                    passportNumber: '',
+                    passportIssued: '',
+                    passportExpiry: '',
+                    taxId: '',
+                    bankAccount: '',
+                    bankName: '',
+                    emergencyContact: '',
+                    emergencyContactName: '',
+                    emergencyContactRelation: '',
+                    startDate: '',
+                    contractNumber: '',
+                    contractExpiry: '',
+                    vacationDaysTotal: 28,
+                    vacationDaysUsed: 0,
+                    sickDaysTotal: 30,
+                    sickDaysUsed: 0,
+                    certifications: '',
+                    languages: '',
+                    achievements: '',
+                    notes: '',
+                    equipment: '',
+                    insuranceNumber: '',
+                    insuranceExpiry: '',
+                    performanceReviews: [],
+                    trainingHistory: [],
+                    workSchedule: {
+                        monday: '',
+                        tuesday: '',
+                        wednesday: '',
+                        thursday: '',
+                        friday: '',
+                        saturday: '',
+                        sunday: ''
+                    },
+                    salaryHistory: [],
+                    documents: []
+                },
+                employees: [],
+                businessTypes: [],
+                businessSubtypes: [],
+                positions: [],
+                selectedBusinessType: '',
+                selectedBusinessSubtype: '',
+                currentBusinessSubtype: '',
+                positionsDebug: null,
+                async init() {
+                    await this.loadEmployees();
+                    // Получаем бизнес текущего пользователя (например, через API или из window.currentBusiness)
+                    // Здесь предполагается, что window.currentBusinessSubtypeId уже определён сервером
+                    this.currentBusinessSubtype = window.currentBusinessSubtypeId || '';
+                    await this.loadPositions();
+                    lucide.createIcons();
+                    // Для отладки: выводим сотрудников в консоль
+                    console.log('EMPLOYEES:', this.employees);
+                    // Добавляем $watch для фильтров
+                    this.$watch('selectedPosition', () => {
+                        this.$nextTick(() => lucide.createIcons());
+                    });
+                    this.$watch('selectedStatus', () => {
+                        this.$nextTick(() => lucide.createIcons());
+                    });
+                    this.$watch('selectedExperience', () => {
+                        this.$nextTick(() => lucide.createIcons());
+                    });
+                    // Добавляем $watch для модального окна и вкладок
+                    this.$watch('showEmployeeModal', () => {
+                        this.$nextTick(() => lucide.createIcons());
+                    });
+                    this.$watch('activeTab', () => {
+                        this.$nextTick(() => lucide.createIcons());
+                    });
+                },
+                async loadEmployees() {
+                    try {
+                        console.debug('[DEBUG] GET /employees/api/employees/');
+                        const response = await fetch('/employees/api/employees/');
+                        const data = await response.json();
+                        console.debug('[DEBUG] loadEmployees Response:', data);
+                        this.employees = Array.isArray(data) ? data : (data.results || data.employees || []);
+                    } catch (error) {
+                        console.error('[DEBUG] Ошибка загрузки сотрудников:', error);
+                        this.showToast('Кызматкерлерди жүктөөдө ката: ' + error.message, 'error');
+                    }
+                },
+                async saveEmployee() {
+                    if (!this.validatePage()) return;
+                    let url = '/employees/api/employees/';
+                    let method = 'POST';
+                    if (this.selectedEmployee) {
+                        url += this.selectedEmployee.id + '/';
+                        method = 'PUT';
+                    }
+                    const payload = { ...this.employeeForm };
+                    // Синхронизация поля мастера
+                    payload.is_master = this.employeeForm.isMaster;
+                    delete payload.isMaster;
+                    [
+                        'birthDate','passportIssued','passportExpiry','startDate','contractExpiry','insuranceExpiry'
+                    ].forEach(f => {
+                        if (payload[f] === '') payload[f] = null;
+                    });
+                    this.errors = {}; // Сбрасываем ошибки перед отправкой
+                    try {
+                        const response = await fetch(url, {
+                            method,
+                            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': this.getCookie('csrftoken') },
+                            body: JSON.stringify(payload),
+                            credentials: 'include'
+                        });
+                        const data = await response.json();
+                        
+                        if (response.status === 201 || response.ok) {
+                            this.showToast('Кызматкер сакталды', 'success');
+                            this.$nextTick(() => lucide.createIcons());
+                            // Сброс фильтров
+                            this.selectedPosition = 'all';
+                            this.selectedStatus = 'all';
+                            this.selectedExperience = 'all';
+                            this.searchQuery = '';
+                            this.errors = {};
+                            await this.loadEmployees();
+                            this.showEmployeeModal = false;
+                        } else if (response.status === 400 && data) {
+                            // Ошибки валидации
+                            if (typeof data === 'object') {
+                                this.errors = data;
+                                // Показываем первую ошибку в toast
+                                const firstErrorKey = Object.keys(data)[0];
+                                const firstError = data[firstErrorKey];
+                                let errorText = Array.isArray(firstError) ? firstError[0] : firstError;
+                                this.showToast('Ката: ' + errorText, 'error');
+                                this.$nextTick(() => {
+                                    // Пробуем найти и проскроллить к первому полю с ошибкой
+                                    const errorField = document.querySelector('[x-model="employeeForm.' + firstErrorKey + '"]');
+                                    if (errorField) {
+                                        errorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                        errorField.focus();
+                                        errorField.classList.add('error-highlight');
+                                        setTimeout(() => errorField.classList.remove('error-highlight'), 2000);
+                                    }
+                                });
+                            } else {
+                                this.showToast('Текшерүүдө ката', 'error');
+                            }
+                        } else {
+                            this.showToast((data.message ? 'Ката: ' + data.message : 'Сактоодо ката'), 'error');
+                        }
+                    } catch (error) {
+                        console.error('[DEBUG] Ошибка сохранения сотрудника:', error);
+                        this.showToast('Ошибка сохранения: ' + error.message, 'error');
+                    }
+                },
+                async deleteEmployee(id) {
+                    if (!confirm('Удалить сотрудника?')) return;
+                    try {
+                        const response = await fetch(`/employees/api/employees/${id}/`, {
+                            method: 'DELETE',
+                            headers: { 'X-CSRFToken': this.getCookie('csrftoken') },
+                            credentials: 'include'
+                        });
+                        let data = {};
+                        if (response.status !== 204) {
+                            try { data = await response.json(); } catch(e) { data = {}; }
+                        }
+                        if (response.status === 204 || data.status === 'success' || response.ok) {
+                            this.showToast('Сотрудник удалён', 'success');
+                            await this.loadEmployees();
+                        } else {
+                            this.showToast((data.message ? 'Ката: ' + data.message : 'Өчүрүүдө ката'), 'error');
+                        }
+                    } catch (error) {
+                        console.error('[DEBUG] Ошибка удаления сотрудника:', error);
+                        this.showToast('Ошибка удаления: ' + error.message, 'error');
+                    }
+                },
+                get filteredEmployees() {
+                    return this.employees.filter(employee => {
+                        const matchesSearch = !this.searchQuery || 
+                            (employee.name && employee.name.toLowerCase().includes(this.searchQuery.toLowerCase())) ||
+                            (employee.phone && employee.phone.includes(this.searchQuery)) ||
+                            (employee.email && employee.email.toLowerCase().includes(this.searchQuery.toLowerCase()));
+                        const matchesPosition = this.selectedPosition === 'all' || 
+                            employee.position === this.selectedPosition;
+                        const matchesStatus = this.selectedStatus === 'all' || 
+                            employee.status === this.selectedStatus;
+                        const matchesExperience = this.selectedExperience === 'all' || 
+                            (this.selectedExperience === 'junior' && employee.experience < 1) ||
+                            (this.selectedExperience === 'middle' && employee.experience >= 1 && employee.experience <= 3) ||
+                            (this.selectedExperience === 'senior' && employee.experience > 3);
+                        return matchesSearch && matchesPosition && matchesStatus && matchesExperience;
+                    });
+                },
+                getActiveEmployeesCount() {
+                    return this.employees.filter(e => e.status === 'active').length;
+                },
+                getVacationEmployeesCount() {
+                    return this.employees.filter(e => e.status === 'vacation').length;
+                },
+                getInitials(name) {
+                    if (!name) return '';
+                    return name.split(' ').map(word => word[0]).join('').toUpperCase();
+                },
+                getPositionName(position) {
+                    const positions = {
+                        'master': 'Мастер',
+                        'administrator': 'Администратор',
+                        'manager': 'Менеджер',
+                        'stylist': 'Стилист',
+                        'cosmetologist': 'Косметолог'
+                    };
+                    return positions[position] || position;
+                },
+                getStatusName(status) {
+                    const statuses = {
+                        'active': 'Иштеп жатат',
+                        'inactive': 'Иштен чыккан',
+                        'vacation': 'Эс алууда',
+                        'sick': 'Ооруган'
+                    };
+                    return statuses[status] || status;
+                },
+                getStatusClasses(status) {
+                    const classes = {
+                        'active': 'bg-green-100 text-green-800',
+                        'inactive': 'bg-red-100 text-red-800',
+                        'vacation': 'bg-yellow-100 text-yellow-800',
+                        'sick': 'bg-orange-100 text-orange-800'
+                    };
+                    return classes[status] || 'bg-gray-100 text-gray-800';
+                },
+                formatDate(date) {
+                    if (!date) return '';
+                    return new Date(date).toLocaleDateString('ru-RU', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                },
+                setEmployeeForm() {
+                    if (this.selectedEmployee) {
+                        // deep copy + parse JSON fields
+                        this.employeeForm = {
+                            ...this.selectedEmployee,
+                            phone: this.formatPhoneNumberFromDB(this.selectedEmployee.phone),
+                            isMaster: this.selectedEmployee.is_master ?? false,
+                            performanceReviews: Array.isArray(this.selectedEmployee.performanceReviews) ? this.selectedEmployee.performanceReviews : [],
+                            trainingHistory: Array.isArray(this.selectedEmployee.trainingHistory) ? this.selectedEmployee.trainingHistory : [],
+                            workSchedule: typeof this.selectedEmployee.workSchedule === 'object' ? this.selectedEmployee.workSchedule : {monday:'',tuesday:'',wednesday:'',thursday:'',friday:'',saturday:'',sunday:''},
+                            salaryHistory: Array.isArray(this.selectedEmployee.salaryHistory) ? this.selectedEmployee.salaryHistory : [],
+                            documents: Array.isArray(this.selectedEmployee.documents) ? this.selectedEmployee.documents : [],
+                        };
+                        this.selectedBusinessType = this.selectedEmployee.business?.type || '';
+                        this.selectedBusinessSubtype = this.selectedEmployee.business?.subtype || '';
+                        this.employeeForm.position = this.selectedEmployee.position_id ? String(this.selectedEmployee.position_id) : '';
+                        this.loadBusinessSubtypes();
+                        this.loadPositions();
+                    } else {
+                        this.employeeForm = {
+                            name: '', position: '', phone: '', email: '', status: 'active', experience: 0, isMaster: false, birthDate: '', education: '', skills: '', address: '', salary: 0, schedule: 'full', clientsCount: 0, rating: 0, passportNumber: '', passportIssued: '', passportExpiry: '', taxId: '', bankAccount: '', bankName: '', emergencyContact: '', emergencyContactName: '', emergencyContactRelation: '', startDate: '', contractNumber: '', contractExpiry: '', vacationDaysTotal: 28, vacationDaysUsed: 0, sickDaysTotal: 30, sickDaysUsed: 0, certifications: '', languages: '', achievements: '', notes: '', equipment: '', insuranceNumber: '', insuranceExpiry: '', performanceReviews: [], trainingHistory: [], workSchedule: {monday:'',tuesday:'',wednesday:'',thursday:'',friday:'',saturday:'',sunday:''}, salaryHistory: [], documents: []
+                        };
+                        this.selectedBusinessType = '';
+                        this.selectedBusinessSubtype = '';
+                        // this.positions = []; // УБРАНО! Не сбрасываем должности
+                        this.loadPositions();
+                    }
+                    this.showAdditionalFields = false;
+                    this.activeTab = 'basic';
+                    this.errors = {};
+                },
+                validatePage() {
+                    this.errors = {};
+                    let isValid = true;
+
+                    // Обязательные поля
+                    if (!this.employeeForm.name || this.employeeForm.name.trim().length < 2) {
+                        this.errors.name = 'Введите корректное имя и фамилию (минимум 2 символа)';
+                            isValid = false;
+                        }
+
+                        if (!this.employeeForm.position) {
+                            this.errors.position = 'Выберите должность';
+                            isValid = false;
+                        }
+
+                        if (!this.employeeForm.phone) {
+                            this.errors.phone = 'Введите номер телефона';
+                            isValid = false;
+                        } else {
+                            // Разрешаем любые коды после +996
+                            const phoneRegex = /^\+996\s\d{3}\s\d{3}\s\d{3}$/;
+                            if (!phoneRegex.test(this.employeeForm.phone)) {
+                            this.errors.phone = 'Введите корректный номер телефона в формате +996 XXX XXX XXX';
+                                isValid = false;
+                            }
+                        }
+
+                        if (!this.employeeForm.email) {
+                            this.errors.email = 'Введите email';
+                            isValid = false;
+                        } else {
+                            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                            if (!emailRegex.test(this.employeeForm.email)) {
+                                this.errors.email = 'Введите корректный email';
+                                isValid = false;
+                            }
+                    }
+
+                    // Валидация числовых полей
+                    if (this.employeeForm.experience !== null && this.employeeForm.experience !== '') {
+                        const experience = parseFloat(this.employeeForm.experience);
+                        if (isNaN(experience) || experience < 0 || experience > 50) {
+                            this.errors.experience = 'Опыт работы должен быть от 0 до 50 лет';
+                            isValid = false;
+                        }
+                    }
+
+                    if (this.employeeForm.salary !== null && this.employeeForm.salary !== '') {
+                        const salary = parseFloat(this.employeeForm.salary);
+                        if (isNaN(salary) || salary < 0) {
+                            this.errors.salary = 'Зарплата должна быть положительным числом';
+                            isValid = false;
+                        }
+                    }
+
+                    // Валидация дат
+                    if (this.employeeForm.birthDate) {
+                        const birthDate = new Date(this.employeeForm.birthDate);
+                        const today = new Date();
+                        const age = today.getFullYear() - birthDate.getFullYear();
+                        if (age < 16 || age > 80) {
+                            this.errors.birthDate = 'Возраст должен быть от 16 до 80 лет';
+                            isValid = false;
+                        }
+                    }
+
+                    if (this.employeeForm.startDate) {
+                        const startDate = new Date(this.employeeForm.startDate);
+                        const today = new Date();
+                        if (startDate > today) {
+                            this.errors.startDate = 'Дата начала работы не может быть в будущем';
+                            isValid = false;
+                        }
+                    }
+
+                    if (this.employeeForm.contractExpiry) {
+                        const contractExpiry = new Date(this.employeeForm.contractExpiry);
+                        const today = new Date();
+                        if (contractExpiry < today) {
+                            this.errors.contractExpiry = 'Срок действия контракта не может быть в прошлом';
+                            isValid = false;
+                        }
+                    }
+
+                    if (this.employeeForm.insuranceExpiry) {
+                        const insuranceExpiry = new Date(this.employeeForm.insuranceExpiry);
+                        const today = new Date();
+                        if (insuranceExpiry < today) {
+                            this.errors.insuranceExpiry = 'Срок действия страховки не может быть в прошлом';
+                            isValid = false;
+                        }
+                    }
+
+                    if (this.employeeForm.passportExpiry) {
+                        const passportExpiry = new Date(this.employeeForm.passportExpiry);
+                        const today = new Date();
+                        if (passportExpiry < today) {
+                            this.errors.passportExpiry = 'Срок действия паспорта не может быть в прошлом';
+                            isValid = false;
+                        }
+                    }
+
+                    // Валидация дней отпуска и больничных
+                    if (this.employeeForm.vacationDaysTotal !== null && this.employeeForm.vacationDaysTotal !== '') {
+                        const vacationTotal = parseInt(this.employeeForm.vacationDaysTotal);
+                        if (isNaN(vacationTotal) || vacationTotal < 0 || vacationTotal > 365) {
+                            this.errors.vacationDaysTotal = 'Количество дней отпуска должно быть от 0 до 365';
+                            isValid = false;
+                        }
+                    }
+
+                    if (this.employeeForm.vacationDaysUsed !== null && this.employeeForm.vacationDaysUsed !== '') {
+                        const vacationUsed = parseInt(this.employeeForm.vacationDaysUsed);
+                        const vacationTotal = parseInt(this.employeeForm.vacationDaysTotal) || 0;
+                        if (isNaN(vacationUsed) || vacationUsed < 0 || vacationUsed > vacationTotal) {
+                            this.errors.vacationDaysUsed = `Использовано дней не может быть больше общего количества (${vacationTotal})`;
+                            isValid = false;
+                        }
+                    }
+
+                    if (this.employeeForm.sickDaysTotal !== null && this.employeeForm.sickDaysTotal !== '') {
+                        const sickTotal = parseInt(this.employeeForm.sickDaysTotal);
+                        if (isNaN(sickTotal) || sickTotal < 0 || sickTotal > 365) {
+                            this.errors.sickDaysTotal = 'Количество больничных дней должно быть от 0 до 365';
+                            isValid = false;
+                        }
+                    }
+
+                    if (this.employeeForm.sickDaysUsed !== null && this.employeeForm.sickDaysUsed !== '') {
+                        const sickUsed = parseInt(this.employeeForm.sickDaysUsed);
+                        const sickTotal = parseInt(this.employeeForm.sickDaysTotal) || 0;
+                        if (isNaN(sickUsed) || sickUsed < 0 || sickUsed > sickTotal) {
+                            this.errors.sickDaysUsed = `Использовано больничных дней не может быть больше общего количества (${sickTotal})`;
+                            isValid = false;
+                        }
+                    }
+
+                    // Валидация текстовых полей (максимальная длина)
+                    const textFields = {
+                        'education': { maxLength: 200, name: 'Образование' },
+                        'skills': { maxLength: 500, name: 'Навыки' },
+                        'languages': { maxLength: 200, name: 'Языки' },
+                        'certifications': { maxLength: 300, name: 'Сертификаты' },
+                        'achievements': { maxLength: 500, name: 'Достижения' },
+                        'equipment': { maxLength: 300, name: 'Оборудование' },
+                        'notes': { maxLength: 1000, name: 'Примечания' },
+                        'passportNumber': { maxLength: 50, name: 'Номер паспорта' },
+                        'taxId': { maxLength: 20, name: 'ИНН' },
+                        'bankAccount': { maxLength: 50, name: 'Банковский счет' },
+                        'bankName': { maxLength: 100, name: 'Название банка' },
+                        'emergencyContact': { maxLength: 50, name: 'Контакты для связи' },
+                        'emergencyContactName': { maxLength: 100, name: 'ФИО контакта' },
+                        'emergencyContactRelation': { maxLength: 50, name: 'Связь с контактом' },
+                        'address': { maxLength: 300, name: 'Адрес' }
+                    };
+
+                    for (const [field, config] of Object.entries(textFields)) {
+                        if (this.employeeForm[field] && this.employeeForm[field].length > config.maxLength) {
+                            this.errors[field] = `${config.name} не может быть длиннее ${config.maxLength} символов`;
+                            isValid = false;
+                        }
+                    }
+
+                    // Валидация ИНН (если заполнен)
+                    if (this.employeeForm.taxId && this.employeeForm.taxId.trim()) {
+                        const taxIdRegex = /^\d{10,12}$/;
+                        if (!taxIdRegex.test(this.employeeForm.taxId.replace(/\s/g, ''))) {
+                            this.errors.taxId = 'ИНН должен содержать 10-12 цифр';
+                            isValid = false;
+                        }
+                    }
+
+                    // Валидация номера паспорта (если заполнен)
+                    if (this.employeeForm.passportNumber && this.employeeForm.passportNumber.trim()) {
+                        const passportRegex = /^[A-Z0-9]{6,20}$/;
+                        if (!passportRegex.test(this.employeeForm.passportNumber.replace(/\s/g, '').toUpperCase())) {
+                            this.errors.passportNumber = 'Номер паспорта должен содержать 6-20 символов (буквы и цифры)';
+                            isValid = false;
+                        }
+                    }
+
+                    return isValid;
+                },
+                editEmployee(employee) {
+                    this.selectedEmployee = employee;
+                    this.setEmployeeForm();
+                    this.showEmployeeModal = true;
+                    this.showProfileModal = false;
+                },
+                viewEmployeeProfile(employee) {
+                    this.selectedEmployee = employee;
+                    this.showProfileModal = true;
+                    this.showEmployeeModal = false;
+                },
+                showToast(message, type) {
+                    this.toast = { message, type };
+                    setTimeout(() => this.toast = null, 3000);
+                },
+                formatPhoneNumber(event) {
+                    let value = event.target.value.replace(/\D/g, '');
+                    if (!value.startsWith('996')) {
+                        value = '996' + value;
+                    }
+                    if (value.length > 12) {
+                        value = value.slice(0, 12);
+                    }
+                    let formattedNumber = '+';
+                    if (value.length > 0) {
+                        formattedNumber += value.slice(0, 3);
+                        if (value.length > 3) {
+                            formattedNumber += ' ' + value.slice(3, 6);
+                            if (value.length > 6) {
+                                formattedNumber += ' ' + value.slice(6, 9);
+                                if (value.length > 9) {
+                                    formattedNumber += ' ' + value.slice(9, 12);
+                                }
+                            }
+                        }
+                    }
+                    this.employeeForm.phone = formattedNumber;
+                },
+                formatPhoneNumberFromDB(phone) {
+                    if (!phone) return '';
+                    let value = phone.replace(/\D/g, '');
+                    if (!value.startsWith('996')) {
+                        value = '996' + value;
+                    }
+                    if (value.length > 12) {
+                        value = value.slice(0, 12);
+                    }
+                    let formattedNumber = '+';
+                    if (value.length > 0) {
+                        formattedNumber += value.slice(0, 3);
+                        if (value.length > 3) {
+                            formattedNumber += ' ' + value.slice(3, 6);
+                            if (value.length > 6) {
+                                formattedNumber += ' ' + value.slice(6, 9);
+                                if (value.length > 9) {
+                                    formattedNumber += ' ' + value.slice(9, 12);
+                                }
+                            }
+                        }
+                    }
+                    return formattedNumber;
+                },
+                getCookie(name) {
+                    let cookieValue = null;
+                    if (document.cookie && document.cookie !== '') {
+                        const cookies = document.cookie.split(';');
+                        for (let i = 0; i < cookies.length; i++) {
+                            const cookie = cookies[i].trim();
+                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                },
+                searchEmployees() {
+                    // Поиск реализован через filteredEmployees
+                },
+                getFieldLabel(field) {
+                    const map = {
+                        name: 'Имя и фамилия',
+                        position: 'Должность',
+                        phone: 'Телефон',
+                        email: 'Email',
+                        experience: 'Опыт работы',
+                        salary: 'Зарплата',
+                        address: 'Адрес',
+                        birthDate: 'Дата рождения',
+                        education: 'Образование',
+                        skills: 'Навыки',
+                        languages: 'Языки',
+                        certifications: 'Сертификаты',
+                        achievements: 'Достижения',
+                        equipment: 'Оборудование',
+                        insuranceNumber: 'Номер страховки',
+                        insuranceExpiry: 'Срок действия страховки',
+                        contractNumber: 'Номер контракта',
+                        contractExpiry: 'Срок действия контракта',
+                        vacationDaysTotal: 'Всего дней отпуска',
+                        vacationDaysUsed: 'Использовано дней отпуска',
+                        sickDaysTotal: 'Всего больничных дней',
+                        sickDaysUsed: 'Использовано больничных дней',
+                        notes: 'Примечания',
+                        passportNumber: 'Номер паспорта',
+                        passportIssued: 'Дата выдачи паспорта',
+                        passportExpiry: 'Срок действия паспорта',
+                        taxId: 'ИНН',
+                        bankAccount: 'Банковский счет',
+                        bankName: 'Название банка',
+                        emergencyContact: 'Контакты для связи',
+                        emergencyContactName: 'ФИО контакта',
+                        emergencyContactRelation: 'Связь с контактом',
+                        startDate: 'Дата начала работы',
+                    };
+                    return map[field] || field;
+                },
+                displayValue(value) {
+                    if (value === undefined || value === null) return '—';
+                    if (typeof value === 'string' && value.trim() === '') return '—';
+                    return value;
+                },
+                selectedBusinessType: '',
+                selectedBusinessSubtype: '',
+                businessSubtypes: {
+                    health: [
+                        { value: 'clinic', label: 'Клиника' },
+                        { value: 'fitness', label: 'Фитнес/Wellness' },
+                        { value: 'pharmacy', label: 'Аптека' },
+                    ],
+                    beauty: [
+                        { value: 'salon', label: 'Салон красоты' },
+                        { value: 'spa', label: 'SPA' },
+                        { value: 'studio', label: 'Студия' },
+                    ],
+                },
+                businessPositions: {
+                    health: {
+                        default: [
+                            { value: 'doctor', label: 'Врач' },
+                            { value: 'nurse', label: 'Медсестра' },
+                            { value: 'therapist', label: 'Терапевт' },
+                            { value: 'administrator', label: 'Администратор' },
+                            { value: 'receptionist', label: 'Регистратор' },
+                            { value: 'fitness_trainer', label: 'Фитнес-тренер' },
+                            { value: 'masseur', label: 'Массажист' },
+                        ],
+                        clinic: [
+                            { value: 'doctor', label: 'Врач' },
+                            { value: 'nurse', label: 'Медсестра' },
+                            { value: 'therapist', label: 'Терапевт' },
+                            { value: 'administrator', label: 'Администратор' },
+                            { value: 'receptionist', label: 'Регистратор' },
+                        ],
+                        fitness: [
+                            { value: 'fitness_trainer', label: 'Фитнес-тренер' },
+                            { value: 'masseur', label: 'Массажист' },
+                            { value: 'administrator', label: 'Администратор' },
+                        ],
+                        pharmacy: [
+                            { value: 'pharmacist', label: 'Провизор' },
+                            { value: 'pharmacy_assistant', label: 'Ассистент аптеки' },
+                            { value: 'administrator', label: 'Администратор' },
+                        ],
+                    },
+                    beauty: {
+                        default: [
+                            { value: 'hairdresser', label: 'Парикмахер' },
+                            { value: 'stylist', label: 'Стилист' },
+                            { value: 'cosmetologist', label: 'Косметолог' },
+                            { value: 'makeup_artist', label: 'Визажист' },
+                            { value: 'nail_master', label: 'Мастер ногтевого сервиса' },
+                            { value: 'brow_master', label: 'Бровист' },
+                            { value: 'lashmaker', label: 'Лэшмейкер' },
+                            { value: 'administrator', label: 'Администратор' },
+                            { value: 'receptionist', label: 'Регистратор' },
+                            { value: 'spa_therapist', label: 'SPA-терапевт' },
+                            { value: 'masseur', label: 'Массажист' },
+                        ],
+                        salon: [
+                            { value: 'hairdresser', label: 'Парикмахер' },
+                            { value: 'stylist', label: 'Стилист' },
+                            { value: 'cosmetologist', label: 'Косметолог' },
+                            { value: 'makeup_artist', label: 'Визажист' },
+                            { value: 'nail_master', label: 'Мастер ногтевого сервиса' },
+                            { value: 'brow_master', label: 'Бровист' },
+                            { value: 'lashmaker', label: 'Лэшмейкер' },
+                            { value: 'administrator', label: 'Администратор' },
+                            { value: 'receptionist', label: 'Регистратор' },
+                        ],
+                        spa: [
+                            { value: 'spa_therapist', label: 'SPA-терапевт' },
+                            { value: 'masseur', label: 'Массажист' },
+                            { value: 'administrator', label: 'Администратор' },
+                        ],
+                        studio: [
+                            { value: 'makeup_artist', label: 'Визажист' },
+                            { value: 'brow_master', label: 'Бровист' },
+                            { value: 'lashmaker', label: 'Лэшмейкер' },
+                            { value: 'nail_master', label: 'Мастер ногтевого сервиса' },
+                            { value: 'stylist', label: 'Стилист' },
+                        ],
+                    },
+                },
+                async loadBusinessTypes() {
+                    try {
+                        const response = await fetch('/employees/api/business-types/');
+                        const data = await response.json();
+                        this.businessTypes = data;
+                    } catch (e) { this.businessTypes = []; }
+                },
+                async loadBusinessSubtypes() {
+                    if (!this.selectedBusinessType) { this.businessSubtypes = []; return; }
+                    try {
+                        const response = await fetch(`/employees/api/business-subtypes/?business_type=${this.selectedBusinessType}`);
+                        const data = await response.json();
+                        this.businessSubtypes = data;
+                    } catch (e) { this.businessSubtypes = []; }
+                },
+                async loadPositions() {
+                    try {
+                        const response = await fetch('/employees/api/positions-for-current-business/');
+                        const data = await response.json();
+                        this.positions = Array.isArray(data.positions) ? [...data.positions] : [];
+                        this.positionsDebug = data.debug || null;
+                        if (this.positionsDebug) {
+                            console.log('[DEBUG positions-for-current-business]', this.positionsDebug);
+                        }
+                    } catch (e) {
+                        this.positions = [];
+                        this.positionsDebug = {error: e.message};
+                    }
+                },
+            }));
+        });
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title x-text="business.business_name ? business.business_name + ' - Booking' : 'Booking'"></title>
+  <!-- Подключаем Tailwind CSS через CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Подключаем Alpine.js через CDN -->
+  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <!-- Подключаем Lucide для иконок -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    [x-cloak] { display: none !important; }
+    /* Кастомный скроллбар для категорий */
+    .categories-scroll {
+      -ms-overflow-style: none;  /* IE и Edge */
+      scrollbar-width: thin;  /* Firefox - всегда тонкий */
+      scrollbar-color: transparent transparent; /* Firefox - изначально прозрачный */
+      padding-bottom: 4px;
+      --scrollbar-thumb-opacity: 0;
+    }
+    .categories-scroll::-webkit-scrollbar {
+      height: 8px;
+      background: transparent;
+    }
+    .categories-scroll::-webkit-scrollbar-track {
+      background: transparent;
+      border-radius: 4px;
+      transition: background 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .categories-scroll::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, calc(0.3 * var(--scrollbar-thumb-opacity)));
+      border-radius: 4px;
+      transition: opacity 0.6s, background 1s cubic-bezier(0.4, 0, 0.2, 1);
+      opacity: var(--scrollbar-thumb-opacity);
+    }
+    
+    /* При наведении скроллбар становится видимым */
+    .categories-scroll:hover::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.05);
+    }
+    .categories-scroll:hover::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, calc(0.3 * var(--scrollbar-thumb-opacity)));
+    }
+    .categories-scroll:hover::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 0, 0, calc(0.5 * var(--scrollbar-thumb-opacity)));
+    }
+    .categories-scroll:hover {
+      scrollbar-color: rgba(0, 0, 0, 0.3) rgba(0, 0, 0, 0.05);
+      --scrollbar-thumb-opacity: 1;
+    }
+    
+    /* Дополнительная анимация для контейнера */
+    .categories-scroll {
+      transition: padding-bottom 0.3s ease;
+    }
+    .categories-scroll:hover {
+      padding-bottom: 4px;
+    }
+
+    /* Скрыть скроллбар на мобильных устройствах */
+    @media (max-width: 767px) {
+      .categories-scroll {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      .categories-scroll::-webkit-scrollbar {
+        display: none;
+      }
+      .categories-scroll {
+        padding-bottom: 0;
+      }
+    }
+  </style>
+</head>
+<body class="font-sans" x-data="websiteApp" x-init="init()">
+  <div x-data="appData()" x-init="lucide.createIcons()" x-effect="lucide.createIcons()">
+    <!-- Главный экран -->
+    <div x-show="step === 'main'" x-cloak class="min-h-screen bg-gray-50 flex justify-center items-center">
+      <div class="w-full max-w-md bg-white p-4 sm:p-8 min-h-screen sm:min-h-screen flex flex-col">
+        <!-- User icon top right -->
+        <div class="absolute top-6 right-6 z-10">
+          <div class="w-8 h-8 bg-gray-100 flex items-center justify-center">
+            <i class="w-5 h-5 text-gray-400" data-lucide="user"></i>
+          </div>
+        </div>
+        <!-- Language Switcher Dropdown -->
+        <div x-data="{ open: false }" class="absolute top-6 right-16 z-20">
+          <button @click="open = !open" type="button" class="flex items-center px-2 py-1 rounded text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-200 bg-white hover:bg-gray-50" :class="open ? 'ring-2 ring-blue-200' : ''">
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+            <span :class="current_language === 'ky' ? 'font-bold text-blue-600' : ''">KY</span>
+            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-24 bg-white rounded-lg shadow-lg z-50">
+            <a href="?lang=ky" class="block px-4 py-2 text-sm hover:bg-gray-100 rounded-t-lg" :class="current_language === 'ky' ? 'font-bold text-blue-600' : ''">Кыргызча</a>
+            <a href="?lang=ru" class="block px-4 py-2 text-sm hover:bg-gray-100 rounded-b-lg" :class="current_language === 'ru' ? 'font-bold text-blue-600' : ''">Русский</a>
+          </div>
+        </div>
+        <div class="pt-8 pb-2 px-2 sm:px-6 text-left">
+          <h1 class="text-lg sm:text-2xl font-bold text-gray-900 mb-6 sm:mb-8 flex items-center gap-2 cursor-pointer select-none truncate max-w-full sm:max-w-2xl"
+              @click="showModal = true">
+            <span class="truncate" 
+                  :class="{
+                    'text-sm sm:text-lg': (business.business_name && business.business_name.length > 20),
+                    'text-base sm:text-xl': (business.business_name && business.business_name.length > 15 && business.business_name.length <= 20),
+                    'text-lg sm:text-2xl': (!business.business_name || business.business_name.length <= 15)
+                  }"
+                  x-text="business.business_name || 'Загрузка...'"></span>
+            <i class="w-5 h-5 text-gray-400 flex-shrink-0" data-lucide="chevron-down"></i>
+          </h1>
+        </div>
+        <div class="flex-1 flex flex-col justify-start gap-1 sm:gap-2 px-2 sm:px-6">
+          <button 
+            @click="step = 'services'; scrollToTop()"
+            class="w-full flex items-center justify-between px-0 py-2 sm:py-3 bg-transparent rounded-xl hover:bg-gray-50 transition-colors group"
+          >
+            <div class="flex items-center gap-3 sm:gap-4">
+              <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 rounded-full flex items-center justify-center">
+                <i class="w-5 h-5 sm:w-6 sm:h-6 text-gray-500" data-lucide="list"></i>
+              </div>
+              <span class="text-base sm:text-lg text-gray-900 font-medium">Кызматтарды тандоо</span>
+            </div>
+            <i class="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-gray-600" data-lucide="chevron-right"></i>
+          </button>
+          <button 
+            @click="selectedServices.length > 0 && (step = 'date'; scrollToTop())"
+            class="w-full flex items-center justify-between px-0 py-2 sm:py-3 rounded-xl transition-colors group"
+            :class="selectedServices.length > 0 ? 'bg-transparent hover:bg-gray-50' : 'bg-transparent opacity-50 cursor-not-allowed'"
+            :disabled="selectedServices.length === 0"
+          >
+            <div class="flex items-center gap-3 sm:gap-4">
+              <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 rounded-full flex items-center justify-center">
+                <i class="w-5 h-5 sm:w-6 sm:h-6 text-gray-500" data-lucide="calendar"></i>
+              </div>
+              <span class="text-base sm:text-lg text-gray-900 font-medium">Датаны жана убакытты тандоо</span>
+            </div>
+            <i class="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-gray-600" data-lucide="chevron-right"></i>
+          </button>
+          <button 
+            @click="selectedServices.length > 0 && (step = 'specialist'; scrollToTop())"
+            class="w-full flex items-center justify-between px-0 py-2 sm:py-3 rounded-xl transition-colors group"
+            :class="selectedServices.length > 0 ? 'bg-transparent hover:bg-gray-50' : 'bg-transparent opacity-50 cursor-not-allowed'"
+            :disabled="selectedServices.length === 0"
+          >
+            <div class="flex items-center gap-3 sm:gap-4">
+              <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 rounded-full flex items-center justify-center">
+                <i class="w-5 h-5 sm:w-6 sm:h-6 text-gray-500" data-lucide="users"></i>
+              </div>
+              <span class="text-base sm:text-lg text-gray-900 font-medium">Адисти тандоо</span>
+            </div>
+            <i class="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-gray-600" data-lucide="chevron-right"></i>
+          </button>
+        </div>
+        <div class="mt-auto pt-8 pb-6 text-center text-base text-gray-500 border-t bg-white">
+          Работает <span class="font-semibold text-gray-700">zappis</span>
+        </div>
+
+        <!-- Модальное окно филиалов -->
+        <div x-show="showModal" x-cloak class="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+          <div class="absolute inset-0 bg-black bg-opacity-60"></div>
+          <div class="relative bg-white rounded-t-2xl sm:rounded-2xl w-full max-w-md mx-auto flex flex-col items-center m-0 sm:m-2 pb-6 pt-4 px-4 sm:pb-8 sm:pt-8 sm:px-8 shadow-none sm:shadow-lg transition-all"
+            :class="{'rounded-t-2xl rounded-b-none': window.innerWidth < 640, 'rounded-2xl': window.innerWidth >= 640}">
+            <button @click="showModal = false" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 focus:outline-none">
+              <svg xmlns='http://www.w3.org/2000/svg' class='h-7 w-7 sm:h-6 sm:w-6' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 18L18 6M6 6l12 12'/></svg>
+            </button>
+            <div class="mb-6 mt-2 text-center w-full">
+              <div class="font-bold text-gray-900 mb-6 sm:mb-4 break-words px-2" 
+                   :class="{
+                     'text-lg sm:text-xl': (business.business_name && business.business_name.length > 20),
+                     'text-xl sm:text-2xl': (business.business_name && business.business_name.length > 15 && business.business_name.length <= 20),
+                     'text-xl sm:text-2xl': (!business.business_name || business.business_name.length <= 15)
+                   }"
+                   x-text="business.business_name || 'Загрузка...'"></div>
+              <button class="w-full bg-white border border-black rounded-2xl py-4 sm:py-3 mb-4 sm:mb-3 text-lg sm:text-lg font-medium text-black transition hover:bg-gray-100" @click="showModal = false; step = 'about'; scrollToTop()">Филиал тууралуу</button>
+              <button class="w-full bg-white border border-black rounded-2xl py-4 sm:py-3 text-lg sm:text-lg font-medium text-black transition hover:bg-gray-100" @click="showModal = false; step = 'branches'; scrollToTop()">Бардык филиалдар</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Экран выбора услуг -->
+    <div x-show="step === 'services'" x-cloak class="min-h-screen bg-gray-50 flex justify-center items-center">
+      <div class="w-full max-w-md bg-white p-4 sm:p-8 min-h-screen sm:min-h-screen flex flex-col">
+        <div class="flex items-center gap-3 mb-8">
+          <button @click="step = 'main'; scrollToTop()">
+            <i class="w-6 h-6 text-gray-600" data-lucide="chevron-left"></i>
+          </button>
+          <h1 class="font-bold truncate flex-1" 
+              :class="{
+                'text-sm sm:text-lg': (business.business_name && business.business_name.length > 20),
+                'text-base sm:text-xl': (business.business_name && business.business_name.length > 15 && business.business_name.length <= 20),
+                'text-lg sm:text-2xl': (!business.business_name || business.business_name.length <= 15)
+              }"
+              x-text="business.business_name || 'Загрузка...'"></h1>
+        </div>
+        <div class="p-4">
+          <h2 class="text-xl font-semibold mb-4">Кызматтарды тандоо</h2>
+          <div class="flex gap-2 mb-6 overflow-x-auto categories-scroll">
+            <button 
+              @click="selectedCategory = 'all'"
+              class="px-4 py-2 rounded-full text-sm whitespace-nowrap transition-colors"
+              :class="selectedCategory === 'all' ? 'bg-black text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
+            >
+              Бардыгы
+            </button>
+            <template x-for="category in categories" :key="category.id">
+            <button 
+                @click="selectedCategory = category.id.toString()"
+              class="px-4 py-2 rounded-full text-sm whitespace-nowrap transition-colors"
+                :class="selectedCategory === category.id.toString() ? 'bg-black text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
+                x-text="category.name"
+            >
+            </button>
+            </template>
+          </div>
+          <div class="mb-4">
+            <input 
+              type="text" 
+              placeholder="Издөө" 
+              x-model="searchQuery"
+              class="w-full p-3 border border-gray-200 rounded-lg" 
+            />
+          </div>
+          <h3 class="text-lg font-semibold mb-4" x-text="getCategoryTitle()"></h3>
+          <div class="space-y-4">
+            <!-- Сообщение когда нет услуг -->
+            <div x-show="filteredServices().length === 0" class="text-center py-12">
+              <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="w-8 h-8 text-gray-400" data-lucide="package-x"></i>
+              </div>
+              <h4 class="text-lg font-medium text-gray-900 mb-2">Кызматтар табылган жок</h4>
+              <p class="text-gray-500 text-sm">Тилекке каршы, бул категорияда азырынча жеткиликтүү кызматтар жок</p>
+            </div>
+            
+            <!-- Список услуг -->
+            <template x-for="service in filteredServices()" :key="service.id">
+              <div class="border-b border-gray-100 pb-4">
+                <div class="flex items-start justify-between">
+                  <div class="flex-1">
+                    <h4 class="font-medium text-gray-800" x-text="service.name"></h4>
+                    <p class="text-sm text-gray-500" x-text="service.duration"></p>
+                    <p class="text-sm font-medium text-gray-700" x-text="service.price"></p>
+                  </div>
+                  <button 
+                    @click="toggleService(service.id)"
+                    class="w-6 h-6 rounded border-2 flex items-center justify-center"
+                    :class="selectedServices.includes(service.id) ? 'bg-black border-black' : 'border-gray-300'"
+                  >
+                    <div x-show="selectedServices.includes(service.id)" class="w-2 h-2 bg-white rounded-sm"></div>
+                  </button>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+        <div x-show="selectedServices.length > 0" class="fixed bottom-0 left-0 right-0 bg-white border-t p-4">
+          <div class="max-w-md mx-auto">
+            <div class="flex justify-between items-center mb-3">
+              <span class="text-sm text-gray-600">
+                <span x-text="selectedServices.length"></span> кызмат <span x-text="getTotalDuration()"></span>
+              </span>
+              <span class="font-semibold">
+                <span x-text="getTotalPriceRange()"></span>
+              </span>
+            </div>
+            <button @click="step = 'specialist'; scrollToTop()" class="w-full bg-black text-white py-3 rounded-lg font-medium">
+              Адисти тандоо
+            </button>
+          </div>
+        </div>
+        <div class="mt-auto p-6 text-center text-xs text-gray-400 border-t bg-white">
+          Работает <span class="font-medium">zappis</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Экран выбора специалиста -->
+    <div x-show="step === 'specialist'" x-cloak class="min-h-screen bg-gray-50 flex justify-center items-center">
+      <div class="w-full max-w-md bg-white p-4 sm:p-8 min-h-screen sm:min-h-screen flex flex-col">
+        <div class="flex items-center gap-3 mb-8">
+          <button @click="step = 'services'; scrollToTop()">
+            <i class="w-6 h-6 text-gray-600" data-lucide="chevron-left"></i>
+          </button>
+          <h1 class="text-2xl font-bold">Адисти тандоо</h1>
+        </div>
+        <div class="space-y-6">
+          <!-- Список специалистов -->
+          <template x-for="specialist in specialists" :key="specialist.id">
+            <div class="flex items-center gap-4 p-4 rounded-xl border border-gray-200" 
+                 :class="specialist.available_times.length === 0 ? 'opacity-50 bg-gray-50' : ''">
+                  <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                <span class="text-green-600 font-semibold text-lg" x-text="specialist.name[0]"></span>
+              </div>
+              <div class="flex-1">
+                <div class="font-semibold text-lg" x-text="specialist.name"></div>
+                <div class="text-gray-500 text-sm" x-text="specialist.role"></div>
+                <div class="text-xs text-gray-400 mt-1">
+                  <span x-show="specialist.available_times.length > 0">Жакынкы бош убакыт <span class="font-semibold text-gray-600">бүгүн:</span></span>
+                  <span x-show="specialist.available_times.length === 0" class="text-red-500">Бүгүн бош убакыт жок</span>
+                </div>
+                <div class="flex gap-2 flex-wrap mt-2" x-show="specialist.available_times.length > 0">
+                  <template x-for="time in specialist.available_times.slice(0, 5)" :key="time">
+                    <span class="px-3 py-1 bg-gray-100 rounded-full text-sm font-medium text-gray-700" x-text="time"></span>
+                  </template>
+                  <span x-show="specialist.available_times.length > 5" class="px-3 py-1 bg-gray-100 rounded-full text-sm font-medium text-gray-700">+<span x-text="specialist.available_times.length - 5"></span></span>
+                </div>
+              </div>
+              <input type="radio" name="specialist" class="w-5 h-5 accent-black" 
+                     @click="specialist.available_times.length > 0 && (selectedSpecialist = specialist)" 
+                     :checked="selectedSpecialist && selectedSpecialist.id === specialist.id"
+                     :disabled="specialist.available_times.length === 0">
+            </div>
+          </template>
+        </div>
+        
+        <!-- Фиксированная кнопка внизу экрана -->
+        <div x-show="selectedSpecialist" class="fixed bottom-0 left-0 right-0 bg-white border-t p-4">
+          <div class="max-w-md mx-auto">
+            <button @click="step = 'date'; scrollToTop()" class="w-full bg-black text-white py-3 rounded-lg font-medium">
+              Датаны жана убакытты тандоо
+            </button>
+          </div>
+        </div>
+        
+        <div class="mt-auto p-6 text-center text-xs text-gray-400 border-t bg-white">
+          Работает <span class="font-medium">zappis</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Экран выбора даты и времени -->
+    <div x-show="step === 'date'" x-cloak class="min-h-screen bg-gray-50 flex justify-center items-center">
+      <div class="w-full max-w-md bg-white p-4 sm:p-8 min-h-screen sm:min-h-screen flex flex-col">
+        <div class="flex items-center gap-3 mb-8">
+          <button @click="step = 'specialist'; scrollToTop()">
+            <i class="w-6 h-6 text-gray-600" data-lucide="chevron-left"></i>
+          </button>
+          <h1 class="font-bold truncate flex-1" 
+              :class="{
+                'text-sm sm:text-base': (business.business_name && business.business_name.length > 20),
+                'text-base sm:text-lg': (business.business_name && business.business_name.length > 15 && business.business_name.length <= 20),
+                'text-lg sm:text-xl': (!business.business_name || business.business_name.length <= 15)
+              }"
+              x-text="business.business_name || 'Загрузка...'"></h1>
+        </div>
+        
+        <div class="p-4">
+          <!-- Выбор месяца -->
+          <div class="flex items-center justify-between mb-6">
+            <button @click="prevMonth()" class="p-2 hover:bg-gray-100 rounded-lg">
+              <i class="w-5 h-5 text-gray-600" data-lucide="chevron-left"></i>
+            </button>
+            <h2 class="text-lg font-semibold" x-text="months[currentMonth] + ' ' + currentYear"></h2>
+            <button @click="nextMonth()" class="p-2 hover:bg-gray-100 rounded-lg">
+              <i class="w-5 h-5 text-gray-600" data-lucide="chevron-right"></i>
+            </button>
+          </div>
+          
+          <!-- Дни недели -->
+          <div class="grid grid-cols-7 gap-1 mb-4">
+            <div class="text-center text-xs text-gray-500 font-medium py-2">Дш</div>
+            <div class="text-center text-xs text-gray-500 font-medium py-2">Шш</div>
+            <div class="text-center text-xs text-gray-500 font-medium py-2">Шр</div>
+            <div class="text-center text-xs text-gray-500 font-medium py-2">Бш</div>
+            <div class="text-center text-xs text-gray-500 font-medium py-2">Жм</div>
+            <div class="text-center text-xs text-gray-500 font-medium py-2">Иш</div>
+            <div class="text-center text-xs text-gray-500 font-medium py-2">Жк</div>
+          </div>
+          
+          <!-- Календарь -->
+          <div class="grid grid-cols-7 gap-1 mb-6">
+            <template x-for="(week, weekIndex) in calendarData" :key="weekIndex">
+              <template x-for="(day, dayIndex) in week" :key="dayIndex">
+                <button 
+                  @click="!isPast(day.date) && selectDate(day.date)"
+                  :disabled="isPast(day.date)"
+                  class="w-10 h-10 flex items-center justify-center text-sm font-medium rounded-full transition-colors focus:outline-none"
+                  :class="{
+                    'bg-black text-white': isSelectedDay(day.date),
+                    'bg-blue-50 text-blue-600': isToday(day.date) && !isSelectedDay(day.date),
+                    'text-gray-400': !day.isCurrentMonth,
+                    'text-gray-700 hover:bg-gray-100': day.isCurrentMonth && !isPast(day.date) && !isSelectedDay(day.date) && !isToday(day.date),
+                    'text-gray-300 cursor-not-allowed': isPast(day.date)
+                  }"
+                >
+                  <span x-text="day.date.getDate()"></span>
+                </button>
+              </template>
+            </template>
+          </div>
+          
+          <!-- Выбранная дата -->
+          <div x-show="selectedDate" class="mb-6 p-4 bg-gray-50 rounded-lg">
+            <h3 class="font-semibold mb-2">Тандалган дата:</h3>
+            <p class="text-gray-600" x-text="formatDate(selectedDate)"></p>
+          </div>
+          
+          <!-- Доступное время -->
+          <div x-show="selectedDate && getFilteredAvailableTimes().length > 0" class="mb-6">
+            <h3 class="font-semibold mb-3">Бош убакыт</h3>
+            <div class="grid grid-cols-3 gap-2">
+              <template x-for="time in getFilteredAvailableTimes()" :key="time">
+                <button 
+                  @click="selectedTime = time"
+                  class="p-3 rounded-lg text-sm font-medium transition-colors"
+                  :class="selectedTime === time ? 'bg-blue-100 text-blue-600 border-2 border-blue-300' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+                  x-text="time"
+                ></button>
+              </template>
+            </div>
+          </div>
+          
+          <!-- Нет доступного времени -->
+          <div x-show="selectedDate && getFilteredAvailableTimes().length === 0 && schedule.available_times" class="text-center py-8">
+            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <i class="w-8 h-8 text-gray-400" data-lucide="clock"></i>
+            </div>
+            <h3 class="text-lg font-semibold mb-2">Бош убакыт жок</h3>
+            <template x-if="schedule.next_available">
+              <p class="text-gray-600 mb-4">Жакынкы: <span class="font-semibold" x-text="formatDate(new Date(schedule.next_available.date)) + ' ' + schedule.next_available.time"></span></p>
+            </template>
+            <template x-if="!schedule.next_available">
+              <p class="text-gray-600 mb-4">Бул күнү адис бош эмес. Башка датаны тандаңыз.</p>
+            </template>
+          </div>
+          
+          <!-- Загрузка -->
+          <div x-show="selectedDate && !schedule.available_times" class="text-center py-8">
+            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <i class="w-8 h-8 text-gray-400 animate-spin" data-lucide="loader-2"></i>
+            </div>
+            <p class="text-gray-600">Бош убакыт жүктөлүүдө...</p>
+          </div>
+        </div>
+        
+        <!-- Кнопка продолжения -->
+        <div x-show="selectedDate && selectedTime && isTimeAvailable(selectedTime)" class="fixed bottom-0 left-0 right-0 bg-white border-t p-4">
+          <div class="max-w-md mx-auto">
+            <button @click="step = 'booking'; scrollToTop()" class="w-full bg-black text-white py-3 rounded-lg font-medium">
+              Продолжить
+            </button>
+          </div>
+        </div>
+        
+        <div class="mt-auto p-6 text-center text-xs text-gray-400 border-t bg-white">
+          Работает <span class="font-medium">zappis</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Экран бронирования -->
+    <div x-show="step === 'booking' && !showSuccess" x-cloak class="min-h-screen bg-gray-50 flex justify-center items-center">
+      <div class="w-full max-w-md bg-white p-0 min-h-screen sm:min-h-screen flex flex-col">
+        <div class="flex items-center gap-3 px-4 pt-6 pb-2 sm:px-6">
+          <button @click="step = 'date'">
+            <i class="w-6 h-6 text-gray-600" data-lucide="chevron-left"></i>
+          </button>
+          <h1 class="font-bold truncate flex-1" 
+              :class="{
+                'text-sm sm:text-base': (business.business_name && business.business_name.length > 20),
+                'text-base sm:text-lg': (business.business_name && business.business_name.length > 15 && business.business_name.length <= 20),
+                'text-lg sm:text-xl': (!business.business_name || business.business_name.length <= 15)
+              }"
+              x-text="business.business_name || 'Загрузка...'"></h1>
+        </div>
+        <div class="flex-1 flex flex-col gap-4 px-2 sm:px-4 pb-4">
+          <div class="bg-white border border-gray-100 p-4 flex flex-col gap-4 rounded-xl shadow-sm">
+            <h2 class="text-2xl font-bold mb-2">Жазылуу деталдары</h2>
+            <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-green-100 flex items-center justify-center text-base font-semibold text-green-600" x-text="selectedSpecialist.name[0]"></div>
+                <div>
+                  <div class="font-semibold text-base" x-text="selectedSpecialist.name"></div>
+                  <div class="text-xs text-gray-500" x-text="selectedSpecialist.role"></div>
+              </div>
+              </div>
+              <button @click="step = 'specialist'; scrollToTop()" class="p-1"><i class="w-4 h-4 text-gray-400 hover:text-black transition" data-lucide="edit"></i></button>
+            </div>
+            <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gray-100 flex items-center justify-center"><i class="w-5 h-5 text-gray-400" data-lucide="calendar"></i></div>
+                <div>
+                  <div class="font-medium text-sm" x-text="selectedDate ? formatDate(selectedDate) : ''"></div>
+                  <div class="text-xs text-gray-500" x-text="selectedTime ? `${selectedTime} — ${calculateEndTime(selectedTime)}` : ''"></div>
+                </div>
+              </div>
+              <button @click="step = 'date'; scrollToTop()" class="p-1"><i class="w-4 h-4 text-gray-400 hover:text-black transition" data-lucide="edit"></i></button>
+            </div>
+            <div class="flex items-center justify-between gap-2">
+              <div>
+                <div class="font-semibold text-base">Кызматтар <span class="text-xs font-normal text-gray-500" x-text="getTotalDuration()"></span></div>
+              <template x-for="serviceId in selectedServices" :key="serviceId">
+                  <div class="flex justify-between text-sm mt-1">
+                  <span x-text="services.find(s => s.id === serviceId).name"></span>
+                </div>
+              </template>
+            </div>
+              <button @click="step = 'services'; scrollToTop()" class="p-1 self-start"><i class="w-4 h-4 text-gray-400 hover:text-black transition" data-lucide="edit"></i></button>
+            </div>
+            <div class="flex justify-between font-semibold border-t pt-2 mt-2">
+                <span>Итого</span>
+                <span x-text="getTotalPriceWithCurrency()"></span>
+            </div>
+          </div>
+
+          <div class="bg-gray-50 border border-gray-100 p-4 rounded-xl">
+            <h3 class="font-semibold mb-3">Сиздин маалыматтар</h3>
+            <div class="mb-2">
+              <label class="block text-xs text-gray-600 mb-1">Аты-жөнү *</label>
+              <input type="text" placeholder="Аты-жөнүңүздү киргизиңиз" x-model="customerData.name" class="w-full p-2 border border-gray-200 rounded-lg text-sm" :class="formErrors.name ? 'border-red-400 bg-red-50' : ''" />
+              <template x-if="formErrors.name"><div class="text-xs text-red-500 mt-1" x-text="formErrors.name"></div></template>
+            </div>
+            <div class="mb-2">
+              <label class="block text-xs text-gray-600 mb-1">Телефон *</label>
+              <input type="tel" placeholder="Телефон номериңиз" x-model="customerData.phone" class="w-full p-2 border border-gray-200 rounded-lg text-sm" :class="formErrors.phone ? 'border-red-400 bg-red-50' : ''" />
+              <template x-if="formErrors.phone"><div class="text-xs text-red-500 mt-1" x-text="formErrors.phone"></div></template>
+            </div>
+            <div class="mb-2">
+              <label class="block text-xs text-gray-600 mb-1">E-mail</label>
+              <input type="email" placeholder="E-mail киргизиңиз" x-model="customerData.email" class="w-full p-2 border border-gray-200 rounded-lg text-sm" :class="formErrors.email ? 'border-red-400 bg-red-50' : ''" />
+              <template x-if="formErrors.email"><div class="text-xs text-red-500 mt-1" x-text="formErrors.email"></div></template>
+            </div>
+            <div class="mb-2">
+              <label class="block text-xs text-gray-600 mb-1">Комментарий</label>
+              <textarea placeholder="Жазылууга комментарий" x-model="customerData.comment" class="w-full p-2 border border-gray-200 rounded-lg text-sm h-16 resize-none"></textarea>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-2 mt-2">
+            <div class="flex justify-between items-center px-2">
+              <span class="text-sm text-gray-600">Итого</span>
+              <span class="font-semibold" x-text="getTotalPriceWithCurrency()"></span>
+            </div>
+            <button @click="if(validateForm()){createBooking();}" class="w-full bg-black text-white py-3 rounded-lg font-medium text-base mt-1">
+              Жазылуу
+            </button>
+            <div class="text-xs text-gray-500 text-center mt-2">
+              «Жазылуу» баскычын басуу менен сиз жеке маалыматтарды иштетүүгө макулдугуңузду бересиз жана <span class="text-blue-600">купуялык саясатына</span> жана <span class="text-blue-600">колдонуучу келишимине</span> макулсуз.
+            </div>
+          </div>
+        </div>
+        <div class="mt-auto p-6 text-center text-xs text-gray-400 border-t bg-white">
+          Работает <span class="font-medium">zappis</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Экран успеха -->
+    <div x-show="showSuccess" x-cloak class="min-h-screen bg-gray-50 flex justify-center items-center">
+      <div class="w-full max-w-md bg-white p-0 min-h-screen sm:min-h-screen flex flex-col items-center justify-center">
+        <div class="flex-1 flex flex-col items-center justify-center px-4 sm:px-6">
+          <i class="w-16 h-16 text-green-500 mb-6" data-lucide="check-circle"></i>
+          <div class="text-xl sm:text-2xl font-bold mb-2 text-center">Жазылуу ийгиликтүү түзүлдү!</div>
+          <div class="text-gray-600 text-center mb-6 text-sm sm:text-base">Бронирөө үчүн рахмат.<br>Ырастоо үчүн байланышабыз.</div>
+          <button @click="showSuccess = false; step = 'main'; scrollToTop()" class="w-full bg-black text-white py-3 rounded-lg font-medium">Башкы бетке</button>
+        </div>
+        <div class="mt-auto p-6 text-center text-xs text-gray-400 border-t bg-white w-full">
+          Работает <span class="font-semibold text-gray-700">zappis</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Экран "О филиале" -->
+    <div x-show="step === 'about'" x-cloak class="min-h-screen bg-gray-50 flex justify-center items-center">
+      <div class="w-full max-w-md bg-white min-h-screen flex flex-col relative">
+        <button @click="step = 'main'; scrollToTop()" class="absolute top-4 left-4 z-10 p-2 rounded-full hover:bg-gray-100">
+          <svg xmlns='http://www.w3.org/2000/svg' class='h-6 w-6 text-gray-700' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M15 19l-7-7 7-7'/></svg>
+        </button>
+        <div class="flex-1 flex flex-col px-4 pt-12 pb-4">
+          <div class="mb-2 mt-2">
+            <div class="font-bold text-gray-900 mb-2 break-words" 
+                 :class="{
+                   'text-sm sm:text-lg': (business.business_name && business.business_name.length > 20),
+                   'text-xl sm:text-2xl': (business.business_name && business.business_name.length > 15 && business.business_name.length <= 20),
+                   'text-xl sm:text-2xl': (!business.business_name || business.business_name.length <= 15)
+                 }"
+                 x-text="business.business_name || 'Загрузка...'"></div>
+            <div class="flex items-center gap-2 mb-2">
+              <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.18c.969 0 1.371 1.24.588 1.81l-3.388 2.46a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.388-2.46a1 1 0 00-1.175 0l-3.388 2.46c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.045 9.394c-.783-.57-.38-1.81.588-1.81h4.18a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+              <span class="text-base font-medium">1 отзыв</span>
+            </div>
+            <div class="text-gray-400 text-base mb-4">Контакты</div>
+            <div class="flex flex-col gap-2 mb-6">
+              <div class="flex items-center gap-2 text-gray-700 text-base">
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M22 16.92V19a2 2 0 0 1-2.18 2A19.72 19.72 0 0 1 3 5.18 2 2 0 0 1 5 3h2.09a2 2 0 0 1 2 1.72c.13 1.05.37 2.07.72 3.06a2 2 0 0 1-.45 2.11l-.27.27a16 16 0 0 0 6.29 6.29l.27-.27a2 2 0 0 1 2.11-.45c.99.35 2.01.59 3.06.72A2 2 0 0 1 22 16.92z"/></svg>
+                <a :href="'tel:' + (business.business_phone || '')" class="hover:underline" x-text="business.business_phone || 'Не указан'"></a>
+              </div>
+              <div class="flex items-center gap-2 text-gray-700 text-base">
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span x-text="business.business_address || 'Адрес не указан'"></span>
+              </div>
+              <div class="flex items-center gap-2 text-gray-700 text-base">
+                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4h16v16H4V4zm2 2v12h12V6H6zm2 2h8v8H8z"/></svg>
+                <a :href="'mailto:' + (business.business_email || '')" class="hover:underline" x-text="business.business_email || 'Email не указан'"></a>
+              </div>
+            </div>
+          </div>
+          <div class="mb-6">
+            <div class="text-lg font-semibold mb-2">Расположение</div>
+            <div class="w-full h-40 rounded-2xl overflow-hidden flex items-center justify-center mb-2">
+              <iframe
+                :src="getMapUrl()"
+                width="100%"
+                height="160"
+                style="border:0; border-radius: 1rem 1rem 0 0; min-width:100%; min-height:100%;"
+                allowfullscreen=""
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                :title="business.business_name + ' location'"
+              ></iframe>
+            </div>
+          </div>
+          <div class="mt-auto pt-4 pb-6">
+            <button @click="step = 'main'; scrollToTop()" class="w-full bg-black text-white py-3 rounded-xl font-medium text-lg">Записаться</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Экран выбора филиала -->
+    <div x-show="step === 'branches'" x-cloak class="min-h-screen bg-gray-50 flex flex-col">
+      <div class="w-full max-w-md mx-auto bg-white min-h-screen flex flex-col relative">
+        <button @click="step = 'main'; scrollToTop()" class="absolute top-4 left-4 z-10 p-2 rounded-full hover:bg-gray-100">
+          <svg xmlns='http://www.w3.org/2000/svg' class='h-6 w-6 text-gray-700' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M15 19l-7-7 7-7'/></svg>
+        </button>
+        <div class="flex-1 flex flex-col px-4 pt-12 pb-4">
+          <div class="mb-4 mt-2">
+            <div class="font-medium text-gray-900 mb-4 break-words" 
+                 :class="{
+                   'text-sm sm:text-lg': (business.business_name && business.business_name.length > 20),
+                   'text-base sm:text-xl': (business.business_name && business.business_name.length > 15 && business.business_name.length <= 20),
+                   'text-lg sm:text-xl': (!business.business_name || business.business_name.length <= 15)
+                 }"
+                 x-text="business.business_name || 'Загрузка...'"></div>
+            <div class="w-full flex items-center justify-center mb-4">
+              <button class="w-full flex items-center justify-center gap-2 bg-gray-100 rounded-full py-2 text-base font-medium text-gray-900">
+                <i class="w-5 h-5 text-gray-700" data-lucide="map-pin"></i>
+                Ош
+              </button>
+            </div>
+            <div class="flex border-b mb-2">
+              <button class="flex-1 text-center py-2 font-medium border-b-2 border-black text-black">Тизме</button>
+            </div>
+            <div class="bg-white rounded-2xl shadow-sm p-0 overflow-hidden mb-4">
+              <div class="w-full h-40 rounded-t-2xl overflow-hidden flex items-center justify-center">
+                <iframe
+                  :src="getMapUrl()"
+                  width="100%"
+                  height="160"
+                  style="border:0; border-radius: 1rem 1rem 0 0; min-width:100%; min-height:100%;"
+                  allowfullscreen=""
+                  loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"
+                  :title="business.business_name + ' location'"
+                ></iframe>
+              </div>
+              <div class="flex items-center justify-between px-4 py-3">
+                <span class="text-base font-medium truncate flex-1" x-text="business.business_name || 'Загрузка...'"></span>
+                <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-gray-50 w-full py-8 flex flex-col items-center justify-center mt-auto">
+          <div class="flex items-center gap-2 text-gray-400 text-base">
+            Работает <span class="font-semibold text-gray-700">zappis</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Логика Alpine.js -->
+  <script>
+    function appData() {
+      return {
+        websiteUrl: '{{ website_url }}',
+        business: {},
+        step: 'main',
+        selectedServices: [],
+        selectedSpecialist: null,
+        selectedDate: null,
+        selectedTime: null,
+        customerData: {
+          name: '',
+          phone: '',
+          email: '',
+          comment: ''
+        },
+        services: [],
+        categories: [],
+        specialists: [],
+        schedule: {},
+        months: [
+          'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+          'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+        ],
+        days: ['жекшемби', 'дүйшөмбү', 'шейшемби', 'шаршемби', 'бейшемби', 'жума', 'ишемби'],
+        searchQuery: '',
+        selectedCategory: 'all',
+        currentMonth: new Date().getMonth(),
+        currentYear: new Date().getFullYear(),
+        showMonthSelect: false,
+        formErrors: {},
+        showSuccess: false,
+        showModal: false,
+        
+        // Свойство для календаря
+        calendarData: [],
+        
+        // Функция для прокрутки вверх
+        scrollToTop() {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
+        
+        // Инициализация
+        async init() {
+          await this.fetchBusinessData();
+          await this.fetchServices();
+          await this.fetchEmployees();
+          this.incrementViews();
+          
+          // Инициализируем календарь текущим месяцем
+          const now = new Date();
+          this.currentMonth = now.getMonth();
+          this.currentYear = now.getFullYear();
+          this.calendarData = this.generateCalendar();
+        },
+        
+        // API методы
+        async fetchBusinessData() {
+          try {
+            const response = await fetch(`/o/api/website/${this.websiteUrl}/`);
+            this.business = await response.json();
+          } catch (error) {
+            console.error('Error fetching business data:', error);
+          }
+        },
+        
+        async fetchServices() {
+          try {
+            const response = await fetch(`/o/api/website/${this.websiteUrl}/services/`);
+            const data = await response.json();
+            this.categories = data.categories;
+            this.services = data.services;
+          } catch (error) {
+            console.error('Error fetching services:', error);
+          }
+        },
+        
+        async fetchEmployees() {
+          try {
+            const response = await fetch(`/o/api/website/${this.websiteUrl}/employees/`);
+            this.specialists = await response.json();
+          } catch (error) {
+            console.error('Error fetching employees:', error);
+          }
+        },
+        
+        async fetchSchedule(employeeId, date) {
+          try {
+            // Форматируем дату правильно, избегая проблем с часовым поясом
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const dateStr = `${year}-${month}-${day}`;
+            
+            const response = await fetch(`/o/api/website/${this.websiteUrl}/schedule/?employee_id=${employeeId}&date=${dateStr}`);
+            
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            this.schedule = await response.json();
+          } catch (error) {
+            console.error('Error fetching schedule:', error);
+            this.schedule = { available_times: [] };
+          }
+        },
+        
+        // Методы
+        toggleService(id) {
+          if (this.selectedServices.includes(id)) {
+            this.selectedServices = this.selectedServices.filter(s => s !== id);
+          } else {
+            this.selectedServices = [...this.selectedServices, id];
+          }
+        },
+        getTotalPrice() {
+          let min = 0, max = 0, hasRange = false;
+          this.selectedServices.forEach(id => {
+            const service = this.services.find(s => s.id === id);
+            if (service) {
+              const prices = service.price.split('–').map(p => parseInt(p.replace(/\D/g, '')));
+              if (prices.length === 2) {
+                hasRange = true;
+                min += prices[0];
+                max += prices[1];
+              } else {
+                min += prices[0];
+                max += prices[0];
+              }
+            }
+          });
+          if (hasRange && min !== max) {
+            return `${min.toLocaleString()} – ${max.toLocaleString()}`;
+          } else {
+            return `${min.toLocaleString()}`;
+          }
+        },
+        getTotalPriceWithCurrency() {
+          return this.getTotalPrice() + ' сом';
+        },
+        getTotalPriceRange() {
+          return this.getTotalPrice() + ' сом';
+        },
+        getTotalDuration() {
+          let totalMinutes = 0;
+          this.selectedServices.forEach(id => {
+            const service = this.services.find(s => s.id === id);
+            if (service) {
+              const duration = service.duration;
+              if (duration.includes('ч')) {
+                const hours = parseInt(duration.match(/(\d+)\s*ч/)?.[1] || 0);
+                totalMinutes += hours * 60;
+              }
+              if (duration.includes('мин')) {
+                const minutes = parseInt(duration.match(/(\d+)\s*мин/)?.[1] || 0);
+                totalMinutes += minutes;
+              }
+            }
+          });
+          const hours = Math.floor(totalMinutes / 60);
+          const minutes = totalMinutes % 60;
+          if (hours > 0 && minutes > 0) {
+            return `${hours} ч. ${minutes} мин.`;
+          } else if (hours > 0) {
+            return `${hours} ч.`;
+          } else {
+            return `${minutes} мин.`;
+          }
+        },
+        generateCalendar() {
+          const year = this.currentYear;
+          const month = this.currentMonth;
+          
+          // Получаем первый день месяца
+          const firstDay = new Date(year, month, 1);
+          
+          // День недели первого дня (0 = воскресенье, 1 = понедельник, ...)
+          let firstDayOfWeek = firstDay.getDay();
+          // Конвертируем: понедельник = 0, воскресенье = 6
+          firstDayOfWeek = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
+          
+          const calendar = [];
+          
+          // Вычисляем дату понедельника первой недели календаря
+          const startDate = new Date(year, month, 1 - firstDayOfWeek);
+          
+          console.log('Start date:', startDate);
+          console.log('First day of week:', firstDayOfWeek);
+          
+          // Создаем 6 недель по 7 дней
+          for (let week = 0; week < 6; week++) {
+            const weekDays = [];
+            
+            for (let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
+              const currentDate = new Date(startDate);
+              currentDate.setDate(startDate.getDate() + week * 7 + dayOfWeek);
+              const isCurrentMonth = currentDate.getMonth() === month;
+              
+              weekDays.push({
+                date: currentDate,
+                isCurrentMonth: isCurrentMonth
+              });
+            }
+            
+            console.log(`Week ${week}:`, weekDays.map(d => d.date.getDate()));
+            calendar.push(weekDays);
+          }
+          
+          // Переворачиваем массив недель, чтобы они шли сверху вниз
+          return calendar.reverse();
+        },
+        prevMonth() {
+          if (this.currentMonth === 0) {
+            this.currentMonth = 11;
+            this.currentYear--;
+          } else {
+            this.currentMonth--;
+          }
+          this.calendarData = this.generateCalendar();
+        },
+        nextMonth() {
+          if (this.currentMonth === 11) {
+            this.currentMonth = 0;
+            this.currentYear++;
+          } else {
+            this.currentMonth++;
+          }
+          this.calendarData = this.generateCalendar();
+        },
+        formatDate(date) {
+          return `${this.days[date.getDay()]}, ${date.getDate()} ${this.months[date.getMonth()]}`;
+        },
+        calculateEndTime(startTime) {
+          // Суммируем длительности всех выбранных услуг
+          let totalMinutes = 0;
+          this.selectedServices.forEach(id => {
+            const service = this.services.find(s => s.id === id);
+            if (service) {
+              const duration = service.duration;
+              if (duration.includes('ч')) {
+                const hours = parseInt(duration.match(/(\d+)\s*ч/)?.[1] || 0);
+                totalMinutes += hours * 60;
+              }
+              if (duration.includes('мин')) {
+                const minutes = parseInt(duration.match(/(\d+)\s*мин/)?.[1] || 0);
+                totalMinutes += minutes;
+              }
+            }
+          });
+          const [startHours, startMinutes] = startTime.split(':').map(Number);
+          const start = new Date(2000, 0, 1, startHours, startMinutes);
+          const end = new Date(start.getTime() + totalMinutes * 60000);
+          const pad = n => n.toString().padStart(2, '0');
+          return `${pad(end.getHours())}:${pad(end.getMinutes())}`;
+        },
+        isToday(date) {
+          const today = new Date();
+          return date.getDate() === today.getDate() && 
+                 date.getMonth() === today.getMonth() && 
+                 date.getFullYear() === today.getFullYear();
+        },
+        isSelectedDay(date) {
+          if (!this.selectedDate) return false;
+          return date.getDate() === this.selectedDate.getDate() && 
+                 date.getMonth() === this.selectedDate.getMonth() && 
+                 date.getFullYear() === this.selectedDate.getFullYear();
+        },
+        isPast(date) {
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const checkDate = new Date(date);
+          checkDate.setHours(0, 0, 0, 0);
+          return checkDate < today;
+        },
+        isCurrentMonth(date) {
+          return date.getMonth() === this.currentMonth && date.getFullYear() === this.currentYear;
+        },
+        filteredServices() {
+          let filtered = this.services;
+          
+          // Фильтрация по категории
+          if (this.selectedCategory !== 'all') {
+            filtered = filtered.filter(service => service.category === parseInt(this.selectedCategory));
+          }
+          
+          // Фильтрация по поисковому запросу
+          if (this.searchQuery.trim() !== '') {
+            filtered = filtered.filter(service => 
+              service.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+            );
+          }
+          
+          return filtered;
+        },
+        getCategoryTitle() {
+          if (this.selectedCategory === 'all') {
+            return 'Бардык кызматтар';
+          }
+          const category = this.categories.find(c => c.id === parseInt(this.selectedCategory));
+          return category ? category.name : 'Бардык кызматтар';
+        },
+        validateForm() {
+          this.formErrors = {};
+          if (!this.customerData.name || this.customerData.name.trim().length < 2) {
+            this.formErrors.name = 'Аты-жөнүңүздү киргизиңиз (кеминде 2 тамга)';
+          }
+          if (!this.customerData.phone || !/^\d{10,}$/.test(this.customerData.phone.replace(/\D/g, ''))) {
+            this.formErrors.phone = 'Телефон номериңизди туура киргизиңиз (кеминде 10 цифра)';
+          }
+          if (this.customerData.email && !/^\S+@\S+\.\S+$/.test(this.customerData.email)) {
+            this.formErrors.email = 'Туура e-mail киргизиңиз';
+          }
+          return Object.keys(this.formErrors).length === 0;
+        },
+        createBooking() {
+          const bookingData = {
+            customer_name: this.customerData.name,
+            customer_phone: this.customerData.phone,
+            customer_email: this.customerData.email,
+            service: this.selectedServices.map(id => this.services.find(s => s.id === id).name).join(', '),
+            specialist: this.selectedSpecialist.name,
+            date: this.selectedDate ? this.selectedDate.toISOString().split('T')[0] : '',
+            time: this.selectedTime || '',
+            comment: this.customerData.comment
+          };
+          
+          fetch(`/o/api/website/${this.websiteUrl}/booking/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(bookingData)
+          })
+          .then(async r => {
+            let data = await r.json();
+            if (!r.ok) throw data;
+            return data;
+          })
+          .then(data => {
+            this.showSuccess = true;
+          })
+          .catch(err => {
+            console.error('Booking error:', err);
+            alert('Ошибка при создании бронирования');
+          });
+        },
+        incrementViews() {
+          fetch(`/o/api/website/${this.websiteUrl}/view/`, { method: 'POST' })
+            .then(r => r.json())
+            .then(data => { 
+              // Можно сохранить количество просмотров если нужно
+            })
+            .catch(error => {
+              console.error('Error incrementing views:', error);
+            });
+        },
+        selectDate(date) {
+          // Проверяем, что дата не в прошлом
+          if (this.isPast(date)) return;
+          
+          // Создаем новую дату для избежания мутации
+          this.selectedDate = new Date(date);
+          this.selectedTime = null;
+          this.schedule = {}; // Сбрасываем расписание для показа загрузки
+          
+          // Загружаем расписание для выбранной даты
+          if (this.selectedSpecialist) {
+            this.fetchSchedule(this.selectedSpecialist.id, date);
+          }
+        },
+        // Функция для фильтрации доступного времени
+        getFilteredAvailableTimes() {
+          if (!this.schedule.available_times || !this.selectedDate) {
+            return [];
+          }
+          
+          const now = new Date();
+          const selectedDate = new Date(this.selectedDate);
+          
+          // Если выбранная дата сегодня, фильтруем прошедшее время
+          const isToday = this.isToday(selectedDate);
+          
+          return this.schedule.available_times.filter(time => {
+            if (isToday) {
+              // Для сегодняшнего дня проверяем, не прошло ли время
+              const [hours, minutes] = time.split(':').map(Number);
+              const timeDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+              
+              // Добавляем 30 минут буфера к текущему времени
+              const bufferTime = new Date(now.getTime() + 30 * 60 * 1000);
+              
+              return timeDate > bufferTime;
+            }
+            
+            return true; // Для других дней показываем все время
+          });
+        },
+        
+        // Функция для проверки, доступно ли время
+        isTimeAvailable(time) {
+          const filteredTimes = this.getFilteredAvailableTimes();
+          return filteredTimes.includes(time);
+        },
+        // Функция для генерации URL карты
+        getMapUrl() {
+          if (this.business.business_address) {
+            return `https://www.google.com/maps?q=${encodeURIComponent(this.business.business_address)}&z=15&output=embed`;
+          }
+          // Fallback на координаты Бишкека если адрес не указан
+          return 'https://www.google.com/maps?q=42.8746,74.5698&z=15&output=embed';
+        }
+      };
+    }
+  </script>
+</body>
+</html>

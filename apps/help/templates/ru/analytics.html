@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аналитика и отчеты — Справочный центр Zappis</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .side-link.active {
+            background: linear-gradient(90deg, #3B82F6 0 6px, #e0e7ef 6px 100%);
+            color: #2563eb;
+            font-weight: 700;
+        }
+        .side-link {
+            transition: background 0.2s, color 0.2s;
+        }
+        .side-link:hover {
+            background: #f3f4f6;
+            color: #2563eb;
+        }
+        @media (max-width: 768px) {
+            .sidebar-nav { display: none; }
+            .sidebar-mobile { display: block; }
+        }
+        @media (min-width: 769px) {
+            .sidebar-nav { display: block; }
+            .sidebar-mobile { display: none; }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-white to-gray-50" style="font-family: system-ui, -apple-system, sans-serif;">
+    <header class="bg-white border-b border-gray-200 py-5 px-4 sm:px-8 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <a href="/support/" class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow hover:bg-blue-700 transition">
+                <i data-lucide="arrow-left" class="w-6 h-6 text-white"></i>
+            </a>
+            <span class="text-xl font-bold text-gray-900 tracking-tight">Справочный центр</span>
+        </div>
+        <a href="/support/" class="text-blue-600 hover:underline font-medium">Все темы</a>
+    </header>
+    <main class="max-w-6xl mx-auto p-6 pt-10 flex gap-8">
+                        <!-- Sidebar Navigation (Desktop) -->
+        <aside class="w-72 shrink-0 sidebar-nav">
+            <nav class="bg-white rounded-2xl border border-gray-200 shadow p-4 sticky top-24 max-h-[80vh] overflow-y-auto">
+                <h2 class="text-lg font-bold text-gray-800 mb-4">Разделы справки</h2>
+                <ul class="space-y-1">
+                    <li><a href="/support/getting-started/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="info" class="w-5 h-5 mr-2"></i> Начало работы с записью</a></li>
+                    <li><a href="/support/getting-started-profile/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="user" class="w-5 h-5 mr-2"></i> Личный кабинет</a></li>
+                    <li><a href="/support/notifications/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="bell" class="w-5 h-5 mr-2"></i> Уведомления</a></li>
+                    <li><a href="/support/schedules/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="calendar" class="w-5 h-5 mr-2"></i> Расписания</a></li>
+                    <li><a href="/support/clients/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="users" class="w-5 h-5 mr-2"></i> Клиенты</a></li>
+                    <li><a href="/support/services/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="scissors" class="w-5 h-5 mr-2"></i> Услуги</a></li>
+                    <li><a href="/support/employees/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="badge" class="w-5 h-5 mr-2"></i> Сотрудники</a></li>
+                    <li><a href="/support/analytics/" class="side-link active flex items-center px-4 py-2 rounded-lg"><i data-lucide="bar-chart-3" class="w-5 h-5 mr-2"></i> Аналитика</a></li>
+                    <li><a href="/support/settings/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="settings" class="w-5 h-5 mr-2"></i> Настройки</a></li>
+                    <li><a href="/support/privacy/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="shield" class="w-5 h-5 mr-2"></i> Конфиденциальность</a></li>
+                    <li><a href="/support/web/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="globe" class="w-5 h-5 mr-2"></i> Онлайн-запись</a></li>
+                    <li><a href="/support/ai/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="bot" class="w-5 h-5 mr-2"></i> AI-функции</a></li>
+                </ul>
+            </nav>
+        </aside>
+                        <!-- Sidebar Navigation (Mobile) -->
+        <aside class="sidebar-mobile w-full mb-8">
+            <nav class="bg-white rounded-2xl border border-gray-200 shadow p-4 flex overflow-x-auto gap-2">
+                <a href="/support/getting-started/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="info" class="w-5 h-5 mr-1"></i> Запись</a>
+                <a href="/support/getting-started-profile/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="user" class="w-5 h-5 mr-1"></i> Личный кабинет</a>
+                <a href="/support/notifications/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bell" class="w-5 h-5 mr-1"></i> Уведомления</a>
+                <a href="/support/schedules/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="calendar" class="w-5 h-5 mr-1"></i> Расписания</a>
+                <a href="/support/clients/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="users" class="w-5 h-5 mr-1"></i> Клиенты</a>
+                <a href="/support/services/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="scissors" class="w-5 h-5 mr-1"></i> Услуги</a>
+                <a href="/support/employees/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="badge" class="w-5 h-5 mr-1"></i> Сотрудники</a>
+                <a href="/support/analytics/" class="side-link active flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bar-chart-3" class="w-5 h-5 mr-1"></i> Аналитика</a>
+                <a href="/support/settings/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="settings" class="w-5 h-5 mr-1"></i> Настройки</a>
+                <a href="/support/privacy/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="shield" class="w-5 h-5 mr-1"></i> Конфиденциальность</a>
+                <a href="/support/web/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="globe" class="w-5 h-5 mr-1"></i> Онлайн-запись</a>
+                <a href="/support/ai/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bot" class="w-5 h-5 mr-1"></i> AI</a>
+            </nav>
+        </aside>
+        <!-- Main Content -->
+        <section class="flex-1 min-w-0">
+            <div class="flex items-center mb-8">
+                <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center mr-5">
+                    <i data-lucide="bar-chart-3" class="w-8 h-8 text-green-600"></i>
+                </div>
+                <h1 class="text-4xl font-extrabold text-gray-900">Аналитика и отчеты в Zappis</h1>
+            </div>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Что такое аналитика и зачем она нужна?</h2>
+                <p class="text-gray-700 mb-3">Аналитика в Zappis — это комплексная система мониторинга и анализа всех ключевых показателей вашего бизнеса в реальном времени. Она автоматически собирает данные из всех модулей системы и представляет их в удобном для понимания виде.</p>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Мониторинг доходов и расходов в реальном времени</li>
+                    <li>Анализ загрузки сотрудников и эффективности работы</li>
+                    <li>Отслеживание популярности услуг и клиентской базы</li>
+                    <li>Прогнозирование трендов и планирование</li>
+                    <li>Персонализированные ИИ-советы для развития бизнеса</li>
+                </ul>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Основные метрики и показатели</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                                <i data-lucide="users" class="w-5 h-5 text-blue-600"></i>
+                            </div>
+                            <h4 class="font-semibold text-gray-900">Клиенты</h4>
+                        </div>
+                        <ul class="text-sm text-gray-700 space-y-2">
+                            <li>• Общее количество клиентов в базе</li>
+                            <li>• Рост клиентской базы за месяц</li>
+                            <li>• Количество новых клиентов</li>
+                            <li>• Топ клиентов по количеству визитов</li>
+                            <li>• Средняя сумма потраченная клиентом</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                                <i data-lucide="calendar" class="w-5 h-5 text-green-600"></i>
+                        </div>
+                            <h4 class="font-semibold text-gray-900">Записи</h4>
+                        </div>
+                        <ul class="text-sm text-gray-700 space-y-2">
+                            <li>• Записи на сегодня</li>
+                            <li>• Рост записей к прошлому периоду</li>
+                            <li>• Динамика записей по дням/неделям/месяцам</li>
+                            <li>• Загрузка по времени суток</li>
+                            <li>• Эффективность расписания</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+                                <i data-lucide="dollar-sign" class="w-5 h-5 text-purple-600"></i>
+                            </div>
+                            <h4 class="font-semibold text-gray-900">Финансы</h4>
+                        </div>
+                        <ul class="text-sm text-gray-700 space-y-2">
+                            <li>• Доход за текущий месяц</li>
+                            <li>• Рост доходов к прошлому месяцу</li>
+                            <li>• Средний чек</li>
+                            <li>• Изменение среднего чека</li>
+                            <li>• Динамика доходов по периодам</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
+                                <i data-lucide="scissors" class="w-5 h-5 text-yellow-600"></i>
+                            </div>
+                            <h4 class="font-semibold text-gray-900">Услуги</h4>
+                        </div>
+                        <ul class="text-sm text-gray-700 space-y-2">
+                            <li>• Количество активных услуг</li>
+                            <li>• Популярные услуги по записям</li>
+                            <li>• Доходность по услугам</li>
+                            <li>• Средняя стоимость услуг</li>
+                            <li>• Эффективность прайс-листа</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Интерактивные графики и диаграммы</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <h4 class="font-semibold text-gray-900 mb-3">График динамики</h4>
+                        <p class="text-sm text-gray-700 mb-3">Основной график показывает три ключевых показателя одновременно:</p>
+                        <ul class="text-sm text-gray-700 space-y-2">
+                            <li>• <b>Доход</b> — синяя линия (левая шкала)</li>
+                            <li>• <b>Записи</b> — зеленая линия (правая шкала)</li>
+                            <li>• <b>Новые клиенты</b> — желтая линия (правая шкала)</li>
+                        </ul>
+                        <div class="mt-4 p-3 bg-gray-50 rounded-lg">
+                            <p class="text-xs text-gray-600"><b>Периоды:</b> Неделя (последние 7 дней), Месяц (дни текущего месяца), Год (месяцы текущего года)</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <h4 class="font-semibold text-gray-900 mb-3">Топ-списки</h4>
+                        <ul class="text-sm text-gray-700 space-y-3">
+                            <li><b>Популярные услуги:</b> Топ-5 услуг по количеству записей с указанием цены и категории</li>
+                            <li><b>Топ клиенты:</b> Клиенты с наибольшим количеством визитов и потраченными суммами</li>
+                            <li><b>Статистика:</b> Общее количество сотрудников, услуг, активных записей</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">ИИ-советы для развития бизнеса</h2>
+                <div class="bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl p-6 text-white">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <i data-lucide="bot" class="w-6 h-6"></i>
+                        <h4 class="font-semibold text-lg">Персонализированные рекомендации</h4>
+                    </div>
+                    <p class="mb-4">Система анализирует все данные вашего бизнеса и генерирует персональные советы для роста прибыли и улучшения работы:</p>
+                    <ul class="space-y-2 text-sm">
+                        <li>• <b>Автоматический анализ:</b> ИИ изучает ваши записи, клиентов, услуги и доходы</li>
+                        <li>• <b>Конкретные рекомендации:</b> Каждый совет адаптирован под ваш бизнес</li>
+                        <li>• <b>Регулярное обновление:</b> Советы обновляются каждые 7 дней</li>
+                        <li>• <b>Приоритизация:</b> Советы ранжируются по важности (1-3)</li>
+                        <li>• <b>Многоязычность:</b> Поддержка русского и кыргызского языков</li>
+                    </ul>
+                </div>
+                <div class="mt-4 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-xl">
+                    <div class="flex items-start">
+                        <i data-lucide="info" class="w-5 h-5 text-yellow-500 mr-3 mt-1"></i>
+                        <div>
+                            <b>Важно:</b> ИИ-советы генерируются на основе реальных данных вашего бизнеса. Чем больше данных в системе, тем точнее будут рекомендации.
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Последние действия и активность</h2>
+                <div class="bg-white rounded-xl p-6 border border-gray-200">
+                    <h4 class="font-semibold text-gray-900 mb-3">Что отслеживается:</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h5 class="font-medium text-gray-800 mb-2">Новые записи</h5>
+                            <ul class="text-sm text-gray-700 space-y-1">
+                                <li>• Клиент, услуга, сумма</li>
+                                <li>• Дата и время записи</li>
+                                <li>• Время создания записи</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h5 class="font-medium text-gray-800 mb-2">Новые клиенты</h5>
+                            <ul class="text-sm text-gray-700 space-y-1">
+                                <li>• Имя и телефон клиента</li>
+                                <li>• Статус клиента</li>
+                                <li>• Дата регистрации</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h5 class="font-medium text-gray-800 mb-2">Новые сотрудники</h5>
+                            <ul class="text-sm text-gray-700 space-y-1">
+                                <li>• Имя и должность</li>
+                                <li>• Дата добавления</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h5 class="font-medium text-gray-800 mb-2">Временные метки</h5>
+                            <ul class="text-sm text-gray-700 space-y-1">
+                                <li>• "Только что" (до 1 минуты)</li>
+                                <li>• "X минут назад" (до 1 часа)</li>
+                                <li>• "X часов назад" (до 1 дня)</li>
+                                <li>• "X дней назад" (более 1 дня)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Мобильная версия аналитики</h2>
+                <div class="bg-white rounded-xl p-6 border border-gray-200">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <i data-lucide="smartphone" class="w-6 h-6 text-blue-600"></i>
+                        <h4 class="font-semibold text-gray-900">Адаптивный интерфейс</h4>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h5 class="font-medium text-gray-800 mb-2">Основные функции:</h5>
+                            <ul class="text-sm text-gray-700 space-y-2">
+                                <li>• Компактные карточки статистики</li>
+                                <li>• Упрощенный график динамики</li>
+                                <li>• Быстрый доступ к топ-спискам</li>
+                                <li>• Модальные окна для детального просмотра</li>
+                                <li>• Поддержка PWA (установка как приложение)</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h5 class="font-medium text-gray-800 mb-2">Особенности:</h5>
+                            <ul class="text-sm text-gray-700 space-y-2">
+                                <li>• Автоматическое определение мобильного устройства</li>
+                                <li>• Оптимизированная навигация</li>
+                                <li>• Быстрая загрузка данных</li>
+                                <li>• Поддержка темной темы</li>
+                                <li>• Офлайн-режим (базовые функции)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Интеграция с другими модулями</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                                <i data-lucide="calendar" class="w-5 h-5 text-blue-600"></i>
+                            </div>
+                            <h4 class="font-semibold text-gray-900">Записи и расписание</h4>
+                        </div>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>• Данные о записях и доходах</li>
+                            <li>• Загрузка по времени и дням</li>
+                            <li>• Эффективность расписания</li>
+                            <li>• Статистика по сотрудникам</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                                <i data-lucide="users" class="w-5 h-5 text-green-600"></i>
+                            </div>
+                            <h4 class="font-semibold text-gray-900">Клиенты и сотрудники</h4>
+                        </div>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>• Рост клиентской базы</li>
+                            <li>• Активность сотрудников</li>
+                            <li>• Топ клиенты и мастера</li>
+                            <li>• История взаимодействий</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
+                                <i data-lucide="scissors" class="w-5 h-5 text-yellow-600"></i>
+                            </div>
+                            <h4 class="font-semibold text-gray-900">Услуги и цены</h4>
+                        </div>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>• Популярность услуг</li>
+                            <li>• Доходность по категориям</li>
+                            <li>• Эффективность прайс-листа</li>
+                            <li>• Средние чеки</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+                                <i data-lucide="settings" class="w-5 h-5 text-purple-600"></i>
+                            </div>
+                            <h4 class="font-semibold text-gray-900">Настройки бизнеса</h4>
+                        </div>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>• Тип бизнеса влияет на аналитику</li>
+                            <li>• Персонализация ИИ-советов</li>
+                            <li>• Языковые настройки</li>
+                            <li>• Конфигурация отчетов</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Часто задаваемые вопросы</h2>
+                <div class="space-y-4">
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <h4 class="font-semibold text-gray-900 mb-2">Как часто обновляются данные в аналитике?</h4>
+                        <p class="text-gray-700">Данные обновляются в реальном времени. Каждое новое действие (запись, новый клиент, изменение статуса) сразу отражается в аналитике. ИИ-советы обновляются автоматически каждые 7 дней или при принудительном обновлении.</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <h4 class="font-semibold text-gray-900 mb-2">Можно ли экспортировать отчеты?</h4>
+                        <p class="text-gray-700">В текущей версии экспорт отчетов не реализован. Все данные доступны только в веб-интерфейсе. Функция экспорта планируется в будущих обновлениях.</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <h4 class="font-semibold text-gray-900 mb-2">Почему ИИ-советы могут быть недоступны?</h4>
+                        <p class="text-gray-700">ИИ-советы генерируются внешним сервисом. При временных проблемах с подключением или высокой нагрузке система может показывать сообщение о недоступности. В таких случаях попробуйте обновить страницу позже.</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <h4 class="font-semibold text-gray-900 mb-2">Как интерпретировать рост показателей?</h4>
+                        <p class="text-gray-700">Рост рассчитывается как процентное изменение к предыдущему периоду. Положительные значения (зеленый цвет) означают улучшение, отрицательные (красный цвет) — снижение показателя. Сравнение происходит автоматически.</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <h4 class="font-semibold text-gray-900 mb-2">Можно ли настроить периоды для графиков?</h4>
+                        <p class="text-gray-700">Да, для основного графика доступны три периода: неделя (последние 7 дней), месяц (дни текущего месяца) и год (месяцы текущего года). Переключение происходит через выпадающий список в правом верхнем углу графика.</p>
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Советы по эффективному использованию аналитики</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-blue-50 rounded-xl p-6">
+                        <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                            <i data-lucide="check-circle" class="w-5 h-5 text-blue-600 mr-2"></i>
+                            Рекомендации
+                        </h4>
+                        <ul class="text-sm text-gray-700 space-y-2">
+                            <li>• Регулярно проверяйте основные метрики</li>
+                            <li>• Обращайте внимание на тренды роста/падения</li>
+                            <li>• Используйте ИИ-советы для планирования</li>
+                            <li>• Анализируйте популярность услуг</li>
+                            <li>• Следите за активностью топ-клиентов</li>
+                        </ul>
+                    </div>
+                    <div class="bg-green-50 rounded-xl p-6">
+                        <h4 class="font-semibold text-gray-900 mb-3 flex items-center">
+                            <i data-lucide="lightbulb" class="w-5 h-5 text-green-600 mr-2"></i>
+                            Полезные функции
+                        </h4>
+                        <ul class="text-sm text-gray-700 space-y-2">
+                            <li>• Автоматическое обновление данных</li>
+                            <li>• Интерактивные графики с подсказками</li>
+                            <li>• Персонализированные ИИ-советы</li>
+                            <li>• Мобильная версия для работы в пути</li>
+                            <li>• История последних действий</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            <div class="flex justify-between mt-12">
+                <a href="/support/employees/" class="text-blue-600 hover:underline flex items-center"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> К сотрудникам</a>
+                <a href="/support/settings/" class="text-blue-600 hover:underline flex items-center">К настройкам <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i></a>
+            </div>
+        </section>
+    </main>
+    <script>document.addEventListener('DOMContentLoaded', function() { lucide.createIcons(); });</script>
+</body>
+</html> 

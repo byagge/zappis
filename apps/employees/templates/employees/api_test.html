@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test - Employees</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .api-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .response { background: #f5f5f5; padding: 10px; margin: 10px 0; border-radius: 3px; }
+        button { padding: 8px 16px; margin: 5px; cursor: pointer; }
+        input, textarea { width: 100%; padding: 8px; margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <h1>API Test - Employees</h1>
+    
+    <div class="api-section">
+        <h2>Получить список сотрудников</h2>
+        <button onclick="getEmployees()">GET /employees/api/employees/</button>
+        <div id="employees-response" class="response"></div>
+    </div>
+    
+    <div class="api-section">
+        <h2>Получить статистику</h2>
+        <button onclick="getStatistics()">GET /employees/api/employees/statistics/</button>
+        <div id="statistics-response" class="response"></div>
+    </div>
+    
+    <div class="api-section">
+        <h2>Создать сотрудника</h2>
+        <form id="create-form">
+            <input type="text" id="name" placeholder="Имя" required>
+            <input type="text" id="position" placeholder="Должность" required>
+            <input type="tel" id="phone" placeholder="Телефон" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <button type="submit">Создать</button>
+        </form>
+        <div id="create-response" class="response"></div>
+    </div>
+    
+    <div class="api-section">
+        <h2>Обновить статус сотрудника</h2>
+        <input type="number" id="employee-id" placeholder="ID сотрудника">
+        <select id="status">
+            <option value="active">Активный</option>
+            <option value="inactive">Неактивный</option>
+            <option value="vacation">В отпуске</option>
+            <option value="sick">На больничном</option>
+        </select>
+        <button onclick="updateStatus()">Обновить статус</button>
+        <div id="status-response" class="response"></div>
+    </div>
+
+    <script>
+        const API_BASE = '/employees/api/employees/';
+        
+        async function getEmployees() {
+            try {
+                const response = await fetch(API_BASE);
+                const data = await response.json();
+                document.getElementById('employees-response').innerHTML = 
+                    '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('employees-response').innerHTML = 
+                    'Ошибка: ' + error.message;
+            }
+        }
+        
+        async function getStatistics() {
+            try {
+                const response = await fetch(API_BASE + 'statistics/');
+                const data = await response.json();
+                document.getElementById('statistics-response').innerHTML = 
+                    '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('statistics-response').innerHTML = 
+                    'Ошибка: ' + error.message;
+            }
+        }
+        
+        document.getElementById('create-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            formData.append('name', document.getElementById('name').value);
+            formData.append('position', document.getElementById('position').value);
+            formData.append('phone', document.getElementById('phone').value);
+            formData.append('email', document.getElementById('email').value);
+            formData.append('status', 'active');
+            formData.append('experience', '0');
+            formData.append('salary', '0');
+            formData.append('clientsCount', '0');
+            formData.append('rating', '0');
+            
+            try {
+                const response = await fetch(API_BASE, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                document.getElementById('create-response').innerHTML = 
+                    '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                
+                if (data.status === 'success') {
+                    document.getElementById('create-form').reset();
+                }
+            } catch (error) {
+                document.getElementById('create-response').innerHTML = 
+                    'Ошибка: ' + error.message;
+            }
+        });
+        
+        async function updateStatus() {
+            const employeeId = document.getElementById('employee-id').value;
+            const status = document.getElementById('status').value;
+            
+            if (!employeeId) {
+                alert('Введите ID сотрудника');
+                return;
+            }
+            
+            try {
+                const response = await fetch(API_BASE + employeeId + '/update_status/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({ status: status })
+                });
+                const data = await response.json();
+                document.getElementById('status-response').innerHTML = 
+                    '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                document.getElementById('status-response').innerHTML = 
+                    'Ошибка: ' + error.message;
+            }
+        }
+        
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ru" x-data="mobileNotifications()" x-init="init()">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#2563eb">
+    <title>Zappis — Уведомления</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <style>
+        body { background: linear-gradient(135deg, #f3f4f6 0%, #dbeafe 100%); }
+        .nav-active { color: #2563eb; }
+        .nav-bar { box-shadow: 0 -2px 16px 0 rgba(37,99,235,0.08); }
+        .notification-card { background: white; border: 1px solid #f3f4f6; transition: all 0.2s ease; }
+        .notification-card:active { background-color: #f3f4f6; border-color: #e5e7eb; }
+        .notification-icon { transition: all 0.2s ease; }
+        .notification-badge { position: absolute; top: -2px; right: -2px; width: 6px; height: 6px; border-radius: 50%; background-color: #ef4444; }
+        .type-reminder { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .type-event { background: linear-gradient(135deg, #10b981, #059669); }
+        .type-alert { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .type-system { background: linear-gradient(135deg, #6b7280, #4b5563); }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col" style="font-family: system-ui, -apple-system, sans-serif;">
+    <!-- AppBar -->
+    <header class="fixed top-0 left-0 right-0 z-20 bg-white/90 backdrop-blur border-b border-gray-200 flex items-center justify-between px-4 h-16">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
+                <span class="text-white font-bold text-2xl">Z</span>
+            </div>
+            <span class="text-lg font-semibold text-gray-900">Zappis</span>
+        </div>
+        <div class="flex items-center space-x-2">
+            <button class="relative text-gray-600 hover:text-blue-600">
+                <i data-lucide="bell" class="w-6 h-6"></i>
+            </button>
+            <button class="text-gray-600 hover:text-blue-600">
+                <i data-lucide="settings" class="w-6 h-6"></i>
+            </button>
+            <div class="flex flex-col items-end ml-2">
+                <span class="text-sm font-semibold text-gray-900" x-text="userProfile.full_name || 'Пользователь'"></span>
+                <span class="text-xs text-gray-500" x-text="userProfile.role || 'Роль'" style="line-height:1; margin-top:-2px;"></span>
+            </div>
+            <div class="w-9 h-9 bg-blue-600 rounded-full flex items-center justify-center ml-2">
+                <i data-lucide="user" class="w-4 h-4 text-white"></i>
+            </div>
+        </div>
+    </header>
+    <!-- Main Content -->
+    <main class="flex-1 pt-20 pb-20 px-2 max-w-md mx-auto w-full">
+        <!-- Фильтры -->
+        <div class="flex space-x-2 mb-4">
+            <select x-model="selectedType" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option value="all">Все типы</option>
+                <option value="reminder">Напоминания</option>
+                <option value="event">События</option>
+                <option value="alert">Оповещения</option>
+                <option value="system">Системные</option>
+            </select>
+            <select x-model="selectedPeriod" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <option value="all">Все время</option>
+                <option value="today">Сегодня</option>
+                <option value="week">За неделю</option>
+                <option value="month">За месяц</option>
+            </select>
+        </div>
+        <!-- Notifications List -->
+        <template x-if="loading">
+            <div class="space-y-4 animate-pulse">
+                <div class="h-8 rounded-xl bg-gray-200"></div>
+                <div class="h-20 rounded-2xl bg-gray-200"></div>
+                <div class="h-20 rounded-2xl bg-gray-200"></div>
+            </div>
+        </template>
+        <template x-if="!loading && filteredNotifications.length === 0">
+            <div class="text-center py-12 text-gray-500">
+                <i data-lucide="bell-off" class="w-12 h-12 mx-auto mb-3 text-gray-300"></i>
+                <p class="text-lg font-medium">Нет уведомлений</p>
+                <p class="text-sm">Здесь будут отображаться ваши уведомления</p>
+            </div>
+        </template>
+        <template x-for="notification in filteredNotifications" :key="notification.id">
+            <div class="notification-card p-4 rounded-xl fade-in mb-3"
+                 :class="{'bg-red-50 border-red-200': notification.isImportant, 'opacity-75': notification.isRead}">
+                <div class="flex items-start space-x-3">
+                    <!-- Icon -->
+                    <div class="relative">
+                        <div :class="getNotificationIconClass(notification.type)"
+                             class="notification-icon w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
+                            <i :data-lucide="getNotificationIcon(notification.type)" class="w-5 h-5 text-white"></i>
+                        </div>
+                        <div x-show="!notification.isRead" class="notification-badge"></div>
+                    </div>
+                    <!-- Content -->
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h3 class="text-sm font-semibold text-gray-900 mb-1" x-text="notification.title"></h3>
+                                <p class="text-sm text-gray-600 leading-relaxed" x-text="notification.message"></p>
+                            </div>
+                            <div class="flex items-center space-x-2 ml-3">
+                                <span class="text-xs text-gray-500" x-text="formatDate(notification.date)"></span>
+                                <button @click="toggleImportant(notification)"
+                                        class="text-gray-400 hover:text-yellow-500 transition-colors p-1 rounded-full hover:bg-yellow-50">
+                                    <i data-lucide="star"
+                                       class="w-4 h-4"
+                                       :class="{'text-yellow-500 fill-current': notification.isImportant}"></i>
+                                </button>
+                                <button @click="deleteNotification(notification)"
+                                        class="text-gray-400 hover:text-red-500 transition-colors p-1 rounded-full hover:bg-red-50">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Доп. инфо -->
+                        <div class="mt-2 flex items-center space-x-3">
+                            <template x-if="notification.type === 'reminder' && notification.reminderTime">
+                                <div class="flex items-center text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                                    <i data-lucide="clock" class="w-3 h-3 mr-1"></i>
+                                    <span x-text="notification.reminderTime"></span>
+                                </div>
+                            </template>
+                            <template x-if="notification.type === 'event' && notification.eventDate">
+                                <div class="flex items-center text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                                    <i data-lucide="calendar" class="w-3 h-3 mr-1"></i>
+                                    <span x-text="notification.eventDate"></span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <!-- Toast -->
+        <div x-show="toast" class="fixed top-4 right-4 z-50 fade-in">
+            <div :class="{'bg-green-500': toast.type === 'success', 'bg-red-500': toast.type === 'error'}"
+                 class="px-4 py-3 rounded-lg shadow-lg text-white text-sm">
+                <span x-text="toast.message"></span>
+            </div>
+        </div>
+    </main>
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 z-30 bg-white nav-bar border-t border-gray-200 flex justify-around items-center h-16 max-w-md mx-auto w-full">
+        <a href="/dashboard_mobile.html" class="flex flex-col items-center">
+            <i data-lucide="home" class="w-6 h-6"></i>
+            <span class="text-xs mt-1">Главная</span>
+        </a>
+        <a href="#" class="flex flex-col items-center">
+            <i data-lucide="calendar" class="w-6 h-6"></i>
+            <span class="text-xs mt-1">Записи</span>
+        </a>
+        <a href="#" class="flex flex-col items-center">
+            <i data-lucide="user-plus" class="w-6 h-6"></i>
+            <span class="text-xs mt-1">Клиенты</span>
+        </a>
+        <a href="#" class="flex flex-col items-center nav-active">
+            <i data-lucide="bell" class="w-6 h-6"></i>
+            <span class="text-xs mt-1">Уведомления</span>
+        </a>
+        <a href="/settings/settings_mobile.html" class="flex flex-col items-center">
+            <i data-lucide="settings" class="w-6 h-6"></i>
+            <span class="text-xs mt-1">Профиль</span>
+        </a>
+    </nav>
+    <script>
+    function mobileNotifications() {
+        return {
+            selectedType: 'all',
+            selectedPeriod: 'all',
+            toast: null,
+            notifications: [],
+            loading: true,
+            error: null,
+            apiUrl: '/notifications/api/',
+            filteredNotifications: [],
+            userProfile: { full_name: '', role: '' },
+            async init() {
+                await Promise.all([
+                    this.fetchUserProfile(),
+                    this.fetchNotifications()
+                ]);
+                lucide.createIcons();
+            },
+            async fetchUserProfile() {
+                try {
+                    const res = await fetch('/accounts/api/profile/', { headers: { 'Content-Type': 'application/json' } });
+                    if (!res.ok) throw new Error('Ошибка профиля');
+                    const data = await res.json();
+                    this.userProfile.full_name = data.full_name || '';
+                    this.userProfile.role = data.role || '';
+                } catch (e) {
+                    this.userProfile.full_name = 'Пользователь';
+                    this.userProfile.role = 'Роль';
+                }
+            },
+            async fetchNotifications() {
+                this.loading = true;
+                this.error = null;
+                try {
+                    const res = await fetch(this.apiUrl, {
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    if (!res.ok) throw new Error('Ошибка загрузки уведомлений');
+                    const data = await res.json();
+                    this.notifications = data.map(n => ({
+                        id: n.id,
+                        type: n.type,
+                        title: n.title,
+                        message: n.message,
+                        date: n.date,
+                        reminderTime: n.reminder_time,
+                        eventDate: n.event_date,
+                        isRead: n.is_read,
+                        isImportant: n.is_important
+                    }));
+                    this.filterNotifications();
+                    this.$nextTick(() => lucide.createIcons());
+                } catch (err) {
+                    this.error = 'Не удалось загрузить уведомления';
+                } finally {
+                    this.loading = false;
+                }
+            },
+            filterNotifications() {
+                this.filteredNotifications = this.notifications.filter(notification => {
+                    const matchesType = this.selectedType === 'all' || notification.type === this.selectedType;
+                    const matchesPeriod = this.selectedPeriod === 'all' || this.isWithinPeriod(notification.date, this.selectedPeriod);
+                    return matchesType && matchesPeriod;
+                });
+            },
+            isWithinPeriod(date, period) {
+                const notificationDate = new Date(date);
+                const now = new Date();
+                switch(period) {
+                    case 'today':
+                        return notificationDate.toDateString() === now.toDateString();
+                    case 'week':
+                        const weekAgo = new Date(now);
+                        weekAgo.setDate(now.getDate() - 7);
+                        return notificationDate >= weekAgo;
+                    case 'month':
+                        const monthAgo = new Date(now);
+                        monthAgo.setMonth(now.getMonth() - 1);
+                        return notificationDate >= monthAgo;
+                    default:
+                        return true;
+                }
+            },
+            getNotificationIcon(type) {
+                const icons = {
+                    'reminder': 'clock',
+                    'event': 'calendar',
+                    'alert': 'alert-triangle',
+                    'system': 'settings'
+                };
+                return icons[type] || 'bell';
+            },
+            getNotificationIconClass(type) {
+                const classes = {
+                    'reminder': 'type-reminder',
+                    'event': 'type-event',
+                    'alert': 'type-alert',
+                    'system': 'type-system'
+                };
+                return classes[type] || 'type-reminder';
+            },
+            formatDate(date) {
+                const notificationDate = new Date(date);
+                const now = new Date();
+                const seconds = Math.floor((now - notificationDate) / 1000);
+                let interval = seconds / 31536000;
+                if (interval > 1) {
+                    const years = Math.floor(interval);
+                    return `${years} ${this.getPlural(years, 'год', 'года', 'лет')} назад`;
+                }
+                interval = seconds / 86400;
+                if (interval > 1) {
+                    const days = Math.floor(interval);
+                    return `${days} ${this.getPlural(days, 'день', 'дня', 'дней')} назад`;
+                }
+                interval = seconds / 3600;
+                if (interval > 1) {
+                    const hours = Math.floor(interval);
+                    return `${hours} ${this.getPlural(hours, 'час', 'часа', 'часов')} назад`;
+                }
+                interval = seconds / 60;
+                if (interval > 1) {
+                    const minutes = Math.floor(interval);
+                    return `${minutes} ${this.getPlural(minutes, 'минута', 'минуты', 'минут')} назад`;
+                }
+                return 'Только что';
+            },
+            getPlural(number, one, two, five) {
+                let n = Math.abs(number);
+                n %= 100;
+                if (n >= 5 && n <= 20) {
+                    return five;
+                }
+                n %= 10;
+                if (n === 1) {
+                    return one;
+                }
+                if (n >= 2 && n <= 4) {
+                    return two;
+                }
+                return five;
+            },
+            async toggleImportant(notification) {
+                try {
+                    const res = await fetch(`${this.apiUrl}${notification.id}/toggle_important/`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    if (!res.ok) throw new Error('Ошибка при изменении важности');
+                    const data = await res.json();
+                    notification.isImportant = data.is_important;
+                    this.showToast(
+                        notification.isImportant ? 'Уведомление отмечено как важное' : 'Уведомление убрано из важных',
+                        'success'
+                    );
+                    this.$nextTick(() => lucide.createIcons());
+                } catch (err) {
+                    this.showToast('Не удалось изменить важность', 'error');
+                }
+            },
+            async deleteNotification(notification) {
+                try {
+                    const res = await fetch(`${this.apiUrl}${notification.id}/`, {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    if (!res.ok) throw new Error('Ошибка при удалении');
+                    this.notifications = this.notifications.filter(n => n.id !== notification.id);
+                    this.filterNotifications();
+                    this.showToast('Уведомление удалено', 'success');
+                    this.$nextTick(() => lucide.createIcons());
+                } catch (err) {
+                    this.showToast('Не удалось удалить уведомление', 'error');
+                }
+            },
+            showToast(message, type) {
+                this.toast = { message, type };
+                setTimeout(() => this.toast = null, 3000);
+            }
+        }
+    }
+    document.addEventListener('DOMContentLoaded', function() { lucide.createIcons(); });
+    </script>
+</body>
+</html> 

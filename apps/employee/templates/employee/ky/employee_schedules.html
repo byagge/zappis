@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Устанын жазылуулары</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <style>
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            z-index: 50;
+        }
+        .nav-item {
+            transition: all 0.2s ease;
+        }
+        .nav-item.active {
+            color: #6366f1;
+        }
+        .nav-item.active .nav-icon {
+            background: #eef2ff;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-gray-50" x-data="employeeSchedulesPage()" x-init="init()">
+    <header class="fixed top-0 left-0 right-0 z-20 bg-white/90 backdrop-blur border-b border-gray-200 flex items-center justify-between px-4 h-16">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center">
+                <span class="text-white font-bold text-2xl">M</span>
+            </div>
+            <span class="text-lg font-semibold text-gray-900">Уста</span>
+        </div>
+        <div class="flex items-center space-x-2">
+            <a href="/settings/" class="text-gray-600 hover:text-gray-900">
+                <i data-lucide="settings" class="w-5 h-5"></i>
+            </a>
+        </div>
+    </header>
+    <main class="flex-1 pt-20 pb-24 px-2 max-w-md mx-auto w-full">
+        <h1 class="text-2xl font-bold text-gray-900 mb-6">Менин жазылууларым</h1>
+        <div class="grid grid-cols-1 gap-4" x-show="!loading">
+            <template x-for="booking in bookings" :key="booking.id">
+                <div class="bg-white rounded-xl p-5 border border-gray-200 shadow-sm flex flex-col">
+                    <div class="flex items-center mb-2">
+                        <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mr-3">
+                            <i data-lucide="calendar" class="w-6 h-6 text-purple-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-lg font-semibold text-gray-900" x-text="booking.service?.name"></p>
+                            <p class="text-xs text-gray-500" x-text="booking.date + ' ' + booking.start_time.slice(0,5) + '-' + booking.end_time.slice(0,5)"></p>
+                        </div>
+                    </div>
+                    <div class="flex-1"></div>
+                    <div class="flex items-center justify-between mt-2">
+                        <span class="text-xs text-gray-500">Клиент: <span x-text="booking.client?.name"></span></span>
+                        <span class="text-xs text-gray-500">Баасы: ⃀<span x-text="booking.price?.toLocaleString()"></span></span>
+                    </div>
+                </div>
+            </template>
+            <div x-show="bookings.length === 0 && !loading" class="col-span-full text-center text-gray-400 py-12">
+                Жазылуuлар жок
+            </div>
+        </div>
+        <div x-show="loading" class="flex justify-center py-12">
+            <div class="spinner border-4 border-blue-200 border-t-blue-600 rounded-full w-8 h-8 animate-spin"></div>
+        </div>
+    </main>
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="flex items-center justify-around py-2">
+            <a href="/employee/" class="nav-item flex flex-col items-center py-2 px-3 text-gray-500">
+                <div class="nav-icon w-6 h-6 rounded-lg flex items-center justify-center mb-1">
+                    <i data-lucide="home" class="w-5 h-5"></i>
+                </div>
+                <span class="text-xs">Башкы бет</span>
+            </a>
+            <a href="/employee/clients/" class="nav-item flex flex-col items-center py-2 px-3 text-gray-500">
+                <div class="nav-icon w-6 h-6 rounded-lg flex items-center justify-center mb-1">
+                    <i data-lucide="users" class="w-5 h-5"></i>
+                </div>
+                <span class="text-xs">Клиенттер</span>
+            </a>
+            <a href="/employee/schedules/" class="nav-item active flex flex-col items-center py-2 px-3">
+                <div class="nav-icon w-6 h-6 rounded-lg flex items-center justify-center mb-1">
+                    <i data-lucide="calendar" class="w-5 h-5"></i>
+                </div>
+                <span class="text-xs">Жазылуuлар</span>
+            </a>
+            <a href="/employee/notifications/" class="nav-item flex flex-col items-center py-2 px-3 text-gray-500">
+                <div class="nav-icon w-6 h-6 rounded-lg flex items-center justify-center mb-1">
+                    <i data-lucide="bell" class="w-5 h-5"></i>
+                </div>
+                <span class="text-xs">Билдирмелер</span>
+            </a>
+            <a href="/settings/" class="nav-item flex flex-col items-center py-2 px-3 text-gray-500">
+                <div class="nav-icon w-6 h-6 rounded-lg flex items-center justify-center mb-1">
+                    <i data-lucide="settings" class="w-5 h-5"></i>
+                </div>
+                <span class="text-xs">Жөндөөлөр</span>
+            </a>
+        </div>
+    </nav>
+    <script>
+    function employeeSchedulesPage() {
+        return {
+            bookings: [],
+            loading: true,
+            async init() {
+                this.loading = true;
+                const resp = await fetch('/employee/api/schedules/', {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                if (resp.ok) {
+                    const data = await resp.json();
+                    this.bookings = data.results || data;
+                }
+                this.loading = false;
+                if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
+            }
+        }
+    }
+    document.addEventListener('alpine:init', () => { Alpine.data('employeeSchedulesPage', employeeSchedulesPage) });
+    document.addEventListener('DOMContentLoaded', function() { lucide.createIcons(); });
+    </script>
+</body>
+</html> 

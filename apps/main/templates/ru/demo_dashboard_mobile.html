@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#6366f1">
+    <link rel="manifest" href="/static/manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="/static/icons/icon-192x192.png">
+    <link rel="apple-touch-icon" href="/static/icons/icon-192x192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Zappis — Главное меню</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { background: linear-gradient(135deg, #f3f4f6 0%, #e0e7ff 100%); }
+        .nav-active { color: #6366f1; }
+        .nav-bar { box-shadow: 0 -2px 16px 0 rgba(99,102,241,0.08); }
+        .card { box-shadow: 0 2px 12px 0 rgba(0,0,0,0.04); }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .skeleton { background: linear-gradient(90deg, #e0e7ef 25%, #f3f4f6 50%, #e0e7ef 75%); background-size: 200% 100%; animation: skeleton 1.2s infinite linear; }
+        @keyframes skeleton { 0% {background-position: 200% 0;} 100% {background-position: -200% 0;} }
+        .modal-bg { background: rgba(0,0,0,0.35); }
+        .transition { transition: all 0.2s cubic-bezier(.4,2,.6,1); }
+        .dark body { background: #18181b; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col" style="font-family: system-ui, -apple-system, sans-serif;" x-data="mobileCRM()" x-init="init()">
+    <!-- AppBar -->
+    <header class="fixed top-0 left-0 right-0 z-20 bg-white/90 dark:bg-gray-900/90 backdrop-blur border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-4 h-16 transition">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center">
+                <span class="text-white font-bold text-2xl">Z</span>
+            </div>
+            <span class="text-lg font-semibold text-gray-900 dark:text-white">Zappis</span>
+        </div>
+        <div class="flex items-center space-x-2">
+            <a href="/notifications/" class="relative text-gray-600 dark:text-gray-300 hover:text-indigo-600">
+                <i data-lucide="bell" class="w-6 h-6"></i>
+                <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-xs text-white flex items-center justify-center">3</span>
+            </a>
+            <button class="text-gray-600 dark:text-gray-300 hover:text-indigo-600">
+                <i data-lucide="settings" class="w-6 h-6"></i>
+            </button>
+            <div x-data="{ open: false }" class="relative ml-2">
+                <button @click="open = !open"
+                        class="flex items-center px-2 py-1 bg-gray-100 rounded-full font-semibold text-xs text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all">
+                        <img src="https://flagcdn.com/32x24/ru.png" width="24" height="18" class="inline-block mr-2 align-middle" alt="Русский">
+                        Русский
+                </button>
+                <div x-show="open" @click.away="open = false"
+                     class="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                    <a href="/demo/ky/mobile/" class="flex items-center px-4 py-2 hover:bg-blue-50 transition">
+                        <img src="https://flagcdn.com/32x24/kg.png" width="24" height="18" class="inline-block mr-2 align-middle" alt="Кыргызча">
+                        Кыргызча
+                    </a>
+                    <a href="/demo/mobile/" class="flex items-center px-4 py-2 hover:bg-blue-50 transition font-bold text-blue-600">
+                        <img src="https://flagcdn.com/32x24/ru.png" width="24" height="18" class="inline-block mr-2 align-middle" alt="Русский">
+                        Русский
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Main Content -->
+    <main class="flex-1 pt-20 pb-20 px-2 max-w-md mx-auto w-full transition">
+        <template x-if="loading">
+            <div class="space-y-4 animate-pulse">
+                <div class="h-8 rounded-xl skeleton"></div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="h-20 rounded-2xl skeleton"></div>
+                    <div class="h-20 rounded-2xl skeleton"></div>
+                    <div class="h-20 rounded-2xl skeleton"></div>
+                    <div class="h-20 rounded-2xl skeleton"></div>
+                </div>
+                <div class="h-40 rounded-2xl skeleton"></div>
+                <div class="h-24 rounded-2xl skeleton"></div>
+                <div class="h-24 rounded-2xl skeleton"></div>
+            </div>
+        </template>
+        <template x-if="!loading">
+            <div>
+                <!-- Welcome -->
+                <div class="mt-2 mb-4">
+                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-1">Привет, Айбек!</h1>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm">Твой бизнес под контролем</p>
+                </div>
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <div class="card bg-white dark:bg-gray-800 rounded-2xl p-4 flex flex-col items-center transition">
+                        <i data-lucide="users" class="w-6 h-6 text-indigo-500 mb-1"></i>
+                        <span class="text-lg font-bold text-gray-900 dark:text-white">156</span>
+                        <span class="text-xs text-gray-500 dark:text-gray-400">Клиентов</span>
+                    </div>
+                    <div class="card bg-white dark:bg-gray-800 rounded-2xl p-4 flex flex-col items-center transition">
+                        <i data-lucide="calendar" class="w-6 h-6 text-green-500 mb-1"></i>
+                        <span class="text-lg font-bold text-gray-900 dark:text-white">12</span>
+                        <span class="text-xs text-gray-500 dark:text-gray-400">Записей сегодня</span>
+                    </div>
+                    <div class="card bg-white dark:bg-gray-800 rounded-2xl p-4 flex flex-col items-center transition">
+                        <i data-lucide="dollar-sign" class="w-6 h-6 text-purple-500 mb-1"></i>
+                        <span class="text-lg font-bold text-gray-900 dark:text-white">45,000 сом</span>
+                        <span class="text-xs text-gray-500 dark:text-gray-400">Доход месяц</span>
+                    </div>
+                    <div class="card bg-white dark:bg-gray-800 rounded-2xl p-4 flex flex-col items-center transition">
+                        <i data-lucide="receipt" class="w-6 h-6 text-yellow-500 mb-1"></i>
+                        <span class="text-lg font-bold text-gray-900 dark:text-white">3,750 сом</span>
+                        <span class="text-xs text-gray-500 dark:text-gray-400">Средний чек</span>
+                    </div>
+                </div>
+                <!-- Chart -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl card p-4 mb-4 transition">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-semibold text-gray-900 dark:text-white">Динамика</span>
+                        <select class="border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1 text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white" x-model="period" @change="updateChart()">
+                            <option value="week">Неделя</option>
+                            <option value="month">Месяц</option>
+                            <option value="year">Год</option>
+                        </select>
+                    </div>
+                    <div class="relative h-40">
+                        <canvas id="revenueChartMobile"></canvas>
+                        <div x-show="chartLoading" class="absolute inset-0 bg-white/80 dark:bg-gray-900/80 flex items-center justify-center z-10 transition">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Popular Services -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl card p-4 mb-4 transition">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-semibold text-gray-900 dark:text-white">Популярные услуги</span>
+                        <button class="text-xs text-indigo-500" @click="openModal('services')">Все</button>
+                    </div>
+                    <template x-for="service in popularServices" :key="service.id">
+                        <div class="flex items-center justify-between py-2 border-b last:border-b-0 border-gray-100 dark:border-gray-700">
+                            <div class="flex items-center space-x-2">
+                                <i data-lucide="scissors" class="w-5 h-5 text-indigo-400"></i>
+                                <span class="text-sm font-medium text-gray-900 dark:text-white" x-text="service.name"></span>
+                            </div>
+                            <span class="text-xs text-gray-500 dark:text-gray-400" x-text="`${service.booking_count || 0} записей`"></span>
+                        </div>
+                    </template>
+                    <div x-show="popularServices.length === 0" class="text-center text-gray-400 text-sm py-2">Нет данных</div>
+                </div>
+                <!-- Top Clients -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl card p-4 mb-4 transition">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-semibold text-gray-900 dark:text-white">Топ клиенты</span>
+                        <button class="text-xs text-indigo-500" @click="openModal('clients')">Все</button>
+                    </div>
+                    <template x-for="client in topClients" :key="client.id">
+                        <div class="flex items-center justify-between py-2 border-b last:border-b-0 border-gray-100 dark:border-gray-700">
+                            <div class="flex items-center space-x-2">
+                                <i data-lucide="user" class="w-5 h-5 text-green-400"></i>
+                                <span class="text-sm font-medium text-gray-900 dark:text-white" x-text="client.name"></span>
+                            </div>
+                            <span class="text-xs text-gray-500 dark:text-gray-400" x-text="`${client.booking_count || 0} визитов`"></span>
+                        </div>
+                    </template>
+                    <div x-show="topClients.length === 0" class="text-center text-gray-400 text-sm py-2">Нет данных</div>
+                </div>
+                <!-- AI Insights (short) -->
+                <div class="bg-gradient-to-r from-indigo-500 to-blue-400 rounded-2xl card p-4 mb-4 text-white transition">
+                    <div class="flex items-center mb-2">
+                        <i data-lucide="bot" class="w-5 h-5 mr-2"></i>
+                        <span class="font-semibold">ИИ-совет</span>
+                    </div>
+                    <template x-if="aiInsights.length > 0">
+                        <div>
+                            <span class="text-sm" x-text="aiInsights[0]?.title"></span>
+                            <div class="text-xs opacity-80 mt-1" x-text="aiInsights[0]?.description"></div>
+                        </div>
+                    </template>
+                    <div x-show="aiInsights.length === 0" class="text-xs opacity-80">ИИ-советы недоступны</div>
+                </div>
+                <!-- Recent Activity -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl card p-4 mb-24 transition">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-semibold text-gray-900 dark:text-white">Последние действия</span>
+                    </div>
+                    <template x-for="activity in recentActivities" :key="activity.id">
+                        <div class="flex items-center space-x-2 py-2 border-b last:border-b-0 border-gray-100 dark:border-gray-700">
+                            <i :data-lucide="activity.action.includes('клиент') ? 'user-plus' : activity.action.includes('запись') ? 'calendar' : activity.action.includes('сотрудник') ? 'users' : 'dollar-sign'" class="w-5 h-5 text-gray-400"></i>
+                            <div class="flex-1">
+                                <span class="text-sm text-gray-900 dark:text-white" x-text="activity.action"></span>
+                                <span class="block text-xs text-gray-400" x-text="activity.time_ago"></span>
+                            </div>
+                        </div>
+                    </template>
+                    <div x-show="recentActivities.length === 0" class="text-center text-gray-400 text-sm py-2">Нет действий</div>
+                </div>
+            </div>
+        </template>
+        <!-- Модальные окна -->
+        <template x-if="modal === 'services'">
+            <div class="fixed inset-0 z-40 flex items-end justify-center modal-bg" @click.self="closeModal()">
+                <div class="bg-white dark:bg-gray-900 rounded-t-2xl w-full max-w-md p-6 transition">
+                    <h2 class="text-lg font-bold mb-4 text-gray-900 dark:text-white">Все услуги</h2>
+                    <template x-for="service in allServices" :key="service.id">
+                        <div class="flex items-center justify-between py-2 border-b last:border-b-0 border-gray-100 dark:border-gray-700">
+                            <span class="text-gray-900 dark:text-white" x-text="service.name"></span>
+                            <span class="text-xs text-gray-500 dark:text-gray-400" x-text="service.price?.toLocaleString()"></span>
+                        </div>
+                    </template>
+                    <button class="mt-4 w-full py-2 bg-indigo-600 text-white rounded-xl font-semibold" @click="closeModal()">Закрыть</button>
+                </div>
+            </div>
+        </template>
+        <template x-if="modal === 'clients'">
+            <div class="fixed inset-0 z-40 flex items-end justify-center modal-bg" @click.self="closeModal()">
+                <div class="bg-white dark:bg-gray-900 rounded-t-2xl w-full max-w-md p-6 transition">
+                    <h2 class="text-lg font-bold mb-4 text-gray-900 dark:text-white">Все клиенты</h2>
+                    <template x-for="client in allClients" :key="client.id">
+                        <div class="flex items-center justify-between py-2 border-b last:border-b-0 border-gray-100 dark:border-gray-700">
+                            <span class="text-gray-900 dark:text-white" x-text="client.name"></span>
+                            <span class="text-xs text-gray-500 dark:text-gray-400" x-text="client.phone"></span>
+                        </div>
+                    </template>
+                    <button class="mt-4 w-full py-2 bg-indigo-600 text-white rounded-xl font-semibold" @click="closeModal()">Закрыть</button>
+                </div>
+            </div>
+        </template>
+        <!-- Кнопка установки PWA -->
+        <button x-show="showInstall" @click="installPWA" class="fixed bottom-24 right-4 z-50 bg-indigo-600 text-white px-4 py-2 rounded-full shadow-lg transition">Установить приложение</button>
+        
+        <!-- Кнопка поддержки -->
+        <button @click="openModal('support')" class="fixed bottom-24 right-4 z-50 bg-green-600 text-white w-12 h-12 rounded-full shadow-lg transition flex items-center justify-center hover:bg-green-700" x-show="!showInstall">
+            <i data-lucide="message-circle" class="w-6 h-6"></i>
+        </button>
+    </main>
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 z-30 bg-white dark:bg-gray-900 nav-bar border-t border-gray-200 dark:border-gray-800 flex justify-around items-center h-16 max-w-md mx-auto w-full transition">
+        <a href="/dashboard/" class="flex flex-col items-center nav-active">
+            <i data-lucide="home" class="w-6 h-6"></i>
+            <span class="text-xs mt-1">Главная</span>
+        </a>
+        <a href="/schedules/" class="flex flex-col items-center">
+            <i data-lucide="calendar" class="w-6 h-6"></i>
+            <span class="text-xs mt-1">Записи</span>
+        </a>
+        <a href="/clients/" class="flex flex-col items-center">
+            <i data-lucide="user-plus" class="w-6 h-6"></i>
+            <span class="text-xs mt-1">Клиенты</span>
+        </a>
+        <a href="/services/" class="flex flex-col items-center">
+            <i data-lucide="scissors" class="w-6 h-6"></i>
+            <span class="text-xs mt-1">Услуги</span>
+        </a>
+        <a href="/settings/" class="flex flex-col items-center">
+            <i data-lucide="settings" class="w-6 h-6"></i>
+            <span class="text-xs mt-1">Профиль</span>
+        </a>
+    </nav>
+    
+    <!-- Модальное окно поддержки -->
+    <template x-if="modal === 'support'">
+        <div class="fixed inset-0 z-50 flex items-end justify-center modal-bg" @click.self="closeModal()">
+            <div class="bg-white dark:bg-gray-900 rounded-t-2xl w-full max-w-md p-6 transition">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white">Поддержка</h2>
+                    <button @click="closeModal()" class="text-gray-400 hover:text-gray-600">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                <div class="space-y-3">
+                    <a href="https://wa.me/996700123456" target="_blank" class="flex items-center p-4 bg-green-50 dark:bg-green-900/20 rounded-xl hover:bg-green-100 dark:hover:bg-green-900/30 transition">
+                        <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center mr-3">
+                            <i data-lucide="message-circle" class="w-5 h-5 text-white"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-semibold text-gray-900 dark:text-white">WhatsApp</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400">Написать в WhatsApp</div>
+                        </div>
+                        <i data-lucide="external-link" class="w-4 h-4 text-gray-400"></i>
+                    </a>
+                    <a href="https://t.me/zappis_support" target="_blank" class="flex items-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-900/30 transition">
+                        <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center mr-3">
+                            <i data-lucide="send" class="w-5 h-5 text-white"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-semibold text-gray-900 dark:text-white">Telegram</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400">Написать в Telegram</div>
+                        </div>
+                        <i data-lucide="external-link" class="w-4 h-4 text-gray-400"></i>
+                    </a>
+                </div>
+                <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <div class="text-center text-sm text-gray-500 dark:text-gray-400">
+                        Время работы: Пн-Пт 9:00-18:00
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    <script>
+    function mobileCRM() {
+        return {
+            overview: {
+                user_name: 'Айбек',
+                total_clients: 156,
+                appointments_today: 12,
+                monthly_revenue: 45000,
+                avg_ticket: 3750,
+                total_employees: 8,
+                total_services: 24
+            },
+            aiInsights: [
+                {
+                    title: 'Клиенттерди көбөйтүү',
+                    description: 'Социальдык тармактарда реклама көрсөтүү менен жаңы клиенттерди тартууга болот',
+                    icon: 'trending-up'
+                },
+                {
+                    title: 'Кызматтарды кеңейтүү',
+                    description: 'Массаж жана маникюр кызматтарын кошуу менен кирешеңизди 25% көбөйтө аласыз',
+                    icon: 'plus-circle'
+                }
+            ],
+            aiInsightsError: false,
+            aiInsightsLoading: false,
+            recentActivities: [
+                {
+                    id: 1,
+                    action: 'Жаңы клиент кошулду',
+                    time_ago: '2 саат мурун',
+                    extra: { client: 'Айзада Калыкова' }
+                },
+                {
+                    id: 2,
+                    action: 'Жазылуу жасалды',
+                    time_ago: '3 саат мурун',
+                    extra: { client: 'Бакыт Абдылдаев', amount: 2500, date: '2024-01-15', time: '14:30' }
+                },
+                {
+                    id: 3,
+                    action: 'Кызматкер кошулду',
+                    time_ago: '1 күн мурун',
+                    extra: { client: 'Айнура Садыкова' }
+                }
+            ],
+            popularServices: [
+                { id: 1, name: 'Чач кыркуу', booking_count: 45, price: 800 },
+                { id: 2, name: 'Боялоо', booking_count: 38, price: 1200 },
+                { id: 3, name: 'Маникюр', booking_count: 32, price: 600 }
+            ],
+            topClients: [
+                { id: 1, name: 'Айзада Калыкова', booking_count: 8, phone: '+996 700 123 456' },
+                { id: 2, name: 'Бакыт Абдылдаев', booking_count: 6, phone: '+996 555 789 012' },
+                { id: 3, name: 'Айнура Садыкова', booking_count: 5, phone: '+996 777 345 678' }
+            ],
+            allServices: [
+                { id: 1, name: 'Чач кыркуу', price: 800 },
+                { id: 2, name: 'Боялоо', price: 1200 },
+                { id: 3, name: 'Маникюр', price: 600 },
+                { id: 4, name: 'Педикюр', price: 800 },
+                { id: 5, name: 'Массаж', price: 1500 }
+            ],
+            allClients: [
+                { id: 1, name: 'Айзада Калыкова', phone: '+996 700 123 456' },
+                { id: 2, name: 'Бакыт Абдылдаев', phone: '+996 555 789 012' },
+                { id: 3, name: 'Айнура Садыкова', phone: '+996 777 345 678' },
+                { id: 4, name: 'Элмира Токтосунова', phone: '+996 700 987 654' }
+            ],
+            revenueChart: null,
+            loading: false,
+            chartLoading: false,
+            period: 'week',
+            modal: null,
+            showInstall: false,
+            async init() {
+                this.initChart();
+                lucide.createIcons();
+                this.registerPWA();
+            },
+            async initChart() {
+                this.chartLoading = true;
+                let chartData = { 
+                    labels: ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'], 
+                    revenue: [15000, 18000, 22000, 25000, 21000, 28000, 32000], 
+                    bookings: [10, 12, 15, 18, 14, 20, 22], 
+                    clients: [4, 6, 8, 10, 7, 12, 14] 
+                };
+                
+                    if (this.revenueChart) this.revenueChart.destroy();
+                    const ctx = document.getElementById('revenueChartMobile');
+                    if (ctx) {
+                        this.revenueChart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: chartData.labels,
+                                datasets: [
+                                    { label: 'Доход', data: chartData.revenue, borderColor: '#6366f1', backgroundColor: 'rgba(99,102,241,0.08)', borderWidth: 2, tension: 0.4, fill: false, pointBackgroundColor: '#6366f1', pointBorderColor: '#fff', pointRadius: 3 },
+                                    { label: 'Записи', data: chartData.bookings, borderColor: '#10B981', backgroundColor: 'rgba(16,185,129,0.08)', borderWidth: 2, tension: 0.4, fill: false, pointBackgroundColor: '#10B981', pointBorderColor: '#fff', pointRadius: 3 },
+                                    { label: 'Клиенттер', data: chartData.clients, borderColor: '#F59E0B', backgroundColor: 'rgba(245,158,11,0.08)', borderWidth: 2, tension: 0.4, fill: false, pointBackgroundColor: '#F59E0B', pointBorderColor: '#fff', pointRadius: 3 }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { display: false },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function(context) {
+                                                if (context.dataset.label === 'Доход') return 'Доход: ⃀' + context.parsed.y.toLocaleString('ru-RU');
+                                                if (context.dataset.label === 'Записи') return 'Записи: ' + context.parsed.y + ' шт.';
+                                                return 'Клиенттер: ' + context.parsed.y + ' чел.';
+                                            }
+                                        }
+                                    }
+                                },
+                                scales: {
+                                    x: { grid: { display: false } },
+                                    y: { grid: { color: 'rgba(0,0,0,0.06)' }, ticks: { callback: function(value) { return value; } } }
+                                }
+                            }
+                        });
+                    }
+                    this.chartLoading = false;
+            },
+            async updateChart() {
+                this.chartLoading = true;
+                await this.initChart();
+                this.chartLoading = false;
+            },
+            openModal(type) { 
+                this.modal = type; 
+                this.$nextTick(() => {
+                    if (window.lucide && window.lucide.createIcons) {
+                        window.lucide.createIcons();
+                    }
+                });
+            },
+            closeModal() { this.modal = null; },
+            registerPWA() {
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.register('/static/service-worker.js');
+                }
+                window.addEventListener('beforeinstallprompt', (e) => {
+                    e.preventDefault();
+                    this.showInstall = true;
+                    this.deferredPrompt = e;
+                });
+            },
+            installPWA() {
+                if (this.deferredPrompt) {
+                    this.deferredPrompt.prompt();
+                    this.deferredPrompt.userChoice.then(() => { this.showInstall = false; this.deferredPrompt = null; });
+                }
+            }
+        }
+    }
+    document.addEventListener('alpine:init', () => { Alpine.data('mobileCRM', mobileCRM) });
+    document.addEventListener('DOMContentLoaded', function() { lucide.createIcons(); });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Системанын орнотуулары — Zappis Жардам борбору</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .side-link.active {
+            background: linear-gradient(90deg, #3B82F6 0 6px, #e0e7ef 6px 100%);
+            color: #2563eb;
+            font-weight: 700;
+        }
+        .side-link {
+            transition: background 0.2s, color 0.2s;
+        }
+        .side-link:hover {
+            background: #f3f4f6;
+            color: #2563eb;
+        }
+        @media (max-width: 768px) {
+            .sidebar-nav { display: none; }
+            .sidebar-mobile { display: block; }
+        }
+        @media (min-width: 769px) {
+            .sidebar-nav { display: block; }
+            .sidebar-mobile { display: none; }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-white to-gray-50" style="font-family: system-ui, -apple-system, sans-serif;">
+    <header class="bg-white border-b border-gray-200 py-5 px-4 sm:px-8 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <a href="/support/" class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow hover:bg-blue-700 transition">
+                <i data-lucide="arrow-left" class="w-6 h-6 text-white"></i>
+            </a>
+            <span class="text-xl font-bold text-gray-900 tracking-tight">Жардам борбору</span>
+        </div>
+        <a href="/support/" class="text-blue-600 hover:underline font-medium">Бардык темалар</a>
+    </header>
+    <main class="max-w-6xl mx-auto p-6 pt-10 flex gap-8">
+                        <!-- Sidebar Navigation (Desktop) -->
+        <aside class="w-72 shrink-0 sidebar-nav">
+            <nav class="bg-white rounded-2xl border border-gray-200 shadow p-4 sticky top-24 max-h-[80vh] overflow-y-auto">
+                <h2 class="text-lg font-bold text-gray-800 mb-4">Жардам бөлүмдөрү</h2>
+                <ul class="space-y-1">
+                    <li><a href="/support/getting-started/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="info" class="w-5 h-5 mr-2"></i> Жазма менен иштөөнү баштоо</a></li>
+                    <li><a href="/support/getting-started-profile/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="user" class="w-5 h-5 mr-2"></i> Жеке кабинет</a></li>
+                    <li><a href="/support/notifications/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="bell" class="w-5 h-5 mr-2"></i> Эскертүүлөр</a></li>
+                    <li><a href="/support/schedules/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="calendar" class="w-5 h-5 mr-2"></i> Жосундар</a></li>
+                    <li><a href="/support/clients/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="users" class="w-5 h-5 mr-2"></i> Кардарлар</a></li>
+                    <li><a href="/support/services/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="scissors" class="w-5 h-5 mr-2"></i> Кызматтар</a></li>
+                    <li><a href="/support/employees/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="badge" class="w-5 h-5 mr-2"></i> Кызматкерлер</a></li>
+                    <li><a href="/support/analytics/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="bar-chart-3" class="w-5 h-5 mr-2"></i> Аналитика</a></li>
+                    <li><a href="/support/settings/" class="side-link active flex items-center px-4 py-2 rounded-lg"><i data-lucide="settings" class="w-5 h-5 mr-2"></i> Орнотуулар</a></li>
+                    <li><a href="/support/privacy/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="shield" class="w-5 h-5 mr-2"></i> Конфиденциалдуулук</a></li>
+                    <li><a href="/support/web/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="globe" class="w-5 h-5 mr-2"></i> Онлайн-жазма</a></li>
+                    <li><a href="/support/ai/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="bot" class="w-5 h-5 mr-2"></i> AI-функциялар</a></li>
+                </ul>
+            </nav>
+        </aside>
+                        <!-- Sidebar Navigation (Mobile) -->
+        <aside class="sidebar-mobile w-full mb-8">
+            <nav class="bg-white rounded-2xl border border-gray-200 shadow p-4 flex overflow-x-auto gap-2">
+                <a href="/support/getting-started/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="info" class="w-5 h-5 mr-1"></i> Жазма</a>
+                <a href="/support/getting-started-profile/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="user" class="w-5 h-5 mr-1"></i> Жеке кабинет</a>
+                <a href="/support/notifications/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bell" class="w-5 h-5 mr-1"></i> Эскертүүлөр</a>
+                <a href="/support/schedules/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="calendar" class="w-5 h-5 mr-1"></i> Жосундар</a>
+                <a href="/support/clients/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="users" class="w-5 h-5 mr-1"></i> Кардарлар</a>
+                <a href="/support/services/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="scissors" class="w-5 h-5 mr-1"></i> Кызматтар</a>
+                <a href="/support/employees/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="badge" class="w-5 h-5 mr-1"></i> Кызматкерлер</a>
+                <a href="/support/analytics/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bar-chart-3" class="w-5 h-5 mr-1"></i> Аналитика</a>
+                <a href="/support/settings/" class="side-link active flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="settings" class="w-5 h-5 mr-1"></i> Орнотуулар</a>
+                <a href="/support/privacy/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="shield" class="w-5 h-5 mr-1"></i> Конфиденциалдуулук</a>
+                <a href="/support/web/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="globe" class="w-5 h-5 mr-1"></i> Онлайн-жазма</a>
+                <a href="/support/ai/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bot" class="w-5 h-5 mr-1"></i> AI</a>
+            </nav>
+        </aside>
+        <!-- Main Content -->
+        <section class="flex-1 min-w-0">
+            <div class="flex items-center mb-8">
+                <div class="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center mr-5">
+                    <i data-lucide="settings" class="w-8 h-8 text-gray-600"></i>
+                </div>
+                <h1 class="text-4xl font-extrabold text-gray-900">Zappis'теги системанын орнотуулары</h1>
+            </div>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Кандай орнотуулар жеткиликтүү?</h2>
+                <p class="text-gray-700 mb-3">Орнотуулар бөлүмүндө системанын бардык негизги параметрлерин башкара аласыз. Көпчүлүк орнотууларга бизнес ээси жана администраторлор гана кире алат.</p>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li><b>Колдонуучу профили:</b> Аты-жөнү, email, телефон, тил, убакыт алкагы, шаар, өлкө, сырсөздү алмаштыруу, email/телефонду ырастоо</li>
+                    <li><b>Бизнес:</b> аталышы, сүрөттөмөсү, категория жана подкатегория, дарек, шаар, өлкө, телефон, email, сайт, Instagram, убакыт алкагы, тил, активдүүлүк статусу, username, рефералдык код</li>
+                    <li><b>Иш убактысы:</b> жума күндөрү боюнча орнотуу, күйгүзүү/өчүрүү, башталыш/аяктоо убактысы</li>
+                    <li><b>Эскертүүлөр:</b> email, WhatsApp, Telegram — колдонуучу жана бизнес үчүн</li>
+                    <li><b>Жазуу:</b> слоттун узактыгы, буфердик убакыт, авто-ырастоо</li>
+                    <li><b>Кызматкерлер:</b> тизмеси, ролдору, статусу, кошуу/түзөтүү</li>
+                    <li><b>Жазылуу жана төлөм тарыхы:</b> учурдагы тариф, тарых, чектерди жүктөө</li>
+                    <li><b>Юридикалык маалымат:</b> саясат, макулдашуу, cookie, маалыматтарды экспорттоо</li>
+                    <li><b>Опасная зона:</b> аккаунтту өчүрүү, 30 күн ичинде калыбына келтирүү</li>
+                </ul>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Укуктар жана коопсуздук</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Орнотууларга бизнес ээси жана администраторлор гана кире алат</li>
+                    <li>Кадимки кызматкерлер бизнес орнотууларын жана кооптуу аракеттерди өзгөртө алышпайт</li>
+                    <li>Сырсөздү алмаштыруу үчүн эски сырсөздү киргизүү керек</li>
+                    <li>Сырсөз алмашкандан кийин бардык түзмөктөн чыгуу болот</li>
+                    <li>Email жана телефон код аркылуу ырасталат</li>
+                    <li>Активдүүлүк журналы коопсуздук бөлүмүндө жеткиликтүү</li>
+                </ul>
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-xl mt-4 flex items-start">
+                    <i data-lucide="shield" class="w-5 h-5 text-yellow-500 mr-3 mt-1"></i>
+                    <div>
+                        <b>Кеңеш:</b> Маалыматтарды коргоо үчүн сырсөздү үзгүлтүксүз алмаштырып, активдүүлүк журналын текшериңиз.
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Интеграциялар жана бизнес сайты</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Онлайн-төлөмдөр (эквайринг, QR-коддор)</li>
+                    <li>Мессенжерлер жана email-рассылкалар</li>
+                    <li>Календарлар (Google, Яндекс ж.б.)</li>
+                    <li>Башка системалар менен интеграция үчүн API</li>
+                    <li>Бизнес сайтты башкаруу: активдүүлүк, username, брондоо жана көрүүлөр статистикасы</li>
+                </ul>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Кооптуу зона: аккаунтту өчүрүү</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Аккаунт өчүрүлгөндөн кийин бизнес, сайт, кызматкерлер жана бардык маалыматтар жеткиликсиз болот</li>
+                    <li>30 күн ичинде колдоо кызматы аркылуу калыбына келтирсе болот</li>
+                    <li>30 күн өткөндөн кийин маалыматтар толугу менен өчүрүлөт</li>
+                </ul>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Көп берилүүчү суроолор</h2>
+                <div class="mb-3">
+                    <b>Сырсөздү, email же телефонду кантип алмаштырса болот?</b>
+                    <div class="text-gray-700">"Профиль" бөлүмүнөн керектүү параметрди тандап, көрсөтмөгө ылайык иш кылыңыз. Сырсөздү алмаштыруу үчүн эски сырсөздү киргизүү керек. Email жана телефон код менен ырасталат.</div>
+                </div>
+                <div class="mb-3">
+                    <b>Кызматкердин орнотууларга кирүүсүн чектесе болобу?</b>
+                    <div class="text-gray-700">Ооба, ар бир роль үчүн укуктарды орнотууга болот. Кадимки кызматкерлер бизнес орнотууларын өзгөртө алышпайт.</div>
+                </div>
+                <div class="mb-3">
+                    <b>Онлайн-төлөмдү кантип кошсо болот?</b>
+                    <div class="text-gray-700">"Интеграциялар" бөлүмүнөн керектүү сервис тандап, көрсөтмөгө ылайык кошуңуз.</div>
+                </div>
+                <div class="mb-3">
+                    <b>Активдүүлүк журналын кайдан көрүүгө болот?</b>
+                    <div class="text-gray-700">"Коопсуздук" бөлүмүндө бардык өзгөртүүлөр жана кирүүлөр журналы жеткиликтүү.</div>
+                </div>
+                <div class="mb-3">
+                    <b>Аккаунт өчүрүлгөндөн кийин кантип калыбына келтирсе болот?</b>
+                    <div class="text-gray-700">Өчүрүлгөндөн кийин 30 күн ичинде колдоо кызматына кайрылып калыбына келтирсе болот. 30 күн өткөндөн кийин калыбына келтирүү мүмкүн эмес.</div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Системаны натыйжалуу орнотуу боюнча кеңештер</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Бизнес жана жосундар тууралуу маалыматтарды үзгүлтүксүз жаңыртып туруңуз</li>
+                    <li>Кызматкерлердин укуктарын текшериңиз</li>
+                    <li>Автоматташтыруу үчүн интеграцияларды колдонуңуз</li>
+                    <li>Коопсуздук жана резервдик көчүрмөлөрдү көзөмөлдөңүз</li>
+                </ul>
+            </section>
+            <div class="flex justify-between mt-12">
+                <a href="/support/analytics/" class="text-blue-600 hover:underline flex items-center"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> Аналитикага</a>
+                <a href="/support/privacy/" class="text-blue-600 hover:underline flex items-center">Купуялуулукка <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i></a>
+            </div>
+        </section>
+    </main>
+    <script>document.addEventListener('DOMContentLoaded', function() { lucide.createIcons(); });</script>
+</body>
+</html> 

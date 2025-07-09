@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Услуги и прайс-листы — Справочный центр Zappis</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .side-link.active {
+            background: linear-gradient(90deg, #3B82F6 0 6px, #e0e7ef 6px 100%);
+            color: #2563eb;
+            font-weight: 700;
+        }
+        .side-link {
+            transition: background 0.2s, color 0.2s;
+        }
+        .side-link:hover {
+            background: #f3f4f6;
+            color: #2563eb;
+        }
+        @media (max-width: 768px) {
+            .sidebar-nav { display: none; }
+            .sidebar-mobile { display: block; }
+        }
+        @media (min-width: 769px) {
+            .sidebar-nav { display: block; }
+            .sidebar-mobile { display: none; }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-white to-gray-50" style="font-family: system-ui, -apple-system, sans-serif;">
+    <header class="bg-white border-b border-gray-200 py-5 px-4 sm:px-8 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <a href="/support/" class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow hover:bg-blue-700 transition">
+                <i data-lucide="arrow-left" class="w-6 h-6 text-white"></i>
+            </a>
+            <span class="text-xl font-bold text-gray-900 tracking-tight">Справочный центр</span>
+        </div>
+        <a href="/support/" class="text-blue-600 hover:underline font-medium">Все темы</a>
+    </header>
+    <main class="max-w-6xl mx-auto p-6 pt-10 flex gap-8">
+                        <!-- Sidebar Navigation (Desktop) -->
+        <aside class="w-72 shrink-0 sidebar-nav">
+            <nav class="bg-white rounded-2xl border border-gray-200 shadow p-4 sticky top-24 max-h-[80vh] overflow-y-auto">
+                <h2 class="text-lg font-bold text-gray-800 mb-4">Разделы справки</h2>
+                <ul class="space-y-1">
+                    <li><a href="/support/getting-started/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="info" class="w-5 h-5 mr-2"></i> Начало работы с записью</a></li>
+                    <li><a href="/support/getting-started-profile/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="user" class="w-5 h-5 mr-2"></i> Личный кабинет</a></li>
+                    <li><a href="/support/notifications/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="bell" class="w-5 h-5 mr-2"></i> Уведомления</a></li>
+                    <li><a href="/support/schedules/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="calendar" class="w-5 h-5 mr-2"></i> Расписания</a></li>
+                    <li><a href="/support/clients/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="users" class="w-5 h-5 mr-2"></i> Клиенты</a></li>
+                    <li><a href="/support/services/" class="side-link active flex items-center px-4 py-2 rounded-lg"><i data-lucide="scissors" class="w-5 h-5 mr-2"></i> Услуги</a></li>
+                    <li><a href="/support/employees/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="badge" class="w-5 h-5 mr-2"></i> Сотрудники</a></li>
+                    <li><a href="/support/analytics/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="bar-chart-3" class="w-5 h-5 mr-2"></i> Аналитика</a></li>
+                    <li><a href="/support/settings/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="settings" class="w-5 h-5 mr-2"></i> Настройки</a></li>
+                    <li><a href="/support/privacy/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="shield" class="w-5 h-5 mr-2"></i> Конфиденциальность</a></li>
+                    <li><a href="/support/web/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="globe" class="w-5 h-5 mr-2"></i> Онлайн-запись</a></li>
+                    <li><a href="/support/ai/" class="side-link flex items-center px-4 py-2 rounded-lg"><i data-lucide="bot" class="w-5 h-5 mr-2"></i> AI-функции</a></li>
+                </ul>
+            </nav>
+        </aside>
+                        <!-- Sidebar Navigation (Mobile) -->
+        <aside class="sidebar-mobile w-full mb-8">
+            <nav class="bg-white rounded-2xl border border-gray-200 shadow p-4 flex overflow-x-auto gap-2">
+                <a href="/support/getting-started/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="info" class="w-5 h-5 mr-1"></i> Запись</a>
+                <a href="/support/getting-started-profile/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="user" class="w-5 h-5 mr-1"></i> Личный кабинет</a>
+                <a href="/support/notifications/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bell" class="w-5 h-5 mr-1"></i> Уведомления</a>
+                <a href="/support/schedules/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="calendar" class="w-5 h-5 mr-1"></i> Расписания</a>
+                <a href="/support/clients/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="users" class="w-5 h-5 mr-1"></i> Клиенты</a>
+                <a href="/support/services/" class="side-link active flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="scissors" class="w-5 h-5 mr-1"></i> Услуги</a>
+                <a href="/support/employees/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="badge" class="w-5 h-5 mr-1"></i> Сотрудники</a>
+                <a href="/support/analytics/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bar-chart-3" class="w-5 h-5 mr-1"></i> Аналитика</a>
+                <a href="/support/settings/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="settings" class="w-5 h-5 mr-1"></i> Настройки</a>
+                <a href="/support/privacy/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="shield" class="w-5 h-5 mr-1"></i> Конфиденциальность</a>
+                <a href="/support/web/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="globe" class="w-5 h-5 mr-1"></i> Онлайн-запись</a>
+                <a href="/support/ai/" class="side-link flex items-center px-3 py-2 rounded-lg whitespace-nowrap"><i data-lucide="bot" class="w-5 h-5 mr-1"></i> AI</a>
+            </nav>
+        </aside>
+        <!-- Main Content -->
+        <section class="flex-1 min-w-0">
+            <div class="flex items-center mb-8">
+                <div class="w-14 h-14 bg-yellow-100 rounded-xl flex items-center justify-center mr-5">
+                    <i data-lucide="scissors" class="w-8 h-8 text-yellow-600"></i>
+                </div>
+                <h1 class="text-4xl font-extrabold text-gray-900">Услуги и прайс-листы в Zappis</h1>
+            </div>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Что такое модуль услуг и зачем он нужен?</h2>
+                <p class="text-gray-700 mb-3">Модуль услуг позволяет создавать и управлять списком всех предоставляемых услуг, устанавливать цены, длительность, категории и описания. Это основа для автоматизации записи, учета и аналитики в вашем бизнесе.</p>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Создание и структурирование услуг по категориям</li>
+                    <li>Настройка цен и длительности</li>
+                    <li>Управление активностью услуг</li>
+                    <li>Интеграция с системой записи</li>
+                    <li>Аналитика по популярности и выручке</li>
+                </ul>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Как добавить новую услугу?</h2>
+                <ol class="list-decimal pl-6 text-gray-700 mb-4">
+                    <li>Перейдите в раздел <b>Услуги</b> личного кабинета.</li>
+                    <li>Нажмите кнопку <b>Добавить услугу</b>.</li>
+                    <li>Заполните обязательные поля: название услуги и цена.</li>
+                    <li>Опционально укажите: категорию, длительность, описание.</li>
+                    <li>Установите статус "Активная услуга" для доступности в записи.</li>
+                    <li>Сохраните — услуга появится в списке.</li>
+                </ol>
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-xl mt-4 flex items-start">
+                    <i data-lucide="info" class="w-5 h-5 text-blue-500 mr-3 mt-1"></i>
+                    <div>
+                        <b>Важно:</b> Обязательными полями являются только название услуги и цена. Остальные поля можно заполнить позже.
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Создание и управление категориями</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Категории помогают организовать услуги по группам (например, "Стрижки", "Окрашивание", "Уход")</li>
+                    <li>Для создания категории нажмите "Добавить категорию" и укажите название и описание</li>
+                    <li>Услуги можно добавлять в категории или оставлять без категории</li>
+                    <li>Категории упрощают навигацию для клиентов при онлайн-записи</li>
+                </ul>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Настройка цен и длительности</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li><b>Цена:</b> обязательное поле, указывается в рублях</li>
+                    <li><b>Длительность:</b> указывается в минутах, автоматически форматируется (например, 90 минут = "1 ч 30 мин")</li>
+                    <li>Цена и длительность отображаются клиентам при записи</li>
+                    <li>Изменения в цене применяются ко всем новым записям</li>
+                </ul>
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-xl mt-4 flex items-start">
+                    <i data-lucide="alert-circle" class="w-5 h-5 text-yellow-500 mr-3 mt-1"></i>
+                    <div>
+                        <b>Ограничение:</b> В текущей версии нет возможности установки разных цен для разных сотрудников или временных акций.
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Управление активностью услуг</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Неактивные услуги не отображаются клиентам при онлайн-записи</li>
+                    <li>Активность можно изменить в любой момент</li>
+                    <li>Неактивные услуги остаются в истории записей</li>
+                    <li>Удобно для временного снятия услуг с продажи</li>
+                </ul>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Редактирование и удаление</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li><b>Редактирование:</b> нажмите на иконку редактирования рядом с услугой или категорией</li>
+                    <li><b>Удаление услуги:</b> удаляет услугу из системы, но не влияет на существующие записи</li>
+                    <li><b>Удаление категории:</b> удаляет категорию и все услуги в ней</li>
+                    <li>Перед удалением система запрашивает подтверждение</li>
+                </ul>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Интеграция с другими модулями</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li><b>Записи:</b> клиент выбирает услугу при записи, видит цену и длительность</li>
+                    <li><b>Расписания:</b> длительность услуги учитывается при планировании времени</li>
+                    <li><b>Аналитика:</b> отчеты по популярности услуг и выручке</li>
+                    <li><b>Онлайн-запись:</b> услуги отображаются на сайте бизнеса для клиентов</li>
+                </ul>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Мобильная версия</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Адаптивный интерфейс для мобильных устройств</li>
+                    <li>Упрощенный просмотр услуг по категориям</li>
+                    <li>Быстрое добавление новых услуг</li>
+                    <li>Редактирование и удаление услуг</li>
+                </ul>
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-xl mt-4 flex items-start">
+                    <i data-lucide="info" class="w-5 h-5 text-blue-500 mr-3 mt-1"></i>
+                    <div>
+                        <b>Функциональность:</b> Мобильная версия поддерживает все основные операции с услугами.
+                    </div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Права доступа</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Управление услугами доступно только администраторам и владельцам бизнеса</li>
+                    <li>Обычные сотрудники могут только просматривать услуги</li>
+                    <li>При попытке доступа без прав происходит перенаправление</li>
+                </ul>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Часто задаваемые вопросы</h2>
+                <div class="mb-3">
+                    <b>Можно ли изменить цену услуги после создания?</b>
+                    <div class="text-gray-700">Да, цена редактируется в любой момент. Изменения применяются ко всем новым записям, но не влияют на существующие.</div>
+                </div>
+                <div class="mb-3">
+                    <b>Как скрыть услугу из онлайн-записи?</b>
+                    <div class="text-gray-700">Снимите галочку "Активная услуга" в настройках услуги. Неактивные услуги не отображаются клиентам.</div>
+                </div>
+                <div class="mb-3">
+                    <b>Можно ли создать услугу без категории?</b>
+                    <div class="text-gray-700">Да, категория является необязательным полем. Услуги без категории отображаются отдельно.</div>
+                </div>
+                <div class="mb-3">
+                    <b>Как добавить акцию или скидку?</b>
+                    <div class="text-gray-700">В текущей версии нет встроенной системы акций. Рекомендуется создать отдельную услугу с акционной ценой.</div>
+                </div>
+                <div class="mb-3">
+                    <b>Можно ли объединить несколько услуг в одну запись?</b>
+                    <div class="text-gray-700">При создании записи можно выбрать несколько услуг. Система автоматически сложит их длительность и стоимость.</div>
+                </div>
+            </section>
+            <section class="mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3">Советы по эффективной работе с услугами</h2>
+                <ul class="list-disc pl-6 text-gray-700 mb-2">
+                    <li>Используйте категории для удобной организации услуг</li>
+                    <li>Регулярно обновляйте цены и описания</li>
+                    <li>Указывайте точную длительность для правильного планирования</li>
+                    <li>Используйте статус активности для временного снятия услуг</li>
+                    <li>Анализируйте популярность услуг для оптимизации прайс-листа</li>
+                    <li>Создавайте понятные названия и описания для клиентов</li>
+                </ul>
+            </section>
+            <div class="flex justify-between mt-12">
+                <a href="/support/clients/" class="text-blue-600 hover:underline flex items-center"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> К клиентам</a>
+                <a href="/support/employees/" class="text-blue-600 hover:underline flex items-center">К сотрудникам <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i></a>
+            </div>
+        </section>
+    </main>
+    <script>document.addEventListener('DOMContentLoaded', function() { lucide.createIcons(); });</script>
+</body>
+</html> 

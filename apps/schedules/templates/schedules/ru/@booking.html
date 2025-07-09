@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zappis — Записи</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script>
+        // Предзагрузка иконок для кэширования
+        const ICONS_TO_LOAD = [
+            'plus', 'chevron-left', 'chevron-right', 'calendar', 'user',
+            'home', 'users', 'user-plus', 'settings', 'x', 'calendar-plus',
+            'info', 'phone', 'scissors', 'clock', 'user-check', 'check',
+            'alert-circle'
+        ];
+    </script>
+    <style>
+        body { background: #f3f4f6; }
+        .bottom-nav { box-shadow: 0 -2px 16px 0 rgba(0,0,0,0.06); }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .slide-up { animation: slideUp 0.3s ease-out; }
+        .fade-in { animation: fadeIn 0.2s ease-out; }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .booking-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .booking-card:active {
+            transform: scale(0.98);
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+        .status-dot.confirmed { background-color: #10B981; }
+        .status-dot.pending { background-color: #F59E0B; }
+        .status-dot.cancelled { background-color: #EF4444; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-gray-50" style="font-family: system-ui, -apple-system, sans-serif;">
+<div x-data="mobileBooking()" class="flex-1 flex flex-col" x-init="init()">
+    <!-- Header -->
+    <header class="bg-white shadow-sm px-4 py-3 flex items-center justify-between sticky top-0 z-20">
+        <div class="flex items-center space-x-3">
+            <span class="font-semibold text-gray-900 text-lg">Записи</span>
+            <span class="text-sm text-gray-500" x-text="filteredBookings.length + ' на сегодня'"></span>
+        </div>
+        <button @click="showAddSheet = true" class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white shadow-lg hover:bg-blue-700 transition-colors focus:outline-none active:transform active:scale-95">
+            <i data-lucide="plus" class="w-6 h-6"></i>
+        </button>
+    </header>
+
+    <!-- Date Navigation -->
+    <div class="bg-white border-b border-gray-100">
+        <div class="px-4 py-3">
+            <div class="flex items-center justify-between mb-4">
+                <button @click="prevDay" class="p-2 hover:bg-gray-50 rounded-lg transition-colors">
+                    <i data-lucide="chevron-left" class="w-5 h-5 text-gray-600"></i>
+                </button>
+                <span class="font-medium text-gray-900" x-text="formatDate(currentDate)"></span>
+                <button @click="nextDay" class="p-2 hover:bg-gray-50 rounded-lg transition-colors">
+                    <i data-lucide="chevron-right" class="w-5 h-5 text-gray-600"></i>
+                </button>
+            </div>
+            <div class="flex space-x-2 overflow-x-auto scrollbar-hide py-1">
+                <template x-for="(day, index) in getWeekDays()" :key="index">
+                    <button @click="setDate(day)" 
+                            class="flex-shrink-0 flex flex-col items-center rounded-xl px-4 py-2 transition-colors"
+                            :class="isSameDate(day, currentDate) ? 'bg-blue-600 text-white' : 'hover:bg-gray-50'">
+                        <span class="text-xs mb-1" x-text="getDayName(day)"></span>
+                        <span class="font-semibold" x-text="day.getDate()"></span>
+                    </button>
+                </template>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking List -->
+    <main class="flex-1 overflow-y-auto scrollbar-hide pb-20">
+        <template x-if="loading">
+            <div class="flex flex-col items-center justify-center h-64">
+                <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                <span class="mt-4 text-gray-600">Загрузка записей...</span>
+            </div>
+        </template>
+        
+        <template x-if="!loading && filteredBookings.length === 0">
+            <div class="flex flex-col items-center justify-center h-64 text-gray-400 px-6">
+                <i data-lucide="calendar" class="w-16 h-16 mb-4 text-gray-300"></i>
+                <div class="text-xl font-semibold mb-2 text-center">Нет записей на этот день</div>
+                <div class="mb-4 text-center text-sm">Записи можно добавить через десктопную версию сайта</div>
+            </div>
+        </template>
+
+        <div class="space-y-3 px-3 pt-3">
+            <template x-for="booking in sortedBookings" :key="booking.id">
+                <div @click="viewBooking(booking)" 
+                     class="booking-card bg-white rounded-xl p-4 shadow-sm hover:shadow transition-shadow">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white shadow-inner">
+                                <i data-lucide="user" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <div class="font-semibold text-gray-900" x-text="booking.client_name || (booking.client && booking.client.name) || 'Клиент'"></div>
+                                <div class="text-sm text-gray-500" x-text="booking.phone || (booking.client && booking.client.phone) || ''"></div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm font-medium text-blue-600" x-text="formatTimeRange(booking.start_time, booking.end_time)"></div>
+                            <div class="text-xs text-gray-400 mt-1" x-text="getTimeLeft(booking)"></div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
+                        <div class="flex items-center space-x-2">
+                            <span class="status-dot" :class="getStatusClass(booking.status)"></span>
+                            <span class="text-sm text-gray-600" x-text="booking.service_name || (booking.service && booking.service.name) || 'Услуга'"></span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="text-sm text-gray-500" x-text="booking.master_name || (booking.master && booking.master.name) || ''"></span>
+                            <span class="font-medium text-gray-900" x-text="formatPrice(booking.price)"></span>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav fixed bottom-0 left-0 right-0 bg-white flex justify-around items-center h-16 border-t border-gray-200 z-30">
+        <a href="/dashboard/" class="flex flex-col items-center text-xs text-gray-500 hover:text-blue-600 transition-colors">
+            <i data-lucide="home" class="w-6 h-6 mb-1"></i>
+            <span>Главная</span>
+        </a>
+        <a href="/employees/" class="flex flex-col items-center text-xs text-gray-500 hover:text-blue-600 transition-colors">
+            <i data-lucide="users" class="w-6 h-6 mb-1"></i>
+            <span>Сотрудники</span>
+        </a>
+        <a href="/clients/" class="flex flex-col items-center text-xs text-gray-500 hover:text-blue-600 transition-colors">
+            <i data-lucide="user-plus" class="w-6 h-6 mb-1"></i>
+            <span>Клиенты</span>
+        </a>
+        <a href="/schedules/" class="flex flex-col items-center text-xs text-blue-600">
+            <i data-lucide="calendar" class="w-6 h-6 mb-1"></i>
+            <span>Записи</span>
+        </a>
+        <a href="/settings/" class="flex flex-col items-center text-xs text-gray-500 hover:text-blue-600 transition-colors">
+            <i data-lucide="settings" class="w-6 h-6 mb-1"></i>
+            <span>Настройки</span>
+        </a>
+    </nav>
+
+    <!-- Add Booking Bottom Sheet -->
+    <div x-show="showAddSheet" 
+         class="fixed inset-0 z-50 flex items-end justify-center bg-black bg-opacity-40 fade-in"
+         @click.self="showAddSheet = false"
+         style="display: none;">
+        <div class="bg-white rounded-t-2xl w-full max-w-md p-6 relative slide-up">
+            <button @click="showAddSheet = false" class="absolute top-3 right-3 p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="flex flex-col items-center mb-6">
+                <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-4">
+                    <i data-lucide="calendar-plus" class="w-8 h-8 text-blue-600"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">Добавление записи</h3>
+                <p class="text-gray-500 text-center">Для добавления новой записи используйте десктопную версию сайта</p>
+            </div>
+            <div class="space-y-4">
+                <div class="flex items-center p-4 bg-blue-50 rounded-lg">
+                    <i data-lucide="info" class="w-5 h-5 text-blue-600 mr-3"></i>
+                    <p class="text-sm text-blue-800">Если возникли вопросы, обратитесь в поддержку</p>
+                </div>
+                <a href="tel:+996500123456" class="flex items-center justify-center space-x-2 w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    <i data-lucide="phone" class="w-5 h-5"></i>
+                    <span>+996 500 123 456</span>
+                </a>
+                <button @click="showAddSheet = false" class="w-full py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                    Закрыть
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Details Bottom Sheet -->
+    <div x-show="showDetails" 
+         class="fixed inset-0 z-50 flex items-end justify-center bg-black bg-opacity-40 fade-in"
+         @click.self="showDetails = false"
+         style="display: none;">
+        <div class="bg-white rounded-t-2xl w-full max-w-md relative slide-up max-h-[90vh] overflow-y-auto">
+            <div class="sticky top-0 bg-white px-6 py-4 border-b border-gray-100">
+                <button @click="showDetails = false" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+                <h3 class="text-xl font-bold text-gray-900">Детали записи</h3>
+            </div>
+            
+            <div class="p-6 space-y-6">
+                <!-- Client Info -->
+                <div class="flex items-start space-x-4">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white shadow-lg">
+                        <i data-lucide="user" class="w-6 h-6"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-semibold text-lg text-gray-900" x-text="selectedBooking?.client_name || (selectedBooking?.client && selectedBooking.client.name) || 'Клиент'"></h4>
+                        <p class="text-gray-500" x-text="selectedBooking?.phone || (selectedBooking?.client && selectedBooking.client.phone) || ''"></p>
+                        <div class="flex items-center mt-2">
+                            <span class="status-dot" :class="getStatusClass(selectedBooking?.status)"></span>
+                            <span class="text-sm text-gray-600" x-text="getStatusText(selectedBooking?.status)"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Service & Time -->
+                <div class="bg-gray-50 rounded-xl p-4 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                                <i data-lucide="scissors" class="w-4 h-4 text-blue-600"></i>
+                            </div>
+                            <span class="text-gray-600">Услуга</span>
+                        </div>
+                        <span class="font-medium text-gray-900" x-text="selectedBooking?.service_name || (selectedBooking?.service && selectedBooking.service.name) || 'Не указана'"></span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                                <i data-lucide="clock" class="w-4 h-4 text-blue-600"></i>
+                            </div>
+                            <span class="text-gray-600">Время</span>
+                        </div>
+                        <span class="font-medium text-gray-900" x-text="formatTimeRange(selectedBooking?.start_time, selectedBooking?.end_time)"></span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                                <i data-lucide="user-check" class="w-4 h-4 text-blue-600"></i>
+                            </div>
+                            <span class="text-gray-600">Мастер</span>
+                        </div>
+                        <span class="font-medium text-gray-900" x-text="selectedBooking?.master_name || (selectedBooking?.master && selectedBooking.master.name) || 'Не назначен'"></span>
+                    </div>
+                </div>
+
+                <!-- Price & Actions -->
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                        <span class="text-gray-600">Стоимость</span>
+                        <span class="text-xl font-bold text-gray-900" x-text="formatPrice(selectedBooking?.price)"></span>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <a :href="'tel:' + (selectedBooking?.phone || (selectedBooking?.client && selectedBooking.client.phone))"
+                           class="flex items-center justify-center space-x-2 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            <i data-lucide="phone" class="w-5 h-5"></i>
+                            <span>Позвонить</span>
+                        </a>
+                        <button @click="cancelBooking(selectedBooking?.id)"
+                                class="flex items-center justify-center space-x-2 py-3 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors">
+                            <i data-lucide="x" class="w-5 h-5"></i>
+                            <span>Отменить</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div x-show="toast.show" 
+         class="fixed top-4 right-4 z-50 max-w-sm fade-in"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         style="display: none;">
+        <div class="bg-white rounded-lg shadow-lg p-4 flex items-center space-x-3">
+            <div class="flex-shrink-0">
+                <template x-if="toast.type === 'success'">
+                    <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                        <i data-lucide="check" class="w-5 h-5 text-green-600"></i>
+                    </div>
+                </template>
+                <template x-if="toast.type === 'error'">
+                    <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+                        <i data-lucide="alert-circle" class="w-5 h-5 text-red-600"></i>
+                    </div>
+                </template>
+            </div>
+            <p class="text-gray-600" x-text="toast.message"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+function mobileBooking() {
+    return {
+        bookings: [],
+        currentDate: new Date(),
+        showAddSheet: false,
+        showDetails: false,
+        selectedBooking: null,
+        loading: true,
+        toast: {
+            show: false,
+            message: '',
+            type: 'success'
+        },
+
+        async init() {
+            // Инициализация иконок при старте
+            this.initIcons();
+            await this.loadBookings();
+            
+            // Обновляем данные каждые 5 минут
+            setInterval(() => this.loadBookings(), 5 * 60 * 1000);
+            
+            // Наблюдаем за изменениями DOM для обновления иконок
+            this.observeDOM();
+        },
+
+        initIcons() {
+            // Создаем иконки с помощью Lucide
+            if (window.lucide) {
+                lucide.createIcons();
+            } else {
+                // Если библиотека еще не загрузилась, ждем и пробуем снова
+                setTimeout(() => this.initIcons(), 100);
+            }
+        },
+
+        observeDOM() {
+            // Наблюдатель за изменениями DOM
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.addedNodes.length > 0) {
+                        this.initIcons();
+                    }
+                });
+            });
+
+            // Начинаем наблюдение за изменениями в DOM
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+        },
+
+        async loadBookings() {
+            this.loading = true;
+            try {
+                const res = await fetch('/schedules/api/bookings/');
+                if (!res.ok) throw new Error('Ошибка загрузки данных');
+                const data = await res.json();
+                this.bookings = Array.isArray(data) ? data : (data.results || []);
+            } catch (e) {
+                this.showToast('Ошибка загрузки записей', 'error');
+                this.bookings = [];
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        get filteredBookings() {
+            const dateStr = this.currentDate.toISOString().slice(0,10);
+            return this.bookings.filter(b => b.date === dateStr);
+        },
+
+        get sortedBookings() {
+            return [...this.filteredBookings].sort((a, b) => {
+                return this.timeToMinutes(a.start_time) - this.timeToMinutes(b.start_time);
+            });
+        },
+
+        formatDate(date) {
+            if (!(date instanceof Date)) date = new Date(date);
+            return date.toLocaleDateString('ru-RU', { 
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+        },
+
+        formatTimeRange(start, end) {
+            if (!start || !end) return '';
+            return `${start.slice(0,5)} - ${end.slice(0,5)}`;
+        },
+
+        formatPrice(price) {
+            if (!price) return '₽ 0';
+            return `₽ ${parseInt(price).toLocaleString('ru-RU')}`;
+        },
+
+        timeToMinutes(time) {
+            if (!time) return 0;
+            const [hours, minutes] = time.split(':').map(Number);
+            return hours * 60 + minutes;
+        },
+
+        getTimeLeft(booking) {
+            if (!booking.start_time) return '';
+            
+            const now = new Date();
+            const bookingDate = new Date(booking.date);
+            bookingDate.setHours(...booking.start_time.split(':'));
+            
+            const diff = bookingDate - now;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            
+            if (diff < 0) return 'Завершена';
+            if (days > 0) return `Через ${days} д.`;
+            if (hours > 0) return `Через ${hours} ч.`;
+            if (minutes > 0) return `Через ${minutes} мин.`;
+            return 'Сейчас';
+        },
+
+        getStatusClass(status) {
+            const classes = {
+                'confirmed': 'confirmed',
+                'pending': 'pending',
+                'cancelled': 'cancelled'
+            };
+            return classes[status] || 'pending';
+        },
+
+        getStatusText(status) {
+            const texts = {
+                'confirmed': 'Подтверждена',
+                'pending': 'Ожидает',
+                'cancelled': 'Отменена'
+            };
+            return texts[status] || 'Ожидает';
+        },
+
+        prevDay() {
+            this.currentDate.setDate(this.currentDate.getDate() - 1);
+            this.currentDate = new Date(this.currentDate);
+        },
+
+        nextDay() {
+            this.currentDate.setDate(this.currentDate.getDate() + 1);
+            this.currentDate = new Date(this.currentDate);
+        },
+
+        getWeekDays() {
+            const days = [];
+            const current = new Date(this.currentDate);
+            current.setDate(current.getDate() - 3);
+            
+            for (let i = 0; i < 7; i++) {
+                days.push(new Date(current));
+                current.setDate(current.getDate() + 1);
+            }
+            return days;
+        },
+
+        getDayName(date) {
+            return date.toLocaleDateString('ru-RU', { weekday: 'short' });
+        },
+
+        isSameDate(date1, date2) {
+            return date1.toDateString() === date2.toDateString();
+        },
+
+        setDate(date) {
+            this.currentDate = new Date(date);
+        },
+
+        viewBooking(booking) {
+            this.selectedBooking = booking;
+            this.showDetails = true;
+        },
+
+        async cancelBooking(id) {
+            if (!confirm('Вы уверены, что хотите отменить запись?')) return;
+            
+            try {
+                const res = await fetch(`/schedules/api/bookings/${id}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': this.getCsrfToken()
+                    }
+                });
+                
+                if (!res.ok) throw new Error('Ошибка отмены записи');
+                
+                this.showDetails = false;
+                await this.loadBookings();
+                this.showToast('Запись успешно отменена', 'success');
+            } catch (e) {
+                this.showToast('Ошибка отмены записи', 'error');
+            }
+        },
+
+        getCsrfToken() {
+            const name = 'csrftoken';
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name + '=')) {
+                    return decodeURIComponent(cookie.substring(name.length + 1));
+                }
+            }
+            return '';
+        },
+
+        showToast(message, type = 'success') {
+            this.toast = {
+                show: true,
+                message,
+                type
+            };
+            setTimeout(() => {
+                this.toast.show = false;
+            }, 3000);
+        }
+    }
+}
+
+// Глобальная функция для обновления иконок
+window.updateIcons = () => {
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+};
+
+document.addEventListener('alpine:init', () => {
+    Alpine.data('mobileBooking', mobileBooking);
+});
+
+// Обновляем иконки при загрузке DOM
+document.addEventListener('DOMContentLoaded', () => {
+    // Пытаемся создать иконки несколько раз с интервалом
+    let attempts = 0;
+    const maxAttempts = 5;
+    
+    function tryCreateIcons() {
+        if (window.lucide) {
+            lucide.createIcons();
+        } else if (attempts < maxAttempts) {
+            attempts++;
+            setTimeout(tryCreateIcons, 200);
+        }
+    }
+    
+    tryCreateIcons();
+});
+
+// Обновляем иконки при полной загрузке страницы
+window.addEventListener('load', () => {
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+});
+
+// Обновляем иконки при динамической подгрузке контента
+document.addEventListener('htmx:afterSwap', () => {
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+});
+
+// Обновляем иконки при изменении видимости элементов
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && window.lucide) {
+        lucide.createIcons();
+    }
+});
+</script>
+</body>
+</html> 
