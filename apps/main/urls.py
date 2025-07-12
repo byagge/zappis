@@ -29,4 +29,7 @@ urlpatterns = [
     
     # Тестовая страница для определения устройства
     path('device-test/', TemplateView.as_view(template_name='device_test.html'), name='device_test'),
+    
+    # Тестовая страница 404 (для разработки)
+    path('test-404/', views.custom_404, name='test_404'),
 ]

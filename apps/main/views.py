@@ -2,6 +2,7 @@ from django.conf import settings
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.generic import TemplateView
+from django.http import Http404
 from .models import City
 from apps.businesses.models import Business, BusinessType, BusinessSubtype, BusinessPhoto
 from apps.employees.models import Employee
@@ -46,6 +47,78 @@ def is_mobile(request):
             pass
     
     return is_mobile_device or is_tablet
+
+def get_language_from_request(request):
+    """
+    Определяет язык из запроса (аналогично main_page)
+    """
+    lang = None
+    user = getattr(request, 'user', None)
+    
+    # 1. Язык из GET-параметра (ручной переключатель)
+    lang_param = request.GET.get('lang')
+    if lang_param in ['ru', 'ky']:
+        lang = lang_param
+        # Если пользователь авторизован — сохранить в профиль
+        if user and user.is_authenticated:
+            if hasattr(user, 'preferred_language') and user.preferred_language != lang_param:
+                user.preferred_language = lang_param
+                user.save(update_fields=['preferred_language'])
+        else:
+            # Для гостей — сохранить в сессию
+            request.session['preferred_language'] = lang_param
+    # 2. Если пользователь авторизован — брать из профиля
+    elif user and user.is_authenticated and hasattr(user, 'preferred_language'):
+        lang = user.preferred_language
+    # 3. Если есть в сессии (для гостей)
+    elif request.session.get('preferred_language') in ['ru', 'ky']:
+        lang = request.session['preferred_language']
+    # 4. Если не авторизован — брать из HTTP_ACCEPT_LANGUAGE
+    else:
+        accept_lang = request.META.get('HTTP_ACCEPT_LANGUAGE', '').lower()
+        if accept_lang.startswith('ky'):
+            lang = 'ky'
+        elif accept_lang.startswith('ru'):
+            lang = 'ru'
+        elif 'ky' in accept_lang.split(',')[0]:
+            lang = 'ky'
+        else:
+            lang = 'ru'
+    
+    return lang
+
+def custom_404(request, exception=None):
+    """
+    Кастомная страница 404 с поддержкой мультиязычности
+    """
+    lang = get_language_from_request(request)
+    context = {
+        'current_language': lang
+    }
+    template = f'{lang}/404.html'
+    return render(request, template, context, status=404)
+
+def custom_500(request):
+    """
+    Кастомная страница 500 с поддержкой мультиязычности
+    """
+    lang = get_language_from_request(request)
+    context = {
+        'current_language': lang
+    }
+    template = f'{lang}/500.html'
+    return render(request, template, context, status=500)
+
+def custom_403(request, exception=None):
+    """
+    Кастомная страница 403 с поддержкой мультиязычности
+    """
+    lang = get_language_from_request(request)
+    context = {
+        'current_language': lang
+    }
+    template = f'{lang}/403.html'
+    return render(request, template, context, status=403)
 
 class DemoDashboardView(TemplateView):
     """Автоматически определяет устройство и показывает соответствующий шаблон"""

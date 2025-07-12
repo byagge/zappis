@@ -1,0 +1,233 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 - Страница не найдена | Zappis</title>
+  <!-- Tailwind CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- Alpine.js CDN -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Smooth scrolling CSS -->
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+    .backdrop-blur {
+      backdrop-filter: blur(12px);
+      background: rgba(255,255,255,0.7);
+    }
+    .minimal-shadow {
+      box-shadow: 0 2px 16px 0 rgba(40, 60, 180, 0.06);
+    }
+    .btn-accent {
+      background: linear-gradient(90deg, #3b82f6 0%, #6366f1 100%);
+      color: #fff;
+      transition: box-shadow 0.2s, transform 0.2s, background 0.2s;
+      box-shadow: 0 2px 8px 0 rgba(59,130,246,0.10);
+    }
+    .btn-accent:hover {
+      background: linear-gradient(90deg, #6366f1 0%, #3b82f6 100%);
+      box-shadow: 0 4px 24px 0 rgba(59,130,246,0.18);
+      transform: translateY(-2px) scale(1.03);
+    }
+    .btn-minimal {
+      border: none;
+      background: transparent;
+      color: #6366f1;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .btn-minimal:hover {
+      color: #3b82f6;
+      text-decoration: underline;
+    }
+    /* Floating animation */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+    .floating {
+      animation: float 6s ease-in-out infinite;
+    }
+    /* Bounce animation */
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-30px); }
+      60% { transform: translateY(-15px); }
+    }
+    .bounce {
+      animation: bounce 2s infinite;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <div class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="backdrop-blur minimal-shadow fixed top-0 left-0 w-full z-50 transition-all duration-300">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center py-5 lg:py-6">
+          <div class="flex items-center">
+            <div class="text-2xl font-bold text-gray-900 tracking-tight">{% trans "zappis" %}</div>
+          </div>
+          <div class="hidden md:flex items-center space-x-4">
+            <button class="btn-accent px-7 py-2 rounded-lg font-medium text-lg" onclick="window.location.href='https://zappis.app/accounts/partners/register/'">{% trans "Попробовать бесплатно" %}</button>
+            <!-- Language Switcher -->
+            <div class="ml-6 flex items-center space-x-2">
+              <a href="?lang=ky" class="px-3 py-1 rounded font-semibold text-sm transition-all {% if current_language == 'ky' %}bg-blue-600 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}">KY</a>
+              <a href="?lang=ru" class="px-3 py-1 rounded font-semibold text-sm transition-all {% if current_language == 'ru' %}bg-blue-600 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}">RU</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex items-center justify-center pt-32 pb-12">
+      <div class="max-w-4xl mx-auto px-4 sm:px-8 lg:px-12 text-center">
+        <!-- 404 Number -->
+        <div class="mb-8">
+          <h1 class="text-8xl sm:text-9xl font-extrabold text-gray-900 floating">
+            4<span class="text-blue-600 bounce">0</span>4
+          </h1>
+        </div>
+
+        <!-- Main Message -->
+        <div class="mb-12">
+          <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+            Упс! Страница не найдена
+          </h2>
+          <p class="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto mb-8">
+            Похоже, что страница, которую вы ищете, заблудилась в цифровом пространстве. 
+            Не волнуйтесь, мы поможем вам найти правильный путь!
+          </p>
+        </div>
+
+        <!-- Illustration -->
+        <div class="mb-12 flex justify-center">
+          <div class="relative">
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-3xl p-8 shadow-xl">
+              <div class="w-48 h-48 flex items-center justify-center">
+                <i data-lucide="map-pin" class="text-blue-600" style="width: 120px; height: 120px;"></i>
+              </div>
+            </div>
+            <!-- Floating elements -->
+            <div class="absolute -top-4 -right-4 bg-yellow-400 rounded-full p-3 shadow-lg">
+              <i data-lucide="search" class="text-white" style="width: 24px; height: 24px;"></i>
+            </div>
+            <div class="absolute -bottom-4 -left-4 bg-green-400 rounded-full p-3 shadow-lg">
+              <i data-lucide="home" class="text-white" style="width: 24px; height: 24px;"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+          <button class="btn-accent px-8 py-4 rounded-xl font-semibold text-lg shadow-lg" onclick="window.location.href='/'">
+            <i data-lucide="home" class="inline mr-2" style="width: 20px; height: 20px;"></i>
+            Вернуться на главную
+          </button>
+          <button class="btn-minimal px-8 py-4 text-lg" onclick="history.back()">
+            <i data-lucide="arrow-left" class="inline mr-2" style="width: 20px; height: 20px;"></i>
+            Назад
+          </button>
+        </div>
+
+        <!-- Helpful Links -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 max-w-2xl mx-auto">
+          <h3 class="text-xl font-semibold text-gray-900 mb-6">Популярные страницы</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <a href="/" class="flex items-center p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all group">
+              <i data-lucide="globe" class="text-blue-600 mr-3 group-hover:scale-110 transition-transform" style="width: 20px; height: 20px;"></i>
+              <span class="text-gray-700 group-hover:text-blue-600">Главная страница</span>
+            </a>
+            <a href="/demo/" class="flex items-center p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all group">
+              <i data-lucide="play" class="text-blue-600 mr-3 group-hover:scale-110 transition-transform" style="width: 20px; height: 20px;"></i>
+              <span class="text-gray-700 group-hover:text-blue-600">Демо</span>
+            </a>
+            <a href="https://zappis.app/accounts/partners/register/" class="flex items-center p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all group">
+              <i data-lucide="user-plus" class="text-blue-600 mr-3 group-hover:scale-110 transition-transform" style="width: 20px; height: 20px;"></i>
+              <span class="text-gray-700 group-hover:text-blue-600">Регистрация</span>
+            </a>
+            <a href="#contact" class="flex items-center p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all group">
+              <i data-lucide="message-circle" class="text-blue-600 mr-3 group-hover:scale-110 transition-transform" style="width: 20px; height: 20px;"></i>
+              <span class="text-gray-700 group-hover:text-blue-600">Поддержка</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Fun Facts -->
+        <div class="mt-12 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-8 max-w-3xl mx-auto">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">Знаете ли вы?</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+            <div class="bg-white rounded-lg p-4 shadow-sm">
+              <div class="text-2xl font-bold text-blue-600 mb-2">404</div>
+              <p class="text-sm text-gray-600">HTTP статус "Не найдено"</p>
+            </div>
+            <div class="bg-white rounded-lg p-4 shadow-sm">
+              <div class="text-2xl font-bold text-green-600 mb-2">1990</div>
+              <p class="text-sm text-gray-600">Год появления ошибки 404</p>
+            </div>
+            <div class="bg-white rounded-lg p-4 shadow-sm">
+              <div class="text-2xl font-bold text-purple-600 mb-2">∞</div>
+              <p class="text-sm text-gray-600">Возможностей с Zappis</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-16 bg-white">
+      <div class="max-w-4xl mx-auto px-4 sm:px-8 lg:px-12 text-center">
+        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">Нужна помощь?</h2>
+        <p class="text-lg text-gray-600 mb-8">Наша команда поддержки готова помочь вам 24/7</p>
+        <div class="flex flex-col sm:flex-row gap-6 justify-center">
+          <a href="https://t.me/ZappisSupportBot" class="flex items-center justify-center gap-3 bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition-all">
+            <i data-lucide="send" style="width: 20px; height: 20px;"></i>
+            Telegram
+          </a>
+          <a href="https://wa.me/77022589768" class="flex items-center justify-center gap-3 bg-green-600 text-white px-6 py-3 rounded-xl hover:bg-green-700 transition-all">
+            <i data-lucide="message-circle" style="width: 20px; height: 20px;"></i>
+            WhatsApp
+          </a>
+          <a href="mailto:support@zappis.app" class="flex items-center justify-center gap-3 bg-purple-600 text-white px-6 py-3 rounded-xl hover:bg-purple-700 transition-all">
+            <i data-lucide="mail" style="width: 20px; height: 20px;"></i>
+            Email
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8">
+      <div class="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 text-center">
+        <div class="text-2xl font-bold mb-3">Zappis</div>
+        <p class="text-gray-400 mb-4">Платформа для онлайн-записи и автоматизации бизнеса</p>
+        <div class="flex justify-center space-x-3 mb-4">
+          <a href="https://wa.me/77022589768" class="w-9 h-9 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors">
+            <i data-lucide="message-circle" style="width: 18px; height: 18px;"></i>
+          </a>
+          <a href="tel:+77022589768" class="w-9 h-9 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors">
+            <i data-lucide="phone" style="width: 18px; height: 18px;"></i>
+          </a>
+          <a href="mailto:support@zappis.app" class="w-9 h-9 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors">
+            <i data-lucide="mail" style="width: 18px; height: 18px;"></i>
+          </a>
+        </div>
+        <p class="text-gray-400 text-sm">© 2025 Zappis. Все права защищены.</p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Initialize Lucide Icons -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html> 

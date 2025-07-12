@@ -216,4 +216,11 @@ TELEGRAM_ADMIN_CHAT_ID = os.environ.get('TELEGRAM_ADMIN_CHAT_ID', '5777052726')
 #   FIELD_ENCRYPTION_KEY=... (ваш ключ)
 FIELD_ENCRYPTION_KEY = "crZloFlkAiMdvUkF-XdJ1YSidfP3s9q_Yw0qmPua6_4="
 if not FIELD_ENCRYPTION_KEY:
-    raise RuntimeError('FIELD_ENCRYPTION_KEY is not set! Generate one and set it as an environment variable.') 
+    raise RuntimeError('FIELD_ENCRYPTION_KEY is not set! Generate one and set it as an environment variable.')
+
+# === Custom Error Pages ===
+# Настройки для кастомных страниц ошибок
+HANDLER404 = 'apps.main.views.custom_404'
+HANDLER500 = 'apps.main.views.custom_500'
+HANDLER403 = 'apps.main.views.custom_403'
+# ======================================== 
