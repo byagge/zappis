@@ -120,6 +120,34 @@ def custom_403(request, exception=None):
     template = f'{lang}/403.html'
     return render(request, template, context, status=403)
 
+def custom_400(request, exception=None):
+    """
+    Кастомная страница 400 с поддержкой мультиязычности
+    """
+    lang = get_language_from_request(request)
+    context = {
+        'current_language': lang
+    }
+    template = f'{lang}/400.html'
+    return render(request, template, context, status=400)
+
+def custom_csrf_failure(request, reason=""):
+    lang = get_language_from_request(request)
+    context = {
+        'current_language': lang,
+        'reason': reason,
+    }
+    template = f'{lang}/csrf.html'
+    return render(request, template, context, status=403)
+
+def custom_405(request, exception=None):
+    lang = get_language_from_request(request)
+    context = {
+        'current_language': lang
+    }
+    template = f'{lang}/405.html'
+    return render(request, template, context, status=405)
+
 class DemoDashboardView(TemplateView):
     """Автоматически определяет устройство и показывает соответствующий шаблон"""
     

@@ -8,6 +8,20 @@ from wagtail.documents import urls as wagtaildocs_urls
 
 from apps.search import views as search_views
 
+from django.contrib.sitemaps.views import sitemap
+from apps.main.sitemaps import StaticViewSitemap
+from apps.main import views as main_views
+
+sitemaps = {
+    'static': StaticViewSitemap,
+}
+
+handler404 = main_views.custom_404
+handler500 = main_views.custom_500
+handler403 = main_views.custom_403
+handler400 = main_views.custom_400
+handler405 = main_views.custom_405
+
 urlpatterns = [
     path("django-admin/", admin.site.urls),  # Unfold/Django admin
     path("admin/", include(wagtailadmin_urls)),  # Wagtail admin
@@ -26,6 +40,7 @@ urlpatterns = [
     path("employee/", include("apps.employee.urls")),
     path("support/", include("apps.help.urls")),
     path("", include("apps.main.urls")),
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django_sitemap'),
 ]
 
 if settings.DEBUG:

@@ -25,6 +25,7 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 # Application definition
 
 INSTALLED_APPS = [
+    "django.contrib.sitemaps",  # Для sitemap.xml
     "apps.search",
     "apps.home",
     "apps.main",
@@ -150,10 +151,10 @@ STATICFILES_FINDERS = [
 ]
 
 STATICFILES_DIRS = [
-    os.path.join(PROJECT_DIR, "static"),
+    os.path.join(BASE_DIR, "static"),
 ]
 
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATIC_URL = "/static/"
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
@@ -223,4 +224,5 @@ if not FIELD_ENCRYPTION_KEY:
 HANDLER404 = 'apps.main.views.custom_404'
 HANDLER500 = 'apps.main.views.custom_500'
 HANDLER403 = 'apps.main.views.custom_403'
+CSRF_FAILURE_VIEW = 'apps.main.views.custom_csrf_failure'
 # ======================================== 

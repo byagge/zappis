@@ -1,0 +1,67 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSRF ката | Zappis</title>
+  <!-- Tailwind CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .btn-accent {
+      background: linear-gradient(90deg, #3b82f6 0%, #6366f1 100%);
+      color: #fff;
+      transition: box-shadow 0.2s, transform 0.2s, background 0.2s;
+      box-shadow: 0 2px 8px 0 rgba(59,130,246,0.10);
+    }
+    .btn-accent:hover {
+      background: linear-gradient(90deg, #6366f1 0%, #3b82f6 100%);
+      box-shadow: 0 4px 24px 0 rgba(59,130,246,0.18);
+      transform: translateY(-2px) scale(1.03);
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <div class="min-h-screen flex items-center justify-center">
+    <div class="max-w-md mx-auto text-center px-4">
+      <div class="mb-8">
+        <h1 class="text-6xl font-extrabold text-gray-900 mb-4">CSRF</h1>
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">Форманын коргоо катасы</h2>
+        <p class="text-gray-600 mb-8">
+          Форманы жөнөтүүдө коопсуздук ката кетти. Сураныч, баракты жаңыртып, кайра аракет кылыңыз.
+        </p>
+        {% if reason %}
+        <p class="text-sm text-gray-500 mb-4">{{ reason }}</p>
+        {% endif %}
+      </div>
+      <div class="mb-8">
+        <i data-lucide="shield-x" class="text-orange-500 mx-auto" style="width: 64px; height: 64px;"></i>
+      </div>
+      <div class="space-y-4">
+        <button class="btn-accent px-6 py-3 rounded-lg font-semibold w-full" onclick="window.location.reload()">
+          <i data-lucide="refresh-cw" class="inline mr-2" style="width: 20px; height: 20px;"></i>
+          Баракты жаңыртуу
+        </button>
+        <button class="w-full px-6 py-3 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-all" onclick="window.location.href='/'">
+          <i data-lucide="home" class="inline mr-2" style="width: 20px; height: 20px;"></i>
+          Башкы бетке
+        </button>
+      </div>
+      <div class="mt-8 text-sm text-gray-500">
+        <p>Эгер ката кайталанса, колдоого кайрылыңыз:</p>
+        <div class="mt-2 space-x-4">
+          <a href="https://t.me/ZappisSupportBot" class="text-blue-600 hover:underline">Telegram</a>
+          <a href="https://wa.me/77022589768" class="text-green-600 hover:underline">WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html> 
