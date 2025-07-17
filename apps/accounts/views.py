@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
-from .serializers import Step1Serializer, Step2Serializer, Step3Serializer, UserSerializer, VerifyCodeSerializer, LoginSerializer, UserSignUpSerializer, UserLanguageSerializer
+from .serializers import Step1Serializer, Step2Serializer, Step3Serializer, UserSerializer, VerifyCodeSerializer, UserSignUpSerializer, UserLanguageSerializer
 from .models import RegistrationSession, User
 from .utils import send_sms
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -11,12 +11,22 @@ from apps.main.models import City
 from apps.businesses.models import Business, BusinessType, BusinessSubtype
 from django.utils import timezone
 from django.db import transaction
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, login
 from django.http import HttpRequest
+from rest_framework_simplejwt.authentication import JWTAuthentication
 import requests
+from django.urls import reverse_lazy
+from django.shortcuts import redirect
 
 class SignUpPageView(TemplateView):
     template_name = 'accounts/signup.html'
+    success_url = reverse_lazy('dashboard-page')  # если используется CreateView
+
+    def post(self, request, *args, **kwargs):
+        # Если используется TemplateView с кастомной обработкой POST
+        # Здесь должна быть логика создания пользователя
+        # После успешной регистрации:
+        return redirect('/dashboard/')
 
 class UserSignUpAPIView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -220,32 +230,6 @@ class ResendCodeView(APIView):
         except RegistrationSession.DoesNotExist:
             return Response({'detail': 'Сессия регистрации не найдена'}, status=status.HTTP_404_NOT_FOUND)
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status, permissions
-from .serializers import LoginSerializer
-
-class LoginAPIView(APIView):
-    permission_classes = [permissions.AllowAny]
-
-    def post(self, request, *args, **kwargs):
-        serializer = LoginSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-
-        refresh = RefreshToken.for_user(user)
-        return Response({
-            "token": str(refresh.access_token),
-            "refresh": str(refresh),
-            "user": {
-                "id":       str(user.id),
-                "full_name": user.full_name,
-                "phone_number": user.phone_number,
-                "email":    user.email,
-                "role":     user.role,
-            }
-        })
-
 class ProfileAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     
@@ -281,3 +265,26 @@ class UserLanguageUpdateAPIView(APIView):
             serializer.save()
             return Response({'preferred_language': serializer.data['preferred_language']})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class CreateSessionAPIView(APIView):
+    """Создает Django сессию для пользователя с JWT токеном"""
+    permission_classes = [permissions.AllowAny]
+    authentication_classes = [JWTAuthentication]
+
+    def post(self, request, *args, **kwargs):
+        try:
+            # Получаем пользователя из JWT токена
+            user = request.user
+            if not user.is_authenticated:
+                return Response({'error': 'Неверный токен'}, status=status.HTTP_401_UNAUTHORIZED)
+            
+            # Создаем Django сессию
+            login(request, user)
+            
+            return Response({
+                'message': 'Сессия создана успешно',
+                'user_id': user.id
+            }, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

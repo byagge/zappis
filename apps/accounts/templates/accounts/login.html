@@ -93,50 +93,30 @@
                 <p class="text-gray-500 text-sm">Для входа в личный кабинет, введите номер и пароль</p>
             </div>
 
-            <div id="login-error" class="flex items-center gap-2 text-red-600 text-base font-semibold bg-red-50 border border-red-200 rounded-lg px-4 py-3 mb-6 shadow-sm hidden transition-all duration-300">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" /></svg>
-                <span id="login-error-text"></span>
-            </div>
-
-            <form id="login-form">
+            <form method="post" action="{% url 'login' %}" class="space-y-6">
+                {% csrf_token %}
                 <div class="mb-5">
-                    <div class="flex items-center border border-gray-200 rounded-lg p-3 bg-white">
-                        <div class="flex items-center mr-3 cursor-pointer">
-                            <img src="https://flagcdn.com/w40/kg.png" 
-                                 srcset="https://flagcdn.com/w80/kg.png 2x"
-                                 width="24" 
-                                 height="16" 
-                                 alt="Кыргызстан"
-                                 class="mr-2">
-                            <span class="flex items-center">
-                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                            </span>
-                        </div>
-                        <input type="tel" id="phone" name="phone_number" class="flex-1 border-none outline-none text-base text-gray-700 placeholder-gray-400" placeholder="+996 (___) ___-___">
-                    </div>
+                    <input type="text" name="username" class="w-full p-4 border border-gray-200 rounded-lg text-base outline-none placeholder-gray-400" placeholder="Телефон или email" required>
                 </div>
-
                 <div class="mb-5">
-                    <div class="relative">
-                        <input type="password" id="password" name="password" class="w-full p-4 border border-gray-200 rounded-lg text-base outline-none placeholder-gray-400" placeholder="Пароль">
-                        <button type="button" class="password-toggle absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 text-gray-600">
-                            <i data-lucide="eye" class="w-5 h-5"></i>
-                        </button>
+                    <input type="password" name="password" class="w-full p-4 border border-gray-200 rounded-lg text-base outline-none placeholder-gray-400" placeholder="Пароль" required>
+                </div>
+                {% if form.errors %}
+                    <div class="flex items-center gap-2 text-red-600 text-base font-semibold bg-red-50 border border-red-200 rounded-lg px-4 py-3 mb-6 shadow-sm transition-all duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z" /></svg>
+                        <span>{{ form.errors }}</span>
                     </div>
-                    <a href="#" class="block text-gray-500 text-sm mt-4 hover:text-gray-600">Забыли пароль?</a>
-                </div>
-
-                <div class="text-xs text-gray-600 mb-5 leading-relaxed">
-                    Нажимая "Войти", Вы принимаете условия 
-                    <a href="#" class="text-primary hover:underline">Политики конфиденциальности</a> и 
-                    <a href="#" class="text-primary hover:underline">Пользовательского соглашения</a> 
-                    и даете согласие на обработку персональных данных
-                </div>
-
+                {% endif %}
                 <button type="submit" class="w-full py-4 bg-secondary text-white rounded-lg text-base font-semibold hover:bg-green-600 transition-colors">
                     Войти
                 </button>
             </form>
+            <div class="text-center">
+                <p class="text-gray-600 text-sm">
+                    Нет аккаунта?
+                    <a href="{% url 'register-page' %}" class="text-primary hover:underline">Зарегистрироваться</a>
+                </p>
+            </div>
         </div>
     </div>
 
@@ -177,25 +157,70 @@
             e.preventDefault();
             loginError.classList.add('hidden');
             loginErrorText.textContent = '';
-            const phone = loginForm.phone_number.value.replace(/\D/g, '');
+            let phone = loginForm.phone_number.value.trim();
+            // Удаляем все кроме цифр и +
+            phone = phone.replace(/[^\d+]/g, '');
+            // Если не начинается с +996, добавляем
+            if (!phone.startsWith('+996')) {
+                if (phone.startsWith('996')) {
+                    phone = '+' + phone;
+                } else {
+                    phone = '+996' + phone;
+                }
+            }
             const password = loginForm.password.value;
             const data = {
-                phone_number: '+996' + phone,
+                phone_number: phone,
                 password: password
             };
+            // Получаем CSRF-токен
+            const csrfToken = (document.cookie.match(/csrftoken=([^;]+)/) || [])[1] || '';
+            if (!csrfToken) {
+                loginErrorText.textContent = 'CSRF токен не найден. Пожалуйста, обновите страницу.';
+                loginError.classList.remove('hidden');
+                return;
+            }
             try {
                 const response = await fetch('/accounts/api/login/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRFToken': (document.cookie.match(/csrftoken=([^;]+)/) || [])[1] || ''
+                        'X-CSRFToken': csrfToken
                     },
                     body: JSON.stringify(data)
                 });
-                const result = await response.json();
+                let result;
+                try {
+                    result = await response.json();
+                } catch (jsonErr) {
+                    // Если не JSON (например, CSRF-ошибка)
+                    loginErrorText.textContent = 'Ошибка сервера или CSRF. Пожалуйста, попробуйте ещё раз.';
+                    loginError.classList.remove('hidden');
+                    return;
+                }
                 if (response.ok) {
-                    // Успешный вход: сохраняем токен, редиректим или обновляем UI
+                    // Успешный вход: сохраняем токен, создаем сессию, редиректим
+                    const result = await response.json();
                     localStorage.setItem('token', result.token);
+                    
+                    // Создаем Django сессию для dashboard
+                    try {
+                        const sessionResponse = await fetch('/accounts/api/create-session/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': csrfToken,
+                                'Authorization': `Bearer ${result.token}`
+                            }
+                        });
+                        
+                        if (!sessionResponse.ok) {
+                            console.warn('Не удалось создать сессию, но токен сохранен');
+                        }
+                    } catch (sessionErr) {
+                        console.warn('Ошибка создания сессии:', sessionErr);
+                    }
+                    
                     const role = (result.user?.role || result.user?.Role || '').toLowerCase();
                     if (role === 'user') {
                         window.location.href = '/';
