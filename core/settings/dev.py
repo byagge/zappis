@@ -1,13 +1,13 @@
 from .base import *
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-gm5ys1$c*m!^u5e96ybz$bdi&jz9+u1lhsb_3svs$qk!0iw!9d"
 
 # SECURITY WARNING: define the correct hosts in production!
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["zappis.app", "www.zappis.app", "185.189.12.23"]
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
