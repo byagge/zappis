@@ -1,0 +1,547 @@
+{% load i18n %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=1">
+  <title>Тарифы и цены — Zappis</title>
+  <meta name="description" content="Выберите подходящий тариф для вашего бизнеса. От базового до премиум планов с неограниченным количеством мастеров.">
+  <meta name="keywords" content="тарифы, цены, онлайн запись, автоматизация, CRM, бизнес, Zappis">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://zappis.app/pricing/">
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="color-scheme" content="light">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="format-detection" content="telephone=no">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:url" content="https://zappis.app/pricing/">
+  <meta property="og:title" content="Тарифы и цены — Zappis">
+  <meta property="og:description" content="Выберите подходящий тариф для вашего бизнеса. От базового до премиум планов с неограниченным количеством мастеров.">
+  <meta property="og:image" content="{% static 'og-image.png' %}">
+  <meta property="og:site_name" content="Zappis">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Тарифы и цены — Zappis">
+  <meta name="twitter:description" content="Выберите подходящий тариф для вашего бизнеса. От базового до премиум планов с неограниченным количеством мастеров.">
+  <meta name="twitter:image" content="https://zappis.app/static/og-image.png">
+  <meta name="twitter:site" content="@zappisapp">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+  <link rel="icon" type="image/png" sizes="96x96" href="{% static 'favicon-96x96.png' %}">
+  <link rel="icon" type="image/x-icon" sizes="32x32" href="{% static 'favicon-32x32.ico' %}">
+  <link rel="icon" type="image/x-icon" sizes="16x16" href="{% static 'favicon-16x16.ico' %}">
+  <link rel="icon" type="image/svg+xml" href="{% static 'favicon.svg' %}">
+  <meta name="msapplication-TileColor" content="#3b82f6">
+  <meta name="msapplication-TileImage" content="{% static 'mstile-144x144.png' %}">
+
+  <!-- Structured Data (Organization) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Zappis",
+    "url": "https://zappis.app/",
+    "logo": "https://zappis.app/static/og-image.png",
+    "sameAs": [
+      "https://t.me/ZappisSupportBot",
+      "https://wa.me/77022589768"
+    ],
+    "description": "Онлайн-запись, CRM и автоматизация для бизнеса. Приводим клиентов без звонков. Сайт, CRM и записи в одном месте."
+  }
+  </script>
+
+  <!-- Tailwind CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- Alpine.js CDN -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Yandex.Metrika counter -->
+  <script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js', 'ym');
+
+    ym(103332996, 'init', {webvisor:true, clickmap:true, accurateTrackBounce:true, trackLinks:true});
+  </script>
+  <noscript><div><img src="https://mc.yandex.ru/watch/103332996" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+  <!-- /Yandex.Metrika counter -->
+
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+    .backdrop-blur {
+      backdrop-filter: blur(12px);
+      background: rgba(255,255,255,0.7);
+    }
+    .minimal-shadow {
+      box-shadow: 0 2px 16px 0 rgba(40, 60, 180, 0.06);
+    }
+    .btn-accent {
+      background: linear-gradient(90deg, #3b82f6 0%, #6366f1 100%);
+      color: #fff;
+      transition: box-shadow 0.2s, transform 0.2s, background 0.2s;
+      box-shadow: 0 2px 8px 0 rgba(59,130,246,0.10);
+    }
+    .btn-accent:hover {
+      background: linear-gradient(90deg, #6366f1 0%, #3b82f6 100%);
+      box-shadow: 0 4px 24px 0 rgba(59,130,246,0.18);
+      transform: translateY(-2px) scale(1.03);
+    }
+    .btn-minimal {
+      border: none;
+      background: transparent;
+      color: #6366f1;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .btn-minimal:hover {
+      color: #3b82f6;
+      text-decoration: underline;
+    }
+    .pricing-card {
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+    .pricing-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+    .pricing-card.featured {
+      border-color: #3b82f6;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    }
+    .pricing-card.featured::before {
+      content: "Популярный";
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #3b82f6;
+      color: white;
+      padding: 4px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .feature-list {
+      list-style: none;
+      padding: 0;
+    }
+    .feature-list li {
+      padding: 8px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .feature-list li:last-child {
+      border-bottom: none;
+    }
+    .feature-list li::before {
+      content: "✓";
+      color: #10b981;
+      font-weight: bold;
+      margin-right: 8px;
+    }
+    .currency-switch {
+      background: #f1f5f9;
+      border-radius: 8px;
+      padding: 4px;
+      display: inline-flex;
+    }
+    .currency-switch button {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .currency-switch button.active {
+      background: white;
+      color: #3b82f6;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body x-data="{ 
+    currency: 'KGS',
+    currencies: {
+        'KGS': { symbol: 'сом', rate: 1 },
+        'USD': { symbol: '$', rate: 0.011 },
+        'RUB': { symbol: '₽', rate: 1.02 }
+    },
+    billing: 'monthly',
+    plans: [
+        {
+            name: 'Базовый',
+            masters: 2,
+            price: { KGS: 490, USD: 5.39, RUB: 499.8 },
+            features: [
+                'Онлайн-запись',
+                'Электронный журнал',
+                'База клиентов (до 100)',
+                'Уведомления WhatsApp',
+                'Мобильное приложение',
+                'Базовая статистика'
+            ],
+            popular: false
+        },
+        {
+            name: 'Старт',
+            masters: 5,
+            price: { KGS: 990, USD: 10.89, RUB: 1009.8 },
+            features: [
+                'Все функции Базового',
+                'База клиентов (до 500)',
+                'Система лояльности',
+                'Интеграция с Telegram',
+                'Расширенная статистика',
+                'Экспорт данных'
+            ],
+            popular: false
+        },
+        {
+            name: 'Продвинутый',
+            masters: 10,
+            price: { KGS: 1990, USD: 21.89, RUB: 2029.8 },
+            features: [
+                'Все функции Старт',
+                'База клиентов (до 2000)',
+                'Мультифилиальность',
+                'API интеграции',
+                'Приоритетная поддержка',
+                'Персональный менеджер'
+            ],
+            popular: true
+        },
+        {
+            name: 'Бизнес',
+            masters: 20,
+            price: { KGS: 3990, USD: 43.89, RUB: 4069.8 },
+            features: [
+                'Все функции Продвинутый',
+                'Неограниченная база клиентов',
+                'White-label решение',
+                'Индивидуальная настройка',
+                'Обучение персонала',
+                '24/7 поддержка'
+            ],
+            popular: false
+        },
+        {
+            name: 'Премиум',
+            masters: 'Без лимита',
+            price: { KGS: 9990, USD: 109.89, RUB: 10189.8 },
+            features: [
+                'Все функции Бизнес',
+                'Неограниченное количество мастеров',
+                'Индивидуальная разработка',
+                'Выделенный сервер',
+                'Персональный аккаунт-менеджер',
+                'Гарантированное время отклика'
+            ],
+            popular: false
+        }
+    ],
+    getPrice(plan) {
+        const currentCurrency = this.currencies[this.currency];
+        const basePrice = plan.price[this.currency];
+        return this.billing === 'yearly' ? Math.round(basePrice * 10) : basePrice;
+    },
+    getFormattedPrice(plan) {
+        const price = this.getPrice(plan);
+        const symbol = this.currencies[this.currency].symbol;
+        return `${price} ${symbol}`;
+    },
+    getSavings(plan) {
+        if (this.billing === 'yearly') {
+            const monthlyPrice = plan.price[this.currency];
+            const yearlyPrice = this.getPrice(plan);
+            const savings = (monthlyPrice * 12) - yearlyPrice;
+            return Math.round(savings);
+        }
+        return 0;
+    }
+}">
+    <div class="bg-white">
+    <!-- Header -->
+    <header class="backdrop-blur minimal-shadow fixed top-0 left-0 w-full z-50 transition-all duration-300">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center py-5 lg:py-6">
+          <div class="flex items-center">
+            <div class="text-2xl font-bold text-gray-900 tracking-tight">{% trans "zappis" %}</div>
+          </div>
+          <nav class="hidden md:flex space-x-8">
+            <a href="/" class="text-gray-700 hover:text-blue-600 transition-colors">{% trans "Главная" %}</a>
+            <a href="/#product-features" class="text-gray-700 hover:text-blue-600 transition-colors">{% trans "Продукт" %}</a>
+            <a href="/#reviews" class="text-gray-700 hover:text-blue-600 transition-colors">{% trans "Отзывы" %}</a>
+            <a href="/faq/" class="text-gray-700 hover:text-blue-600 transition-colors">{% trans "FAQ" %}</a>
+            <a href="/#contact" class="text-gray-700 hover:text-blue-600 transition-colors">{% trans "Контакты" %}</a>
+          </nav>
+          <div class="hidden md:flex items-center space-x-4">
+            <button class="btn-accent px-7 py-2 rounded-lg font-medium text-lg" onclick="window.location.href='https://zappis.app/accounts/partners/register/'">{% trans "Попробовать бесплатно" %}</button>
+            <!-- Language Switcher -->
+            <div class="ml-6 flex items-center space-x-2">
+              <a href="?lang=ky" class="px-3 py-1 rounded font-semibold text-sm transition-all {% if current_language == 'ky' %}bg-blue-600 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}">KY</a>
+              <a href="?lang=ru" class="px-3 py-1 rounded font-semibold text-sm transition-all {% if current_language == 'ru' %}bg-blue-600 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}">RU</a>
+            </div>
+          </div>
+          <button class="md:hidden" @click="mobileMenuOpen = !mobileMenuOpen" :aria-expanded="mobileMenuOpen">
+            <i data-lucide="menu" x-show="!mobileMenuOpen" aria-hidden="true" style="width: 24px; height: 24px;"></i>
+            <i data-lucide="x" x-show="mobileMenuOpen" aria-hidden="true" style="width: 24px; height: 24px;"></i>
+          </button>
+        </div>
+      </div>
+      <div x-show="mobileMenuOpen" class="md:hidden bg-white border-t">
+        <div class="px-4 py-2 space-y-2">
+          <a href="/" class="block py-2 text-gray-700" @click="mobileMenuOpen = false">Главная</a>
+          <a href="/#product-features" class="block py-2 text-gray-700" @click="mobileMenuOpen = false">Продукт</a>
+          <a href="/#reviews" class="block py-2 text-gray-700" @click="mobileMenuOpen = false">Отзывы</a>
+          <a href="/faq/" class="block py-2 text-gray-700" @click="mobileMenuOpen = false">FAQ</a>
+          <a href="/#contact" class="block py-2 text-gray-700" @click="mobileMenuOpen = false">Контакты</a>
+          <button class="w-full btn-accent py-2 rounded-lg mt-2" onclick="window.location.href='https://zappis.app/accounts/partners/register/'">Попробовать бесплатно</button>
+          <!-- Language Switcher Mobile -->
+          <div class="flex items-center space-x-2 mt-4">
+            <a href="?lang=ky" class="px-3 py-1 rounded font-semibold text-sm transition-all {% if current_language == 'ky' %}bg-blue-600 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}">KY</a>
+            <a href="?lang=ru" class="px-3 py-1 rounded font-semibold text-sm transition-all {% if current_language == 'ru' %}bg-blue-600 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}">RU</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-br from-blue-50 to-indigo-100 pt-32 pb-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12">
+        <div class="text-center">
+          <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 mb-6">
+            {% trans "Выберите подходящий тариф" %}
+          </h1>
+          <p class="text-xl sm:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto">
+            {% trans "Гибкие тарифы для бизнеса любого размера. Начните с бесплатного пробного периода." %}
+          </p>
+          
+          <!-- Currency and Billing Toggle -->
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-6 mb-12">
+            <!-- Currency Switch -->
+            <div class="currency-switch">
+              <button 
+                @click="currency = 'KGS'" 
+                :class="{ 'active': currency === 'KGS' }"
+                class="text-sm"
+              >
+                KGS
+              </button>
+              <button 
+                @click="currency = 'USD'" 
+                :class="{ 'active': currency === 'USD' }"
+                class="text-sm"
+              >
+                USD
+              </button>
+              <button 
+                @click="currency = 'RUB'" 
+                :class="{ 'active': currency === 'RUB' }"
+                class="text-sm"
+              >
+                RUB
+              </button>
+            </div>
+            
+            <!-- Billing Toggle -->
+            <div class="flex items-center space-x-4">
+              <span class="text-sm font-medium" :class="{ 'text-gray-400': billing === 'yearly' }">{% trans "Месячно" %}</span>
+              <button 
+                @click="billing = billing === 'monthly' ? 'yearly' : 'monthly'"
+                class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
+                :class="billing === 'yearly' ? 'bg-blue-600' : 'bg-gray-200'"
+              >
+                <span 
+                  class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+                  :class="billing === 'yearly' ? 'translate-x-6' : 'translate-x-1'"
+                ></span>
+              </button>
+              <span class="text-sm font-medium" :class="{ 'text-gray-400': billing === 'monthly' }">{% trans "Годово" %}</span>
+              <span x-show="billing === 'yearly'" class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium">
+                {% trans "Экономия 17%" %}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing Cards Section -->
+    <section class="py-20 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
+          <template x-for="(plan, index) in plans" :key="index">
+            <div class="pricing-card relative bg-white rounded-2xl shadow-lg p-8" :class="{ 'featured': plan.popular }">
+              <!-- Plan Header -->
+              <div class="text-center mb-8">
+                <h3 class="text-2xl font-bold text-gray-900 mb-2" x-text="plan.name"></h3>
+                <div class="text-gray-600 mb-4">
+                  <span class="text-lg" x-text="plan.masters + ' мастеров'"></span>
+                </div>
+                
+                <!-- Price -->
+                <div class="mb-4">
+                  <div class="text-4xl font-bold text-gray-900" x-text="getFormattedPrice(plan)"></div>
+                  <div class="text-sm text-gray-500" x-text="billing === 'monthly' ? '/месяц' : '/год'"></div>
+                </div>
+                
+                <!-- Savings Badge -->
+                <div x-show="billing === 'yearly' && getSavings(plan) > 0" class="mb-4">
+                  <span class="bg-green-100 text-green-800 text-sm px-3 py-1 rounded-full font-medium">
+                    {% trans "Экономия" %} <span x-text="getSavings(plan) + ' ' + currencies[currency].symbol"></span>
+                  </span>
+                </div>
+              </div>
+              
+              <!-- Features -->
+              <ul class="feature-list mb-8">
+                <template x-for="(feature, featureIndex) in plan.features" :key="featureIndex">
+                  <li class="text-sm text-gray-700" x-text="feature"></li>
+                </template>
+              </ul>
+              
+              <!-- CTA Button -->
+              <div class="text-center">
+                <button 
+                  class="w-full py-3 px-6 rounded-xl font-semibold transition-all"
+                  :class="plan.popular ? 'btn-accent' : 'bg-gray-100 text-gray-900 hover:bg-gray-200'"
+                  onclick="window.location.href='https://zappis.app/accounts/partners/register/'"
+                >
+                  {% trans "Выбрать план" %}
+                </button>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-20 bg-gray-50">
+      <div class="max-w-4xl mx-auto px-4 sm:px-8 lg:px-12">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">{% trans "Часто задаваемые вопросы" %}</h2>
+          <p class="text-lg text-gray-600">{% trans "Ответы на популярные вопросы о тарифах" %}</p>
+        </div>
+        
+        <div class="space-y-8">
+          <div class="bg-white rounded-2xl p-8 shadow-sm">
+            <h3 class="text-xl font-semibold mb-4">{% trans "Можно ли изменить тариф в любое время?" %}</h3>
+            <p class="text-gray-600">{% trans "Да, вы можете изменить тариф в любое время. При переходе на более дорогой план доплата будет рассчитана пропорционально оставшемуся периоду." %}</p>
+          </div>
+          
+          <div class="bg-white rounded-2xl p-8 shadow-sm">
+            <h3 class="text-xl font-semibold mb-4">{% trans "Есть ли бесплатный пробный период?" %}</h3>
+            <p class="text-gray-600">{% trans "Да, мы предоставляем 14 дней бесплатного пробного периода для всех тарифов. Вы можете протестировать все функции без ограничений." %}</p>
+          </div>
+          
+          <div class="bg-white rounded-2xl p-8 shadow-sm">
+            <h3 class="text-xl font-semibold mb-4">{% trans "Что входит в стоимость тарифа?" %}</h3>
+            <p class="text-gray-600">{% trans "В стоимость входит полный доступ к платформе, техническая поддержка, обновления и все функции, указанные в описании тарифа." %}</p>
+          </div>
+          
+          <div class="bg-white rounded-2xl p-8 shadow-sm">
+            <h3 class="text-xl font-semibold mb-4">{% trans "Можно ли отменить подписку?" %}</h3>
+            <p class="text-gray-600">{% trans "Да, вы можете отменить подписку в любое время. Доступ к сервису сохранится до конца оплаченного периода." %}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-blue-600">
+      <div class="max-w-4xl mx-auto px-4 sm:px-8 lg:px-12 text-center">
+        <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6">{% trans "Готовы начать?" %}</h2>
+        <p class="text-xl text-blue-100 mb-8">{% trans "Присоединяйтесь к сотням предпринимателей, которые уже используют Zappis" %}</p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <button class="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-100 transition-all" onclick="window.location.href='https://zappis.app/accounts/partners/register/'">
+            {% trans "Начать бесплатно" %}
+          </button>
+          <button class="border-2 border-white text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white hover:text-blue-600 transition-all" onclick="window.location.href='/#contact'">
+            {% trans "Связаться с нами" %}
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white pt-16 pb-8">
+      <div class="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12">
+        <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-10 mb-10">
+          <div>
+            <div class="text-2xl font-bold mb-3">Zappis</div>
+            <p class="text-gray-400 mb-4 max-w-xs">Платформа для онлайн-записи и автоматизации бизнеса в сфере услуг</p>
+            <div class="flex space-x-3">
+              <a href="https://wa.me/77022589768" class="w-9 h-9 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors" aria-label="WhatsApp"><i data-lucide="message-circle" style="width: 18px; height: 18px;"></i></a>
+              <a href="tel:+77022589768" class="w-9 h-9 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors" aria-label="Телефон"><i data-lucide="phone" style="width: 18px; height: 18px;"></i></a>
+              <a href="mailto:support@zappis.app" class="w-9 h-9 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors" aria-label="Email"><i data-lucide="mail" style="width: 18px; height: 18px;"></i></a>
+            </div>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-10">
+            <div>
+              <h3 class="font-semibold mb-3">Продукт</h3>
+              <ul class="space-y-2 text-gray-400">
+                <li><a href="/dashboard/" class="hover:text-white transition-colors">Личный кабинет</a></li>
+                <li><a href="/settings/" class="hover:text-white transition-colors">Настройки</a></li>
+                <li><a href="/employees/" class="hover:text-white transition-colors">Сотрудники</a></li>
+                <li><a href="/clients/" class="hover:text-white transition-colors">Клиенты</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="font-semibold mb-3">Поддержка</h3>
+              <ul class="space-y-2 text-gray-400">
+                <li><a href="/support/" class="hover:text-white transition-colors">База знаний</a></li>
+                <li><a href="https://t.me/ZappisSupportBot" class="hover:text-white transition-colors">Поддержка в Telegram</a></li>
+                <li><a href="https://wa.me/77022589768" class="hover:text-white transition-colors">Поддержка в WhatsApp</a></li>
+                <li><a href="/#contact" class="hover:text-white transition-colors">Связаться с нами</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="font-semibold mb-3">Сотрудникам</h3>
+              <ul class="space-y-2 text-gray-400">
+                <li><a href="/employee/" class="hover:text-white transition-colors">Личный кабинет</a></li>
+                <li><a href="/employee/clients/" class="hover:text-white transition-colors">Клиенты</a></li>
+                <li><a href="/employee/settings/" class="hover:text-white transition-colors">Настройки</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+          <p class="text-gray-400 text-sm">© 2025 Zappis. Все права защищены.</p>
+          <div class="flex space-x-6 text-sm text-gray-400 mt-4 md:mt-0">
+            <a href="/terms/" class="hover:text-white transition-colors">Условия использования</a>
+            <a href="/privacy/" class="hover:text-white transition-colors">Политика конфиденциальности</a>
+            <a href="/cookies/" class="hover:text-white transition-colors">Cookies</a>
+          </div>
+        </div>
+      </div>
+      <div class="mt-8 text-center text-gray-400 text-sm flex items-center justify-center gap-1">
+        Сделано с
+        <i data-lucide="heart" class="text-red-500 mx-1" style="width: 16px; height: 16px;"></i>
+        в Оше командой Zappis.
+      </div>
+    </footer>
+  </div>
+
+  <!-- Initialize Lucide Icons -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html> 

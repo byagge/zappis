@@ -65,22 +65,24 @@
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
+  
+  
   <!-- Yandex.Metrika counter -->
-  <script type="text/javascript" >
-    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-    m[i].l=1*new Date();
-    for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-    k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-    (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+  <script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js', 'ym');
 
-    ym(103332996, "init", {
-        clickmap:true,
-        trackLinks:true,
-        accurateTrackBounce:true
-    });
+    ym(103332996, 'init', {webvisor:true, clickmap:true, accurateTrackBounce:true, trackLinks:true});
   </script>
   <noscript><div><img src="https://mc.yandex.ru/watch/103332996" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
   <!-- /Yandex.Metrika counter -->
+
+
+
 
   <!-- Google Analytics (раскомментируйте если нужно) -->
   <!--
@@ -355,6 +357,7 @@
             <a href="#product-features" class="text-gray-700 hover:text-blue-600 transition-colors">{% trans "Продукт" %}</a>
             <a href="#pricing" class="text-gray-700 hover:text-blue-600 transition-colors">{% trans "Цены" %}</a>
             <a href="#reviews" class="text-gray-700 hover:text-blue-600 transition-colors">{% trans "Отзывы" %}</a>
+            <a href="/faq/" class="text-gray-700 hover:text-blue-600 transition-colors">{% trans "FAQ" %}</a>
             <a href="#contact" class="text-gray-700 hover:text-blue-600 transition-colors">{% trans "Контакты" %}</a>
           </nav>
           <div class="hidden md:flex items-center space-x-4">
@@ -376,6 +379,7 @@
           <a href="#product-features" class="block py-2 text-gray-700" @click="mobileMenuOpen = false">Продукт</a>
           <a href="#pricing" class="block py-2 text-gray-700" @click="mobileMenuOpen = false">Цены</a>
           <a href="#reviews" class="block py-2 text-gray-700" @click="mobileMenuOpen = false">Отзывы</a>
+          <a href="/faq/" class="block py-2 text-gray-700" @click="mobileMenuOpen = false">FAQ</a>
           <a href="#contact" class="block py-2 text-gray-700" @click="mobileMenuOpen = false">Контакты</a>
           <button class="w-full btn-accent py-2 rounded-lg mt-2" onclick="window.location.href='https://zappis.app/accounts/partners/register/'">Попробовать бесплатно</button>
           <!-- Language Switcher Mobile -->

@@ -32,4 +32,6 @@ urlpatterns = [
     
     # Тестовая страница 404 (для разработки)
     path('test-404/', views.custom_404, name='test_404'),
+    path('faq/', views.faq_view, name='faq'),
+    path('pricing/', views.pricing_view, name='pricing'),
 ]

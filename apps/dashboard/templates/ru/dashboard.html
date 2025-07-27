@@ -1,9 +1,77 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zappis - Главное меню</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=1">
+  <title>Башкы меню — Zappis</title>
+  <meta name="description" content="Zappis — онлайн-запись, CRM и автоматизация для бизнеса. Приводим клиентов без звонков. Сайт, CRM и записи в одном месте. Попробуйте бесплатно!">
+  <meta name="keywords" content="онлайн запись, автоматизация, CRM, бизнес, салон красоты, стоматология, фитнес, бронирование, клиенты, Zappis">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://zappis.app/">
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="color-scheme" content="light">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="format-detection" content="telephone=no">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:url" content="https://zappis.app/">
+  <meta property="og:title" content="Онлайн-запись и автоматизация для бизнеса — Zappis">
+  <meta property="og:description" content="Zappis — онлайн-запись, CRM и автоматизация для бизнеса. Приводим клиентов без звонков. Сайт, CRM и записи в одном месте.">
+  <meta property="og:image" content="{% static 'og-image.png' %}">
+  <meta property="og:site_name" content="Zappis">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Онлайн-запись и автоматизация для бизнеса — Zappis">
+  <meta name="twitter:description" content="Zappis — онлайн-запись, CRM и автоматизация для бизнеса. Приводим клиентов без звонков. Сайт, CRM и записи в одном месте.">
+  <meta name="twitter:image" content="https://zappis.app/static/og-image.png">
+  <meta name="twitter:site" content="@zappisapp">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+  <link rel="icon" type="image/png" sizes="96x96" href="{% static 'favicon-96x96.png' %}">
+  <link rel="icon" type="image/x-icon" sizes="32x32" href="{% static 'favicon-32x32.ico' %}">
+  <link rel="icon" type="image/x-icon" sizes="16x16" href="{% static 'favicon-16x16.ico' %}">
+  <link rel="icon" type="image/svg+xml" href="{% static 'favicon.svg' %}">
+  <meta name="msapplication-TileColor" content="#3b82f6">
+  <meta name="msapplication-TileImage" content="{% static 'mstile-144x144.png' %}">
+
+  <!-- Structured Data (Organization) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Zappis",
+    "url": "https://zappis.app/",
+    "logo": "https://zappis.app/static/og-image.png",
+    "sameAs": [
+      "https://t.me/ZappisSupportBot",
+      "https://wa.me/77022589768"
+    ],
+    "description": "Онлайн-запись, CRM и автоматизация для бизнеса. Приводим клиентов без звонков. Сайт, CRM и записи в одном месте."
+  }
+  </script>
+
+    
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+        (function(m,e,t,r,i,k,a){
+            m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+            m[i].l=1*new Date();
+            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+        })(window, document,'script','https://mc.yandex.ru/metrika/tag.js', 'ym');
+
+        ym(103332996, 'init', {webvisor:true, clickmap:true, accurateTrackBounce:true, trackLinks:true});
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/103332996" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+
     <!-- Tailwind CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Lucide Icons -->
@@ -125,10 +193,10 @@
     <div id="tariff-modal" style="position:fixed;z-index:99999;top:0;left:0;width:100vw;height:100vh;background:rgba(30,41,59,0.85);display:flex;align-items:center;justify-content:center;">
         <div class="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center flex flex-col items-center animate-fade-in">
             <div class="mb-4">
-                <span class="inline-block bg-blue-100 text-blue-700 rounded-full px-4 py-2 text-lg font-bold mb-2">Спасибо за выбор Zappis!</span>
+                <span class="inline-block bg-blue-100 text-blue-700 rounded-full px-4 py-2 text-lg font-bold mb-2">Спасибо, что выбрали Zappis!</span>
             </div>
-            <h2 class="text-2xl font-bold text-gray-900 mb-2">Ваш пробный период закончился</h2>
-            <p class="text-gray-700 mb-4">Чтобы продолжить пользоваться Zappis и не потерять данные, выберите тариф.</p>
+            <h2 class="text-2xl font-bold text-gray-900 mb-2">Пробный период завершён</h2>
+            <p class="text-gray-700 mb-4">Чтобы продолжить пользоваться Zappis и не потерять данные, выберите подходящий тариф.</p>
             <div class="flex items-center justify-center mb-2">
                 <i data-lucide="zap" class="w-5 h-5 text-indigo-500 mr-1"></i>
                 <span class="text-sm text-indigo-700 font-semibold">Оплатите в течение 24 часов и получите скидку 10%.</span>
@@ -136,7 +204,7 @@
             <div class="mb-4">
                 <span class="block text-lg font-semibold text-indigo-700">Тариф — 990 сом/мес</span>
             </div>
-            <button class="mt-4 px-6 py-3 bg-indigo-600 text-white rounded-xl text-lg font-semibold shadow hover:bg-indigo-700 transition">Купить тариф</button>
+            <button class="mt-4 px-6 py-3 bg-indigo-600 text-white rounded-xl text-lg font-semibold shadow hover:bg-indigo-700 transition">Купить сейчас</button>
             <p class="mt-6 text-xs text-gray-400">Если у вас есть вопросы — <a href="mailto:support@zappis.app" class="underline">напишите нам</a></p>
         </div>
     </div>
@@ -149,17 +217,17 @@
                     <i data-lucide="eye" class="w-8 h-8 text-white"></i>
                 </div>
                 <h2 class="text-2xl font-bold text-gray-900 mb-2">Добро пожаловать в Zappis!</h2>
-                <p class="text-gray-700 mb-6">Хотите посмотреть, как выглядит развитый бизнес в нашей системе?</p>
+                <p class="text-gray-700 mb-6">Посмотрите, как работает система на примере.</p>
             </div>
             <div class="flex flex-col sm:flex-row gap-3 w-full">
                 <button onclick="window.location.href='/dashboard/demo/'" class="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-lg font-semibold shadow hover:from-blue-700 hover:to-purple-700 transition">
-                    Посмотреть демо
+                    Пример работы
                 </button>
                 <button onclick="skipDemo()" class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-xl text-lg font-semibold hover:bg-gray-50 transition">
                     Пропустить
                 </button>
             </div>
-            <p class="mt-4 text-xs text-gray-500">Вы всегда сможете посмотреть демо позже в настройках</p>
+            <p class="mt-4 text-xs text-gray-500">Вы всегда сможете посмотреть пример позже в настройках</p>
         </div>
     </div>
     {% endif %}
@@ -236,7 +304,7 @@
                     <span class="text-red-600">Пробный период завершён</span>
                 {% endif %}
                 {% if not is_tarifed %}
-                    <a href="/buy/" class="bg-blue-900 text-white px-4 py-1.5 rounded font-semibold hover:bg-blue-800 transition" style="font-size: 15px;">Buy now</a>
+                    <a href="/buy/" class="bg-blue-900 text-white px-4 py-1.5 rounded font-semibold hover:bg-blue-800 transition" style="font-size: 15px;">Купить сейчас</a>
                 {% endif %}
                 <!-- Языковой переключатель -->
                 <div class="ml-2 flex items-center gap-1">
@@ -279,7 +347,7 @@
         <aside class="w-64 bg-white border-r border-gray-200 p-4 space-y-6 fixed left-0 top-28 bottom-0 overflow-y-auto scrollbar-none z-20" style="scrollbar-width: none; -ms-overflow-style: none;">
             <!-- Навигация -->
             <div>
-                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Навигация</h3>
+                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Меню</h3>
                 <nav class="space-y-1">
                     <a href="/dashboard/" class="flex items-center space-x-3 px-3 py-2 rounded-lg bg-blue-50 text-blue-600">
                         <i data-lucide="home" class="w-5 h-5"></i>
@@ -295,7 +363,7 @@
                     </a>
                     <a href="/schedules/" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50">
                         <i data-lucide="calendar" class="w-5 h-5"></i>
-                        <span>Записи</span>
+                        <span>Записи клиентов</span>
                     </a>
                     <a href="/services/" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50">
                         <i data-lucide="scissors" class="w-5 h-5"></i>
@@ -310,7 +378,7 @@
 
             <!-- Статистика -->
             <div>
-                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Статистика</h3>
+                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Ваша статистика</h3>
                 <div class="space-y-3">
                     <div class="bg-gray-50 rounded-lg p-3">
                         <div class="flex items-center justify-between mb-1">
@@ -353,7 +421,7 @@
 
             <!-- Фильтры -->
             <div>
-                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Фильтры</h3>
+                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Быстрый доступ</h3>
                 <div class="space-y-2">
                     <a href="/schedules/" class="w-full flex items-center space-x-2 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50">
                         <i data-lucide="filter" class="w-4 h-4"></i>
@@ -377,17 +445,13 @@
             <div class="flex justify-between items-center mb-8">
                 <div>
                     <h1 class="text-3xl font-bold text-gray-900 mb-2" x-text="`Добро пожаловать, ${overview.user_name || 'Пользователь'}!`"></h1>
-                    <p class="text-gray-600">Вот что происходит в вашем бизнесе сегодня</p>
+                    <p class="text-gray-600">Здесь вы можете быстро посмотреть, что происходит в вашем бизнесе сегодня.</p>
                 </div>
                 <div class="flex space-x-4">
                     <a href="/schedules/" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2">
                         <i data-lucide="plus" class="w-4 h-4"></i>
-                        <span>Новая запись</span>
+                        <span>Добавить запись</span>
                     </a>
-                    <!-- <button class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center space-x-2">
-                        <i data-lucide="download" class="w-4 h-4"></i>
-                        <span>Отчет</span>
-                    </button> -->
                 </div>
             </div>
 

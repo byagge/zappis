@@ -1,0 +1,603 @@
+{% load i18n %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=1">
+  <title>Часто задаваемые вопросы — Zappis</title>
+  <meta name="description" content="Ответы на частые вопросы об онлайн-записи и автоматизации Zappis. Узнайте больше о возможностях платформы.">
+  <meta name="keywords" content="FAQ, вопросы, онлайн запись, автоматизация, CRM, бизнес, Zappis">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://zappis.app/faq/">
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="color-scheme" content="light">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="format-detection" content="telephone=no">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:url" content="https://zappis.app/faq/">
+  <meta property="og:title" content="Часто задаваемые вопросы — Zappis">
+  <meta property="og:description" content="Ответы на частые вопросы об онлайн-записи и автоматизации Zappis.">
+  <meta property="og:image" content="{% static 'og-image.png' %}">
+  <meta property="og:site_name" content="Zappis">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Часто задаваемые вопросы — Zappis">
+  <meta name="twitter:description" content="Ответы на частые вопросы об онлайн-записи и автоматизации Zappis.">
+  <meta name="twitter:image" content="https://zappis.app/static/og-image.png">
+  <meta name="twitter:site" content="@zappisapp">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+  <link rel="icon" type="image/png" sizes="96x96" href="{% static 'favicon-96x96.png' %}">
+  <link rel="icon" type="image/x-icon" sizes="32x32" href="{% static 'favicon-32x32.ico' %}">
+  <link rel="icon" type="image/x-icon" sizes="16x16" href="{% static 'favicon-16x16.ico' %}">
+  <link rel="icon" type="image/svg+xml" href="{% static 'favicon.svg' %}">
+  <meta name="msapplication-TileColor" content="#3b82f6">
+  <meta name="msapplication-TileImage" content="{% static 'mstile-144x144.png' %}">
+
+  <!-- Structured Data (FAQ) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Как подключиться к Zappis?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Оставьте заявку на сайте или зарегистрируйтесь самостоятельно — это займёт не больше 2 минут."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Сколько стоит использование платформы?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Первые 14 дней — бесплатно. Далее действует тарифный план, ознакомьтесь с актуальными ценами на странице 'Цены'."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- Tailwind CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- Alpine.js CDN -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Yandex.Metrika counter -->
+  <script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js', 'ym');
+
+    ym(103332996, 'init', {webvisor:true, clickmap:true, accurateTrackBounce:true, trackLinks:true});
+  </script>
+  <noscript><div><img src="https://mc.yandex.ru/watch/103332996" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+    .backdrop-blur {
+      backdrop-filter: blur(12px);
+      background: rgba(255,255,255,0.7);
+    }
+    .minimal-shadow {
+      box-shadow: 0 2px 16px 0 rgba(40, 60, 180, 0.06);
+    }
+    .btn-accent {
+      background: linear-gradient(90deg, #3b82f6 0%, #6366f1 100%);
+      color: #fff;
+      transition: box-shadow 0.2s, transform 0.2s, background 0.2s;
+      box-shadow: 0 2px 8px 0 rgba(59,130,246,0.10);
+    }
+    .btn-accent:hover {
+      background: linear-gradient(90deg, #6366f1 0%, #3b82f6 100%);
+      box-shadow: 0 4px 24px 0 rgba(59,130,246,0.18);
+      transform: translateY(-2px) scale(1.03);
+    }
+    .btn-minimal {
+      border: none;
+      background: transparent;
+      color: #6366f1;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .btn-minimal:hover {
+      color: #3b82f6;
+      text-decoration: underline;
+    }
+    .faq-item {
+      transition: all 0.3s ease;
+    }
+    .faq-item:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .faq-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    .faq-content.open {
+      max-height: 500px;
+    }
+  </style>
+</head>
+<body x-data="{ mobileMenuOpen: false }">
+  <div class="bg-white">
+    <!-- Header -->
+    <header class="backdrop-blur minimal-shadow fixed top-0 left-0 w-full z-50 transition-all duration-300">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center py-5 lg:py-6">
+          <div class="flex items-center">
+            <div class="text-2xl font-bold text-gray-900 tracking-tight">zappis</div>
+          </div>
+          <nav class="hidden md:flex space-x-8">
+            <a href="/" class="text-gray-700 hover:text-blue-600 transition-colors">Башкы бет</a>
+            <a href="#faq" class="text-gray-700 hover:text-blue-600 transition-colors">FAQ</a>
+            <a href="/#contact" class="text-gray-700 hover:text-blue-600 transition-colors">Байланыш</a>
+          </nav>
+          <div class="hidden md:flex items-center space-x-4">
+            <button class="btn-accent px-7 py-2 rounded-lg font-medium text-lg" onclick="window.location.href='https://zappis.app/accounts/partners/register/'">Попробовать бесплатно</button>
+            <!-- Language Switcher -->
+            <div class="ml-6 flex items-center space-x-2">
+              <a href="?lang=ky" class="px-3 py-1 rounded font-semibold text-sm transition-all {% if current_language == 'ky' %}bg-blue-600 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}">KY</a>
+              <a href="?lang=ru" class="px-3 py-1 rounded font-semibold text-sm transition-all {% if current_language == 'ru' %}bg-blue-600 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}">RU</a>
+            </div>
+          </div>
+          <button class="md:hidden" @click="mobileMenuOpen = !mobileMenuOpen" :aria-expanded="mobileMenuOpen">
+            <i data-lucide="menu" x-show="!mobileMenuOpen" aria-hidden="true" style="width: 24px; height: 24px;"></i>
+            <i data-lucide="x" x-show="mobileMenuOpen" aria-hidden="true" style="width: 24px; height: 24px;"></i>
+          </button>
+        </div>
+      </div>
+      <div x-show="mobileMenuOpen" class="md:hidden bg-white border-t">
+        <div class="px-4 py-2 space-y-2">
+          <a href="/" class="block py-2 text-gray-700" @click="mobileMenuOpen = false">Башкы бет</a>
+          <a href="#faq" class="block py-2 text-gray-700" @click="mobileMenuOpen = false">FAQ</a>
+          <a href="/#contact" class="block py-2 text-gray-700" @click="mobileMenuOpen = false">Байланыш</a>
+          <button class="w-full btn-accent py-2 rounded-lg mt-2" onclick="window.location.href='https://zappis.app/accounts/partners/register/'">Попробовать бесплатно</button>
+          <!-- Language Switcher Mobile -->
+          <div class="flex items-center space-x-2 mt-4">
+            <a href="?lang=ky" class="px-3 py-1 rounded font-semibold text-sm transition-all {% if current_language == 'ky' %}bg-blue-600 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}">KY</a>
+            <a href="?lang=ru" class="px-3 py-1 rounded font-semibold text-sm transition-all {% if current_language == 'ru' %}bg-blue-600 text-white{% else %}text-gray-700 hover:bg-gray-100{% endif %}">RU</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="bg-white min-h-screen flex items-center justify-center pt-24 pb-12">
+      <div class="w-full flex flex-col items-center justify-center text-center">
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-8 tracking-tight">
+          Көп берилген суроолор
+        </h1>
+        <p class="text-lg sm:text-xl lg:text-2xl text-gray-600 max-w-2xl mx-auto">
+          Биз Zappis тууралуу эң көп берилген суроолорго жоопторду топтодук
+        </p>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-24 bg-gray-50">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4">Сиздин суроолоруңузга жооптор</h2>
+          <p class="text-lg sm:text-xl text-gray-600">Жооп табылган жокпу? Биз менен байланышыңыз</p>
+        </div>
+        
+        <div class="space-y-6">
+          <!-- FAQ Item 1 -->
+          <div x-data="{ open: false }" class="faq-item bg-white border border-gray-200 rounded-xl shadow-sm">
+            <button @click="open = !open" class="w-full flex justify-between items-center p-6 text-left focus:outline-none hover:bg-gray-50 transition-colors">
+              <span class="text-lg font-semibold text-gray-900">Zappisке кантип кошулса болот?</span>
+              <i data-lucide="chevron-down" :class="open ? 'rotate-180' : ''" class="text-blue-600 transition-transform duration-200" style="width: 24px; height: 24px;"></i>
+            </button>
+            <div x-show="open" x-transition class="px-6 pb-6 text-gray-700">
+              <p class="mb-4">Zappisке кошулуу абдан оңой:</p>
+              <ol class="list-decimal list-inside space-y-2 ml-4">
+                <li>Сайттан арыз калтырыңыз же өз алдынча катталыңыз</li>
+                <li>Онлайн жазылуу үчүн жеке сайтыңызды алыңыз</li>
+                <li>Кызматтарды жана графикти орнотуңуз</li>
+                <li>Клиенттерден жазылууларды кабыл алыңыз</li>
+              </ol>
+              <p class="mt-4 text-sm text-gray-600">Бүткүл процесс 15 мүнөттөн ашпайт!</p>
+            </div>
+          </div>
+
+          <!-- FAQ Item 2 -->
+          <div x-data="{ open: false }" class="faq-item bg-white border border-gray-200 rounded-xl shadow-sm">
+            <button @click="open = !open" class="w-full flex justify-between items-center p-6 text-left focus:outline-none hover:bg-gray-50 transition-colors">
+              <span class="text-lg font-semibold text-gray-900">Платформаны колдонуу канча турат?</span>
+              <i data-lucide="chevron-down" :class="open ? 'rotate-180' : ''" class="text-blue-600 transition-transform duration-200" style="width: 24px; height: 24px;"></i>
+            </button>
+            <div x-show="open" x-transition class="px-6 pb-6 text-gray-700">
+              <p class="mb-4">Бизде жөнөкөй жана ачык тарифтик система:</p>
+              <ul class="space-y-2 ml-4">
+                <li class="flex items-center">
+                  <i data-lucide="check" class="text-green-500 mr-2" style="width: 16px; height: 16px;"></i>
+                  <span>Алгачкы 14 күн — акысыз</span>
+                </li>
+                <li class="flex items-center">
+                  <i data-lucide="check" class="text-green-500 mr-2" style="width: 16px; height: 16px;"></i>
+                  <span>Жашыруун комиссиялар жок</span>
+                </li>
+                <li class="flex items-center">
+                  <i data-lucide="check" class="text-green-500 mr-2" style="width: 16px; height: 16px;"></i>
+                  <span>Подписканы каалаган убакта токтотсо болот</span>
+                </li>
+              </ul>
+              <p class="mt-4 text-sm text-gray-600">Актуалдуу бааларды 'Баалар' баракчасынан көрүңүз.</p>
+            </div>
+          </div>
+
+          <!-- FAQ Item 3 -->
+          <div x-data="{ open: false }" class="faq-item bg-white border border-gray-200 rounded-xl shadow-sm">
+            <button @click="open = !open" class="w-full flex justify-between items-center p-6 text-left focus:outline-none hover:bg-gray-50 transition-colors">
+              <span class="text-lg font-semibold text-gray-900">Zappis кайсы бизнес түрлөрүнө ылайыктуу?</span>
+              <i data-lucide="chevron-down" :class="open ? 'rotate-180' : ''" class="text-blue-600 transition-transform duration-200" style="width: 24px; height: 24px;"></i>
+            </button>
+            <div x-show="open" x-transition class="px-6 pb-6 text-gray-700">
+              <p class="mb-4">Zappis бардык сервис бизнеске ылайыктуу:</p>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <h4 class="font-semibold mb-2">Сулуулук жана ден соолук</h4>
+                  <ul class="text-sm space-y-1">
+                    <li>Сулуулук салондору</li>
+                    <li>Чачтарачтар</li>
+                    <li>Стоматологиялар</li>
+                    <li>Массаж кабинеттер</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 class="font-semibold mb-2">Кызматтар жана сервистер</h4>
+                  <ul class="text-sm space-y-1">
+                    <li>Фитнес-клубдар</li>
+                    <li>Фотографтар</li>
+                    <li>Репетиторлор</li>
+                    <li>Автосервистер</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ Item 4 -->
+          <div x-data="{ open: false }" class="faq-item bg-white border border-gray-200 rounded-xl shadow-sm">
+            <button @click="open = !open" class="w-full flex justify-between items-center p-6 text-left focus:outline-none hover:bg-gray-50 transition-colors">
+              <span class="text-lg font-semibold text-gray-900">Эскертмелер системасы кантип иштейт?</span>
+              <i data-lucide="chevron-down" :class="open ? 'rotate-180' : ''" class="text-blue-600 transition-transform duration-200" style="width: 24px; height: 24px;"></i>
+            </button>
+            <div x-show="open" x-transition class="px-6 pb-6 text-gray-700">
+              <p class="mb-4">Zappis автоматтык түрдө эскертмелерди жөнөтөт:</p>
+              <div class="space-y-3">
+                <div class="flex items-start">
+                  <i data-lucide="message-circle" class="text-green-500 mr-3 mt-1" style="width: 20px; height: 20px;"></i>
+                  <div>
+                    <h5 class="font-semibold">WhatsApp жана Telegram</h5>
+                    <p class="text-sm text-gray-600">Жазылууну ырастоо жана эскертмелер</p>
+                  </div>
+                </div>
+                <div class="flex items-start">
+                  <i data-lucide="smartphone" class="text-blue-500 mr-3 mt-1" style="width: 20px; height: 20px;"></i>
+                  <div>
+                    <h5 class="font-semibold">Push-эскертмелер</h5>
+                    <p class="text-sm text-gray-600">Клиенттер жана кызматкерлер үчүн</p>
+                  </div>
+                </div>
+                <div class="flex items-start">
+                  <i data-lucide="mail" class="text-purple-500 mr-3 mt-1" style="width: 20px; height: 20px;"></i>
+                  <div>
+                    <h5 class="font-semibold">Email-рассылкалар</h5>
+                    <p class="text-sm text-gray-600">Акциялар жана жаңылыктар</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ Item 5 -->
+          <div x-data="{ open: false }" class="faq-item bg-white border border-gray-200 rounded-xl shadow-sm">
+            <button @click="open = !open" class="w-full flex justify-between items-center p-6 text-left focus:outline-none hover:bg-gray-50 transition-colors">
+              <span class="text-lg font-semibold text-gray-900">Zappisти бар болгон сайтка интеграция кылса болобу?</span>
+              <i data-lucide="chevron-down" :class="open ? 'rotate-180' : ''" class="text-blue-600 transition-transform duration-200" style="width: 24px; height: 24px;"></i>
+            </button>
+            <div x-show="open" x-transition class="px-6 pb-6 text-gray-700">
+              <p class="mb-4">Ооба, Zappisти өзүңүздүн бар болгон сайтыңызга интеграция кылса болот:</p>
+              <ul class="space-y-2 ml-4">
+                <li>Жазылуу виджеттери</li>
+                <li>Толук интеграция үчүн API</li>
+                <li>Соцтармактар үчүн QR-коддор</li>
+                <li>Мессенджерлер үчүн шилтемелер</li>
+              </ul>
+              <p class="mt-4 text-sm text-gray-600">Биздин команда интеграцияны сиздин муктаждыгыңызга жараша орнотуп берет.</p>
+            </div>
+          </div>
+
+          <!-- FAQ Item 6 -->
+          <div x-data="{ open: false }" class="faq-item bg-white border border-gray-200 rounded-xl shadow-sm">
+            <button @click="open = !open" class="w-full flex justify-between items-center p-6 text-left focus:outline-none hover:bg-gray-50 transition-colors">
+              <span class="text-lg font-semibold text-gray-900">Мобилдик тиркеме барбы?</span>
+              <i data-lucide="chevron-down" :class="open ? 'rotate-180' : ''" class="text-blue-600 transition-transform duration-200" style="width: 24px; height: 24px;"></i>
+            </button>
+            <div x-show="open" x-transition class="px-6 pb-6 text-gray-700">
+              <p class="mb-4">Zappis бардык түзмөктө иштейт:</p>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-blue-50 p-4 rounded-lg">
+                  <h5 class="font-semibold mb-2">Веб-версия</h5>
+                  <p class="text-sm text-gray-600">Компьютер жана планшет үчүн толук функционалдуу версия</p>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg">
+                  <h5 class="font-semibold mb-2">Мобилдик версия</h5>
+                  <p class="text-sm text-gray-600">Смартфон үчүн ыңгайлаштырылган версия</p>
+                </div>
+              </div>
+              <p class="mt-4 text-sm text-gray-600">Мобилдик тиркеме иштелип чыгууда жана жакында жеткиликтүү болот.</p>
+            </div>
+          </div>
+
+          <!-- FAQ Item 7 -->
+          <div x-data="{ open: false }" class="faq-item bg-white border border-gray-200 rounded-xl shadow-sm">
+            <button @click="open = !open" class="w-full flex justify-between items-center p-6 text-left focus:outline-none hover:bg-gray-50 transition-colors">
+              <span class="text-lg font-semibold text-gray-900">Лоялдуулук системасы кантип иштейт?</span>
+              <i data-lucide="chevron-down" :class="open ? 'rotate-180' : ''" class="text-blue-600 transition-transform duration-200" style="width: 24px; height: 24px;"></i>
+            </button>
+            <div x-show="open" x-transition class="px-6 pb-6 text-gray-700">
+              <p class="mb-4">Zappisтин лоялдуулук системасына төмөнкүлөр кирет:</p>
+              <div class="space-y-3">
+                <div class="flex items-center">
+                  <i data-lucide="gift" class="text-red-500 mr-3" style="width: 20px; height: 20px;"></i>
+                  <span>Бонус карталар жана упайлар</span>
+                </div>
+                <div class="flex items-center">
+                  <i data-lucide="credit-card" class="text-blue-500 mr-3" style="width: 20px; height: 20px;"></i>
+                  <span>Белек сертификаттар</span>
+                </div>
+                <div class="flex items-center">
+                  <i data-lucide="calendar" class="text-green-500 mr-3" style="width: 20px; height: 20px;"></i>
+                  <span>Абонементтер жана кызмат топтомдору</span>
+                </div>
+                <div class="flex items-center">
+                  <i data-lucide="percent" class="text-purple-500 mr-3" style="width: 20px; height: 20px;"></i>
+                  <span>Жеке арзандатуулар</span>
+                </div>
+              </div>
+              <p class="mt-4 text-sm text-gray-600">Бардык программаларды бизнесиңизге ылайыкташтырса болот.</p>
+            </div>
+          </div>
+
+          <!-- FAQ Item 8 -->
+          <div x-data="{ open: false }" class="faq-item bg-white border border-gray-200 rounded-xl shadow-sm">
+            <button @click="open = !open" class="w-full flex justify-between items-center p-6 text-left focus:outline-none hover:bg-gray-50 transition-colors">
+              <span class="text-lg font-semibold text-gray-900">Кандай колдоо көрсөтүлөт?</span>
+              <i data-lucide="chevron-down" :class="open ? 'rotate-180' : ''" class="text-blue-600 transition-transform duration-200" style="width: 24px; height: 24px;"></i>
+            </button>
+            <div x-show="open" x-transition class="px-6 pb-6 text-gray-700">
+              <p class="mb-4">Биз толук колдоо көрсөтөбүз:</p>
+              <div class="space-y-3">
+                <div class="flex items-center">
+                  <i data-lucide="message-circle" class="text-green-500 mr-3" style="width: 20px; height: 20px;"></i>
+                  <span>WhatsApp: +7 702 258 9768</span>
+                </div>
+                <div class="flex items-center">
+                  <i data-lucide="send" class="text-blue-500 mr-3" style="width: 20px; height: 20px;"></i>
+                  <span>Telegram: @ZappisSupportBot</span>
+                </div>
+                <div class="flex items-center">
+                  <i data-lucide="mail" class="text-purple-500 mr-3" style="width: 20px; height: 20px;"></i>
+                  <span>Email: support@zappis.app</span>
+                </div>
+              </div>
+              <p class="mt-4 text-sm text-gray-600">Колдоо 24/7 иштейт. Жооп берүү убактысы — 5 мүнөткө чейин.</p>
+            </div>
+          </div>
+
+          <!-- FAQ Item 9 -->
+          <div x-data="{ open: false }" class="faq-item bg-white border border-gray-200 rounded-xl shadow-sm">
+            <button @click="open = !open" class="w-full flex justify-between items-center p-6 text-left focus:outline-none hover:bg-gray-50 transition-colors">
+              <span class="text-lg font-semibold text-gray-900">Башка CRMден маалыматтарды өткөрүп берсе болобу?</span>
+              <i data-lucide="chevron-down" :class="open ? 'rotate-180' : ''" class="text-blue-600 transition-transform duration-200" style="width: 24px; height: 24px;"></i>
+            </button>
+            <div x-show="open" x-transition class="px-6 pb-6 text-gray-700">
+              <p>Ооба, биз башка CRM системасынан маалыматтарды өткөрүп берүүгө жардам беребиз. Жеке консультация жана тез миграция үчүн колдоо кызматына кайрылыңыз.</p>
+            </div>
+          </div>
+
+          <!-- FAQ Item 10 -->
+          <div x-data="{ open: false }" class="faq-item bg-white border border-gray-200 rounded-xl shadow-sm">
+            <button @click="open = !open" class="w-full flex justify-between items-center p-6 text-left focus:outline-none hover:bg-gray-50 transition-colors">
+              <span class="text-lg font-semibold text-gray-900">Zappisти канча убакытта ишке киргизсе болот?</span>
+              <i data-lucide="chevron-down" :class="open ? 'rotate-180' : ''" class="text-blue-600 transition-transform duration-200" style="width: 24px; height: 24px;"></i>
+            </button>
+            <div x-show="open" x-transition class="px-6 pb-6 text-gray-700">
+              <p>Ишке киргизүү 1-3 күндү алат. Көпчүлүк колдонуучулар катталган күнү эле иштей башташат.</p>
+            </div>
+          </div>
+
+          <!-- FAQ Item 11 -->
+          <div x-data="{ open: false }" class="faq-item bg-white border border-gray-200 rounded-xl shadow-sm">
+            <button @click="open = !open" class="w-full flex justify-between items-center p-6 text-left focus:outline-none hover:bg-gray-50 transition-colors">
+              <span class="text-lg font-semibold text-gray-900">Кандай төлөө ыкмалары бар?</span>
+              <i data-lucide="chevron-down" :class="open ? 'rotate-180' : ''" class="text-blue-600 transition-transform duration-200" style="width: 24px; height: 24px;"></i>
+            </button>
+            <div x-show="open" x-transition class="px-6 pb-6 text-gray-700">
+              <p>Подписканы банк картасы, MBank аркылуу же юридикалык жактар үчүн эсеп аркылуу төлөөгө болот.</p>
+            </div>
+          </div>
+
+          <!-- FAQ Item 12 -->
+          <div x-data="{ open: false }" class="faq-item bg-white border border-gray-200 rounded-xl shadow-sm">
+            <button @click="open = !open" class="w-full flex justify-between items-center p-6 text-left focus:outline-none hover:bg-gray-50 transition-colors">
+              <span class="text-lg font-semibold text-gray-900">Менин маалыматтарым коопсузбу?</span>
+              <i data-lucide="chevron-down" :class="open ? 'rotate-180' : ''" class="text-blue-600 transition-transform duration-200" style="width: 24px; height: 24px;"></i>
+            </button>
+            <div x-show="open" x-transition class="px-6 pb-6 text-gray-700">
+              <p>Ооба, бардык маалыматтар корголгон серверлерде сакталат жана дайыма резервдик көчүрмөлөр жасалат. Биз коопсуздук жана купуялуулук стандарттарын сактайбыз.</p>
+            </div>
+          </div>
+
+          <!-- FAQ Item 13 -->
+          <div x-data="{ open: false }" class="faq-item bg-white border border-gray-200 rounded-xl shadow-sm">
+            <button @click="open = !open" class="w-full flex justify-between items-center p-6 text-left focus:outline-none hover:bg-gray-50 transition-colors">
+              <span class="text-lg font-semibold text-gray-900">Бир нече филиал менен иштесе болобу?</span>
+              <i data-lucide="chevron-down" :class="open ? 'rotate-180' : ''" class="text-blue-600 transition-transform duration-200" style="width: 24px; height: 24px;"></i>
+            </button>
+            <div x-show="open" x-transition class="px-6 pb-6 text-gray-700">
+              <p>Ооба, Zappis бир нече филиал менен иштөөнү колдойт жана алардын баарын бир аккаунттан башкарса болот.</p>
+            </div>
+          </div>
+
+          <!-- FAQ Item 14 -->
+          <div x-data="{ open: false }" class="faq-item bg-white border border-gray-200 rounded-xl shadow-sm">
+            <button @click="open = !open" class="w-full flex justify-between items-center p-6 text-left focus:outline-none hover:bg-gray-50 transition-colors">
+              <span class="text-lg font-semibold text-gray-900">Соцтармактар менен интеграция барбы?</span>
+              <i data-lucide="chevron-down" :class="open ? 'rotate-180' : ''" class="text-blue-600 transition-transform duration-200" style="width: 24px; height: 24px;"></i>
+            </button>
+            <div x-show="open" x-transition class="px-6 pb-6 text-gray-700">
+              <p>Ооба, Zappisти WhatsApp, Telegram жана башка мессенджерлерге интеграция кылса болот, ошондой эле QR-коддорду жана соцтармактар үчүн шилтемелерди колдонсо болот.</p>
+            </div>
+          </div>
+
+          <!-- FAQ Item 15 -->
+          <div x-data="{ open: false }" class="faq-item bg-white border border-gray-200 rounded-xl shadow-sm">
+            <button @click="open = !open" class="w-full flex justify-between items-center p-6 text-left focus:outline-none hover:bg-gray-50 transition-colors">
+              <span class="text-lg font-semibold text-gray-900">Кызматкерлерди кантип кошсо болот?</span>
+              <i data-lucide="chevron-down" :class="open ? 'rotate-180' : ''" class="text-blue-600 transition-transform duration-200" style="width: 24px; height: 24px;"></i>
+            </button>
+            <div x-show="open" x-transition class="px-6 pb-6 text-gray-700">
+              <p>Кызматкерлерди жеке кабинеттеги «Кызматкерлер» бөлүмүнөн кошсо болот. Ар бир кызматкерге өзүнчө укуктарды жана графикти орнотууга болот.</p>
+            </div>
+          </div>
+
+          <!-- FAQ Item 16 -->
+          <div x-data="{ open: false }" class="faq-item bg-white border border-gray-200 rounded-xl shadow-sm">
+            <button @click="open = !open" class="w-full flex justify-between items-center p-6 text-left focus:outline-none hover:bg-gray-50 transition-colors">
+              <span class="text-lg font-semibold text-gray-900">Ар бир кызматкер үчүн өзүнчө график коюуга болобу?</span>
+              <i data-lucide="chevron-down" :class="open ? 'rotate-180' : ''" class="text-blue-600 transition-transform duration-200" style="width: 24px; height: 24px;"></i>
+            </button>
+            <div x-show="open" x-transition class="px-6 pb-6 text-gray-700">
+              <p>Ооба, ар бир кызматкер үчүн өзүнчө график, эс алуу жана иш убактысын коюуга болот.</p>
+            </div>
+          </div>
+
+          <!-- FAQ Item 17 -->
+          <div x-data="{ open: false }" class="faq-item bg-white border border-gray-200 rounded-xl shadow-sm">
+            <button @click="open = !open" class="w-full flex justify-between items-center p-6 text-left focus:outline-none hover:bg-gray-50 transition-colors">
+              <span class="text-lg font-semibold text-gray-900">Демо-версия барбы?</span>
+              <i data-lucide="chevron-down" :class="open ? 'rotate-180' : ''" class="text-blue-600 transition-transform duration-200" style="width: 24px; height: 24px;"></i>
+            </button>
+            <div x-show="open" x-transition class="px-6 pb-6 text-gray-700">
+              <p>Ооба, <a href="/demo/" class="text-blue-600 underline">Демо</a> баракчасынан каттоосуз демо-версияны көрө аласыз.</p>
+            </div>
+          </div>
+
+          <!-- FAQ Item 18 -->
+          <div x-data="{ open: false }" class="faq-item bg-white border border-gray-200 rounded-xl shadow-sm">
+            <button @click="open = !open" class="w-full flex justify-between items-center p-6 text-left focus:outline-none hover:bg-gray-50 transition-colors">
+              <span class="text-lg font-semibold text-gray-900">Подписканы кантип токтотсо болот?</span>
+              <i data-lucide="chevron-down" :class="open ? 'rotate-180' : ''" class="text-blue-600 transition-transform duration-200" style="width: 24px; height: 24px;"></i>
+            </button>
+            <div x-show="open" x-transition class="px-6 pb-6 text-gray-700">
+              <p>Подписканы каалаган убакта жеке кабинеттен же колдоо кызматына кайрылып токтотсо болот. Калган күндөр төлөнгөн мөөнөт аягына чейин жеткиликтүү болот.</p>
+            </div>
+          </div>
+
+        <!-- Contact CTA -->
+        <div class="mt-16 text-center bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
+          <h3 class="text-2xl font-bold text-gray-900 mb-4">Сурооңузга жооп таппадыңызбы?</h3>
+          <p class="text-gray-600 mb-6">Биздин колдоо командасы менен байланышыңыз</p>
+          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <button class="btn-accent px-8 py-3 rounded-xl font-semibold" onclick="window.location.href='https://t.me/ZappisSupportBot'">
+              <i data-lucide="send" class="inline mr-2" style="width: 20px; height: 20px;"></i>
+              Telegram аркылуу жазуу
+            </button>
+            <button class="btn-minimal px-8 py-3 rounded-xl font-semibold border border-gray-300" onclick="window.location.href='https://wa.me/77022589768'">
+              <i data-lucide="message-circle" class="inline mr-2" style="width: 20px; height: 20px;"></i>
+              WhatsApp аркылуу жазуу
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white pt-16 pb-8">
+      <div class="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12">
+        <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-10 mb-10">
+          <div>
+            <div class="text-2xl font-bold mb-3">Zappis</div>
+            <p class="text-gray-400 mb-4 max-w-xs">Кызмат көрсөтүү тармагындагы бизнес үчүн онлайн-жазылуу жана автоматташтыруу платформасы</p>
+            <div class="flex space-x-3">
+              <a href="https://wa.me/77022589768" class="w-9 h-9 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors" aria-label="WhatsApp"><i data-lucide="message-circle" style="width: 18px; height: 18px;"></i></a>
+              <a href="tel:+77022589768" class="w-9 h-9 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors" aria-label="Телефон"><i data-lucide="phone" style="width: 18px; height: 18px;"></i></a>
+              <a href="mailto:support@zappis.app" class="w-9 h-9 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors" aria-label="Email"><i data-lucide="mail" style="width: 18px; height: 18px;"></i></a>
+            </div>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-10">
+            <div>
+              <h3 class="font-semibold mb-3">Продукт</h3>
+              <ul class="space-y-2 text-gray-400">
+                <li><a href="/dashboard/" class="hover:text-white transition-colors">Жеке кабинет</a></li>
+                <li><a href="/settings/" class="hover:text-white transition-colors">Жөндөөлөр</a></li>
+                <li><a href="/employees/" class="hover:text-white transition-colors">Кызматкерлер</a></li>
+                <li><a href="/clients/" class="hover:text-white transition-colors">Клиенттер</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="font-semibold mb-3">Колдоо</h3>
+              <ul class="space-y-2 text-gray-400">
+                <li><a href="/support/" class="hover:text-white transition-colors">База билимдер</a></li>
+                <li><a href="https://t.me/ZappisSupportBot" class="hover:text-white transition-colors">Telegram аркылуу колдоо</a></li>
+                <li><a href="https://wa.me/77022589768" class="hover:text-white transition-colors">WhatsApp аркылуу колдоо</a></li>
+                <li><a href="#contact" class="hover:text-white transition-colors">Биз менен байланышуу</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="font-semibold mb-3">Кызматкерлер үчүн</h3>
+              <ul class="space-y-2 text-gray-400">
+                <li><a href="/employee/" class="hover:text-white transition-colors">Жеке кабинет</a></li>
+                <li><a href="/employee/clients/" class="hover:text-white transition-colors">Клиенттер</a></li>
+                <li><a href="/employee/settings/" class="hover:text-white transition-colors">Жөндөөлөр</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+          <p class="text-gray-400 text-sm">© 2025 Zappis. Бардык укуктар корголгон.</p>
+          <div class="flex space-x-6 text-sm text-gray-400 mt-4 md:mt-0">
+            <a href="/terms/" class="hover:text-white transition-colors">Колдонуу шарттары</a>
+            <a href="/privacy/" class="hover:text-white transition-colors">Купуялуулук саясаты</a>
+            <a href="/cookies/" class="hover:text-white transition-colors">Cookies</a>
+          </div>
+        </div>
+      </div>
+      <div class="mt-8 text-center text-gray-400 text-sm flex items-center justify-center gap-1">
+        Махабат менен
+        <i data-lucide="heart" class="text-red-500 mx-1" style="width: 16px; height: 16px;"></i>
+        Ош шаарында Zappis командасы тарабынан жасалды.
+      </div>
+    </footer>
+  </div>
+
+  <!-- Initialize Lucide Icons -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html> 

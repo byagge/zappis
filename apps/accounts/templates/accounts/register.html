@@ -1,551 +1,508 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>zappis Registration Form</title>
-    <!-- Alpine.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-    <!-- Tailwind CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <!-- Lucide Icons CDN -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Inputmask CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/inputmask/5.0.7/inputmask.min.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        body { font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; }
-        .logo-font { font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; font-weight: 700; letter-spacing: -1px; }
-        button { transition: all 0.2s ease-in-out; }
-        button:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
-        .modern-input { transition: all 0.2s ease; border: 1px solid #e5e7eb; font-family: inherit; }
-        .modern-input:focus { border-color: #000; outline: none; }
-        .phone-input-container { position: relative; display: flex; align-items: center; background: white; border: 1px solid #e5e7eb; border-radius: 0.375rem; transition: all 0.2s ease; }
-        .phone-input-container:focus-within { border-color: #000; }
-        .phone-input-container input { border: none; box-shadow: none; font-family: inherit; }
-        .phone-input-container input:focus { box-shadow: none; outline: none; }
-        .error-message { opacity: 0; transform: translateY(-10px); transition: all 0.3s ease; }
-        .error-message.show { opacity: 1; transform: translateY(0); }
-        .terms-container { position: relative; margin-top: 1rem; padding: 1rem; border-radius: 0.5rem; background-color: #f8fafc; transition: all 0.3s ease; }
-        .terms-container.error { background-color: #fef2f2; border: 1px solid #fee2e2; }
-        .terms-error { position: absolute; top: -2rem; left: 0; color: #ef4444; font-size: 0.875rem; opacity: 0; transform: translateY(-10px); transition: all 0.3s ease; }
-        .terms-error.show { opacity: 1; transform: translateY(0); }
-        .step-line { position: absolute; top: 1rem; left: 40%; width: 30%; height: 1px; background-color: #e5e7eb; z-index: 0; }
-        @media (max-width: 640px) { .step-line { left: 35%; width: 40%; } }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Регистрация — Zappis</title>
+  <meta name="description" content="Быстрая регистрация в Zappis — онлайн-запись и CRM для вашего бизнеса">
+  
+  <!-- Tailwind CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- Alpine.js -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+    
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    body { 
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      min-height: 100vh;
+    }
+    
+    .glass-card {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+    }
+    
+    .modern-input {
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      transition: all 0.2s ease;
+    }
+    
+    .modern-input:focus {
+      background: rgba(255, 255, 255, 0.95);
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      outline: none;
+    }
+    
+    .modern-button {
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      border: none;
+      transition: all 0.2s ease;
+    }
+    
+    .modern-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+    }
+    
+    .slide-up {
+      animation: slideUp 0.6s ease-out forwards;
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .gradient-text {
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .feature-item {
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 12px;
+      padding: 16px;
+      transition: all 0.2s ease;
+    }
+    
+    .feature-item:hover {
+      background: rgba(255, 255, 255, 0.9);
+      transform: translateY(-2px);
+    }
+    
+    .stats-item {
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+    
+    .stats-item:hover {
+      background: rgba(255, 255, 255, 0.95);
+      transform: translateY(-2px);
+    }
+    
+    .form-section {
+      animation-delay: calc(var(--delay) * 0.1s);
+    }
+    
+    @media (max-width: 768px) {
+      .mobile-stack {
+        flex-direction: column;
+      }
+      
+      .mobile-full {
+        width: 100%;
+        min-height: auto;
+      }
+    }
+  </style>
 </head>
-<body>
-  <div 
-    class="min-h-screen bg-gray-50" 
-    x-data="registrationForm()"
-    x-init="initForm(
-      {{ selected_city.id|default:'1' }},
-      '{{ selected_city.name|default:'Бишкек' }}',
-      '{{ selected_country|default:'Кыргызстан' }}',
-      JSON.parse(document.getElementById('cities-data').textContent)
-    )"
-  >
-    <!-- Header -->
-    <header class="bg-white shadow-sm">
-      <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-        <div class="flex items-center space-x-2">
-          <span class="logo-font text-3xl text-gray-900">zappis</span>
-        </div>
-        <div class="flex items-center space-x-6">
-          <div class="flex items-center text-red-500 text-base font-medium cursor-pointer select-none" @click="showCityModal = true">
-            <i data-lucide="map-pin" class="w-5 h-5 mr-1"></i>
-            <span x-text="selectedCityName"></span>
+<body class="min-h-screen overflow-x-hidden">
+  <div x-data="registrationForm()" x-init="initForm()">
+    <!-- Переключатель языков -->
+    <div class="fixed top-20 right-6 z-50">
+      <div class="flex bg-white rounded-lg shadow-lg border">
+        <button 
+          @click="language = 'ru'" 
+          :class="language === 'ru' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-gray-900'"
+          class="px-3 py-2 text-sm font-medium rounded-l-lg transition-colors"
+        >
+          RU
+        </button>
+        <button 
+          @click="language = 'ky'" 
+          :class="language === 'ky' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-gray-900'"
+          class="px-3 py-2 text-sm font-medium rounded-r-lg transition-colors"
+        >
+          KG
+        </button>
+      </div>
+    </div>
+    <!-- Минималистичный хедер -->
+    <header class="fixed top-0 left-0 w-full z-50 bg-white border-b border-gray-200">
+      <div class="max-w-7xl mx-auto px-6 py-4">
+        <div class="flex justify-between items-center">
+          <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+              <span class="text-white font-bold text-sm">Z</span>
+            </div>
+            <span class="text-xl font-bold text-gray-900">Zappis</span>
           </div>
-          <a href="#" class="text-gray-600 hover:text-gray-900 transition-colors text-base">Стать партнером</a>
-          <a href="#" class="text-gray-600 hover:text-gray-900 transition-colors text-base">Контакты</a>
-          <button class="px-5 py-2 bg-green-500 text-white rounded-lg font-semibold shadow hover:bg-green-600 transition-all text-base">
-            Войти
-          </button>
+          <a href="/accounts/login/" class="text-gray-600 hover:text-blue-600 font-medium transition-colors">
+            <span x-text="t.login"></span>
+          </a>
         </div>
       </div>
     </header>
-    <!-- Main Content -->
-    <main class="max-w-4xl mx-auto px-4 py-8">
-      <div class="bg-white rounded-lg shadow-md p-4 sm:p-8">
-        <h1 class="text-2xl font-bold text-gray-900 mb-2">Регистрация</h1>
-        <p class="text-gray-600 mb-8">
-          Пройдите регистрацию и получите бесплатный доступ ко всем функциям программы на 5 дней
-        </p>
-        <template x-if="errors.api">
-          <div class="mb-4 text-red-500 text-sm" x-text="errors.api"></div>
-        </template>
-        <!-- Step Indicators with Lines -->
-        <div class="flex justify-center space-x-12 mb-8 relative">
-          <div class="step-line"></div>
-          <div class="flex flex-col items-center relative z-10">
-            <div :class="{
-              'w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium': true,
-              'bg-blue-500 text-white': currentStep >= 1,
-              'bg-gray-200 text-gray-600': currentStep < 1
-            }">
-              <i data-lucide="check" class="w-4 h-4" x-show="currentStep > 1"></i>
-              <span x-show="currentStep <= 1">1</span>
+
+    <!-- Основной контент -->
+    <main class="pt-20 pb-12">
+      <div class="flex mobile-stack min-h-screen">
+        <!-- Левая часть - Информация -->
+        <div class="w-1/2 mobile-full min-h-screen flex items-center justify-center p-8 lg:p-12 bg-gradient-to-br from-blue-50 to-indigo-100">
+          <div class="w-full max-w-lg">
+            <!-- Заголовок -->
+            <div class="mb-12 slide-up" style="--delay: 1;">
+              <h1 class="text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight mb-6 text-gray-900">
+                <span x-text="t.automateBusiness"></span> 
+                <span class="gradient-text" x-text="t.business"></span>
+                <span x-text="t.withZappis"></span>
+              </h1>
+              <p class="text-lg lg:text-xl text-gray-600 leading-relaxed">
+                <span x-text="t.joinHundreds"></span>
+              </p>
             </div>
-            <span class="text-sm text-gray-600">Основное</span>
-          </div>
-          <div class="flex flex-col items-center relative z-10">
-            <div :class="{
-              'w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium': true,
-              'bg-blue-500 text-white': currentStep >= 2,
-              'bg-gray-200 text-gray-600': currentStep < 2
-            }">
-              <i data-lucide="check" class="w-4 h-4" x-show="currentStep > 2"></i>
-              <span x-show="currentStep <= 2">2</span>
-            </div>
-            <span class="text-sm text-gray-600">О компании</span>
-          </div>
-          <div class="flex flex-col items-center relative z-10">
-            <div :class="{
-              'w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium': true,
-              'bg-blue-500 text-white': currentStep >= 3,
-              'bg-gray-200 text-gray-600': currentStep < 3
-            }">
-              <i data-lucide="check" class="w-4 h-4" x-show="currentStep > 3"></i>
-              <span x-show="currentStep <= 3">3</span>
-            </div>
-            <span class="text-sm text-gray-600">WhatsApp код</span>
-          </div>
-        </div>
-        <!-- Step 1: Basic Information -->
-        <div x-show="currentStep === 1" class="space-y-6">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
-            <div>
-              <h3 class="text-lg font-medium text-gray-900 mb-4">О себе:</h3>
-              <div class="space-y-4">
-                <div>
-                  <label class="block text-sm text-gray-600 mb-1">
-                    <span class="text-red-500">*</span> ФИО:
-                  </label>
-                  <input
-                    type="text"
-                    x-model="formData.name"
-                    @input="errors.name = false"
-                    class="w-full px-3 py-2 modern-input rounded-md"
-                    :class="{'border-red-500': errors.name}"
-                  />
-                  <p x-show="errors.name" class="text-red-500 text-sm mt-1">Пожалуйста, введите ваше ФИО</p>
+            
+            <!-- Преимущества -->
+            <div class="space-y-4 mb-12 slide-up" style="--delay: 2;">
+              <div class="feature-item flex items-center space-x-4">
+                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                  <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
                 </div>
-                <div>
-                  <label class="block text-sm text-gray-600 mb-1">
-                    <span class="text-red-500">*</span> Телефон:
-                  </label>
-                  <div class="phone-input-container" :class="{'border-red-500': errors.phone}">
-                    <img src="https://flagcdn.com/w20/kg.png" alt="Флаг Кыргызстана" class="w-4 h-3 ml-3">
-                    <span class="text-gray-600 ml-1">+996</span>
-                    <input
-                      type="text"
-                      x-model="formData.phoneMasked"
-                      @input="formatPhoneInput($event)"
-                      class="flex-1 px-3 py-2 focus:outline-none"
-                      placeholder="999 999 999"
-                      maxlength="11"
-                      pattern="[0-9 ]*"
-                      inputmode="numeric"
-                    />
+                                  <div>
+                    <h3 class="text-base font-semibold text-gray-900 mb-1" x-text="t.freeTrial"></h3>
+                    <p class="text-sm text-gray-600" x-text="t.freeTrialDesc"></p>
                   </div>
-                  <p x-show="errors.phone" class="text-red-500 text-sm mt-1">Пожалуйста, введите корректный номер телефона</p>
-                </div>
               </div>
-            </div>
-            <div>
-              <h3 class="text-lg font-medium text-gray-900 mb-4">Расположение:</h3>
-              <div class="space-y-4">
-                <div>
-                  <label class="block text-sm text-gray-600 mb-1">
-                    <span class="text-red-500">*</span> Страна:
-                  </label>
-                  <input
-                    type="text"
-                    x-model="formData.country"
-                    class="w-full px-3 py-2 modern-input rounded-md bg-gray-50"
-                    readonly
-                  />
+              
+              <div class="feature-item flex items-center space-x-4">
+                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                  </svg>
                 </div>
-                <div class="relative">
-                  <label class="block text-sm text-gray-600 mb-1">
-                    <span class="text-red-500">*</span> Город:
-                  </label>
-                  <div class="w-full px-3 py-2 modern-input rounded-md bg-white border border-gray-300 flex items-center cursor-pointer"
-                       @click="showCityModal = true">
-                    <span class="flex-1 text-gray-900" x-text="selectedCityName"></span>
-                    <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400 ml-2"></i>
+                                  <div>
+                    <h3 class="text-base font-semibold text-gray-900 mb-1" x-text="t.quickSetup"></h3>
+                    <p class="text-sm text-gray-600" x-text="t.quickSetupDesc"></p>
                   </div>
-                  <input type="hidden" x-model="formData.city">
-                  <p x-show="errors.city" class="text-red-500 text-sm mt-1">Пожалуйста, выберите город</p>
-                </div>
               </div>
-            </div>
-          </div>
-          <div class="terms-container" style="display:none"></div>
-          <div class="flex justify-end flex-col items-end">
-            <button
-              @click="goToNextStep"
-              class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            >
-              Сохранить и продолжить
-            </button>
-            <span class="text-xs text-gray-400 mt-2">Нажимая «Сохранить и продолжить», вы соглашаетесь с <span class="text-blue-500 underline">Политикой конфиденциальности</span> и <span class="text-blue-500 underline">Партнерским соглашением</span></span>
-          </div>
-        </div>
-        <!-- Step 2: Company Information -->
-        <div x-show="currentStep === 2" class="space-y-6">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
-            <div>
-              <h3 class="text-lg font-medium text-gray-900 mb-4">О компании:</h3>
-              <div class="space-y-4">
-                <div>
-                  <label class="block text-sm text-gray-600 mb-1">
-                    <span class="text-red-500">*</span> Название:
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Название компании"
-                    x-model="formData.companyName"
-                    @input="errors.companyName = false"
-                    class="w-full px-3 py-2 modern-input rounded-md"
-                    :class="{'border-red-500': errors.companyName}"
-                  />
-                  <p x-show="errors.companyName" class="text-red-500 text-sm mt-1">Пожалуйста, введите название компании</p>
+              
+              <div class="feature-item flex items-center space-x-4">
+                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M12 2.25a9.75 9.75 0 100 19.5 9.75 9.75 0 000-19.5z"></path>
+                  </svg>
                 </div>
-                <div class="relative">
-                  <label class="block text-sm text-gray-600 mb-1">
-                    <span class="text-red-500">*</span> Ваша сфера:
-                  </label>
-                  <select
-                    x-model="formData.businessType"
-                    @change="fetchBusinessSubtypes"
-                    class="w-full px-3 py-2 modern-input rounded-md appearance-none bg-white text-gray-700"
-                  >
-                    <option value="">Выберите сферу</option>
-                    <template x-for="type in businessTypes" :key="type.id">
-                      <option :value="type.id" x-text="type.name"></option>
-                    </template>
-                  </select>
-                  <i data-lucide="chevron-down" class="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"></i>
-                  <p x-show="errors.businessType" class="text-red-500 text-sm mt-1">Пожалуйста, выберите сферу деятельности</p>
-                </div>
-                <div class="relative">
-                  <label class="block text-sm text-gray-600 mb-1">
-                    <span class="text-red-500">*</span> Тип компании:
-                  </label>
-                  <select
-                    x-model="formData.businessSubtype"
-                    class="w-full px-3 py-2 modern-input rounded-md appearance-none bg-white text-gray-700"
-                  >
-                    <option value="">Выберите тип компании</option>
-                    <template x-for="subtype in businessSubtypes" :key="subtype.id">
-                      <option :value="subtype.id" x-text="subtype.name"></option>
-                    </template>
-                  </select>
-                  <i data-lucide="chevron-down" class="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"></i>
-                  <p x-show="errors.businessSubtype" class="text-red-500 text-sm mt-1">Пожалуйста, выберите тип компании</p>
-                </div>
-              </div>
-            </div>
-            <div>
-              <h3 class="text-lg font-medium text-gray-900 mb-4">Количество специалистов:</h3>
-              <div class="space-y-2">
-                <div class="flex items-center space-x-2">
-                  <label class="block text-sm text-gray-600">
-                    <span class="text-red-500">*</span> Количество специалистов:
-                  </label>
-                  <i data-lucide="info" class="w-4 h-4 text-gray-400" title="Количество мастеров в вашей компании"></i>
-                </div>
-                <div class="space-y-2">
-                  <label class="flex items-center">
-                    <input
-                      type="radio"
-                      name="specialistsCount"
-                      value="1-5"
-                      x-model="formData.specialistsCount"
-                      class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                    />
-                    <span class="ml-2 text-sm text-gray-700">1-5 мастеров</span>
-                  </label>
-                  <label class="flex items-center">
-                    <input
-                      type="radio"
-                      name="specialistsCount"
-                      value="5+"
-                      x-model="formData.specialistsCount"
-                      class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                    />
-                    <span class="ml-2 text-sm text-gray-700">Более 5 мастеров</span>
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="flex justify-between">
-            <button
-              @click="goToPrevStep"
-              class="px-6 py-2 text-blue-500 border border-blue-500 rounded-md hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            >
-              Вернуться
-            </button>
-            <button
-              @click="goToNextStep"
-              class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            >
-              Сохранить и продолжить
-            </button>
-          </div>
-        </div>
-        <!-- Step 3: SMS Code Verification -->
-        <div x-show="currentStep === 3" class="space-y-6">
-          <div class="text-center mb-8">
-            <h3 class="text-lg font-medium text-gray-900 mb-4">WhatsApp код</h3>
-            <p class="text-gray-600 mb-6">
-              Введите код подтверждения, отправленный в WhatsApp на номер <span x-text="'+996' + formData.phone"></span>
-            </p>
-          </div>
-          
-          <div class="max-w-md mx-auto space-y-6">
-            <!-- SMS Code Input -->
-            <div class="text-center">
-              <div class="flex justify-center space-x-2 mb-6">
-                <input type="text" maxlength="1" class="w-8 h-8 sm:w-12 sm:h-12 text-center text-base sm:text-lg modern-input rounded-md"
-                  :class="{'border-red-500': errors.code, 'opacity-50 cursor-not-allowed': codeVerified}"
-                  x-model="codeInputs[0]"
-                  @input="handleCodeInput($event, 0)"
-                  @keydown.backspace="focusPrev($event, 0)"
-                  @keydown="focusNext($event, 0)"
-                  @paste="handleCodePaste($event)"
-                  pattern="[0-9]*" inputmode="numeric" autofocus
-                  :disabled="codeVerified"
-                >
-                <input type="text" maxlength="1" class="w-8 h-8 sm:w-12 sm:h-12 text-center text-base sm:text-lg modern-input rounded-md"
-                  :class="{'border-red-500': errors.code, 'opacity-50 cursor-not-allowed': codeVerified}"
-                  x-model="codeInputs[1]"
-                  @input="handleCodeInput($event, 1)"
-                  @keydown.backspace="focusPrev($event, 1)"
-                  @keydown="focusNext($event, 1)"
-                  pattern="[0-9]*" inputmode="numeric"
-                  :disabled="codeVerified"
-                >
-                <input type="text" maxlength="1" class="w-8 h-8 sm:w-12 sm:h-12 text-center text-base sm:text-lg modern-input rounded-md"
-                  :class="{'border-red-500': errors.code, 'opacity-50 cursor-not-allowed': codeVerified}"
-                  x-model="codeInputs[2]"
-                  @input="handleCodeInput($event, 2)"
-                  @keydown.backspace="focusPrev($event, 2)"
-                  @keydown="focusNext($event, 2)"
-                  pattern="[0-9]*" inputmode="numeric"
-                  :disabled="codeVerified"
-                >
-                <input type="text" maxlength="1" class="w-8 h-8 sm:w-12 sm:h-12 text-center text-base sm:text-lg modern-input rounded-md"
-                  :class="{'border-red-500': errors.code, 'opacity-50 cursor-not-allowed': codeVerified}"
-                  x-model="codeInputs[3]"
-                  @input="handleCodeInput($event, 3)"
-                  @keydown.backspace="focusPrev($event, 3)"
-                  @keydown="focusNext($event, 3)"
-                  pattern="[0-9]*" inputmode="numeric"
-                  :disabled="codeVerified"
-                >
-                <input type="text" maxlength="1" class="w-8 h-8 sm:w-12 sm:h-12 text-center text-base sm:text-lg modern-input rounded-md"
-                  :class="{'border-red-500': errors.code, 'opacity-50 cursor-not-allowed': codeVerified}"
-                  x-model="codeInputs[4]"
-                  @input="handleCodeInput($event, 4)"
-                  @keydown.backspace="focusPrev($event, 4)"
-                  @keydown="focusNext($event, 4)"
-                  pattern="[0-9]*" inputmode="numeric"
-                  :disabled="codeVerified"
-                >
-                <input type="text" maxlength="1" class="w-8 h-8 sm:w-12 sm:h-12 text-center text-base sm:text-lg modern-input rounded-md"
-                  :class="{'border-red-500': errors.code, 'opacity-50 cursor-not-allowed': codeVerified}"
-                  x-model="codeInputs[5]"
-                  @input="handleCodeInput($event, 5)"
-                  @keydown.backspace="focusPrev($event, 5)"
-                  @keydown="focusNext($event, 5)"
-                  pattern="[0-9]*" inputmode="numeric"
-                  :disabled="codeVerified"
-                >
-              </div>
-              <p x-show="errors.code" class="text-red-500 text-sm text-center mb-2">Пожалуйста, введите корректный 6-значный код</p>
-              <div x-show="codeChecking" class="flex items-center justify-center space-x-2 text-blue-600 text-sm">
-                <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <span>Проверяем код...</span>
-              </div>
-              <div x-show="codeVerified" class="flex items-center justify-center space-x-2 text-green-600 text-sm">
-                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                </svg>
-                <span>Код подтвержден!</span>
+                                  <div>
+                    <h3 class="text-base font-semibold text-gray-900 mb-1" x-text="t.support247"></h3>
+                    <p class="text-sm text-gray-600" x-text="t.support247Desc"></p>
+                  </div>
               </div>
             </div>
             
-            <!-- Resend Code Button -->
-            <div class="text-center pt-4" x-show="!codeVerified">
-              <div class="flex items-center justify-center">
-                <button 
-                  @click="startResendTimer"
-                  :disabled="resendStatus === 'waiting'"
-                  class="text-sm font-medium transition-colors duration-200"
-                  :class="{
-                    'text-blue-500 hover:text-blue-600': resendStatus === 'ready',
-                    'text-green-500': resendStatus === 'sent',
-                    'text-blue-700': resendStatus === 'waiting'
-                  }"
-                >
-                  <span x-show="resendStatus === 'ready'">Отправить код повторно в WhatsApp</span>
-                  <div x-show="resendStatus === 'sent'" class="flex items-center space-x-1">
-                    <i data-lucide="check" class="w-4 h-4"></i>
-                    <span>Отправлено!</span>
+            <!-- Статистика -->
+            <div class="grid grid-cols-3 gap-4 mb-12 slide-up" style="--delay: 3;">
+              <div class="stats-item">
+                <div class="text-2xl lg:text-3xl font-bold text-blue-600 mb-1">25+</div>
+                <div class="text-xs text-gray-600" x-text="t.businesses"></div>
+              </div>
+              <div class="stats-item">
+                <div class="text-2xl lg:text-3xl font-bold text-blue-600 mb-1">400+</div>
+                <div class="text-xs text-gray-600" x-text="t.records"></div>
+              </div>
+              <div class="stats-item">
+                <div class="text-2xl lg:text-3xl font-bold text-blue-600 mb-1">92%</div>
+                <div class="text-xs text-gray-600" x-text="t.satisfied"></div>
+              </div>
+            </div>
+            
+            <!-- Дополнительные преимущества -->
+            <div class="space-y-2 slide-up" style="--delay: 4;">
+              <div class="flex items-center space-x-3">
+                <div class="w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
+                <span class="text-sm text-gray-600" x-text="t.personalSite"></span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <div class="w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
+                <span class="text-sm text-gray-600" x-text="t.mobileApp"></span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <div class="w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
+                <span class="text-sm text-gray-600" x-text="t.whatsappIntegration"></span>
+              </div>
+              <div class="flex items-center space-x-3">
+                <div class="w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
+                <span class="text-sm text-gray-600" x-text="t.analytics"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Правая часть - Форма регистрации -->
+        <div class="w-1/2 mobile-full min-h-screen flex items-center justify-center p-8 lg:p-12">
+          <div class="w-full max-w-lg">
+            <!-- Форма регистрации -->
+            <div class="p-8 lg:p-10">
+              <div class="text-center mb-8 slide-up" style="--delay: 1;">
+                <div class="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                  </svg>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900 mb-2" x-text="t.createAccount"></h2>
+                <p class="text-gray-600" x-text="t.startUsingFree"></p>
+              </div>
+
+              <form @submit.prevent="register" class="space-y-6">
+                <!-- Ошибка API -->
+                <div x-show="errors.api" class="bg-red-50 border border-red-200 rounded-lg p-4 slide-up" style="--delay: 2;">
+                  <div class="flex items-center space-x-2">
+                    <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <p class="text-red-600 text-sm" x-text="errors.api"></p>
                   </div>
-                  <span x-show="resendStatus === 'waiting'">
-                    Отправить код повторно (<span x-text="resendTimer"></span> сек)
+                </div>
+
+                <!-- Имя и Телефон в одной строке -->
+                <div class="grid grid-cols-1 gap-4 form-section" style="--delay: 3;">
+                  <!-- Имя -->
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                      <span x-text="t.name"></span> <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                      <div class="absolute left-3 top-1/2 transform -translate-y-1/2">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                      </div>
+                      <input
+                        type="text"
+                        x-model="formData.name"
+                        @input="errors.name = false"
+                        class="w-full pl-10 pr-4 py-3 modern-input rounded-lg text-sm"
+                        :placeholder="t.yourName"
+                        :class="{'border-red-500': errors.name}"
+                      />
+                    </div>
+                    <p x-show="errors.name" class="text-red-500 text-xs mt-1" x-text="t.enterName"></p>
+                  </div>
+
+                  <!-- Телефон -->
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                      <span x-text="t.phone"></span> <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                      <div class="absolute left-3 top-1/2 transform -translate-y-1/2 flex items-center space-x-1">
+                        <img src="https://flagcdn.com/w20/kg.png" alt="KG" class="w-4 h-3 rounded-sm">
+                        <span class="text-gray-500 text-xs">+996</span>
+                      </div>
+                      <input
+                        type="tel"
+                        x-model="formData.phone"
+                        @input="formatPhone($event)"
+                        class="w-full pl-16 pr-4 py-3 modern-input rounded-lg text-sm"
+                        placeholder="999 999 999"
+                        maxlength="11"
+                        :class="{'border-red-500': errors.phone}"
+                      />
+                    </div>
+                    <p x-show="errors.phone" class="text-red-500 text-xs mt-1" x-text="t.enterPhone"></p>
+                  </div>
+                </div>
+
+                <!-- Название компании и Сфера деятельности -->
+                <div class="grid grid-cols-1 gap-4 form-section" style="--delay: 4;">
+                  <!-- Название компании -->
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                      <span x-text="t.company"></span> <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                      <div class="absolute left-3 top-1/2 transform -translate-y-1/2">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                      </div>
+                      <input
+                        type="text"
+                        x-model="formData.companyName"
+                        @input="errors.companyName = false"
+                        class="w-full pl-10 pr-4 py-3 modern-input rounded-lg text-sm"
+                        :placeholder="t.companyName"
+                        :class="{'border-red-500': errors.companyName}"
+                      />
+                    </div>
+                    <p x-show="errors.companyName" class="text-red-500 text-xs mt-1" x-text="t.enterCompany"></p>
+                  </div>
+
+                  <!-- Сфера деятельности -->
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                      <span x-text="t.sphere"></span> <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                      <div class="absolute left-3 top-1/2 transform -translate-y-1/2">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2V6"></path>
+                        </svg>
+                      </div>
+                      <select
+                        x-model="formData.businessType"
+                        @change="errors.businessType = false"
+                        class="w-full pl-10 pr-10 py-3 modern-input rounded-lg text-sm appearance-none bg-white"
+                        :class="{'border-red-500': errors.businessType}"
+                      >
+                        <option value="" x-text="t.selectSphere"></option>
+                        {% for business_type in business_types %}
+                        <option value="{{ business_type.id }}">{{ business_type.name }}</option>
+                        {% endfor %}
+                      </select>
+                      <div class="absolute right-3 top-1/2 transform -translate-y-1/2">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                      </div>
+                    </div>
+                    <p x-show="errors.businessType" class="text-red-500 text-xs mt-1" x-text="t.selectBusinessType"></p>
+                  </div>
+                </div>
+
+                <!-- Пароль -->
+                <div class="form-section" style="--delay: 5;">
+                                      <label class="block text-sm font-medium text-gray-700 mb-2">
+                      <span x-text="t.password"></span> <span class="text-red-500">*</span>
+                    </label>
+                  <div class="relative">
+                    <div class="absolute left-3 top-1/2 transform -translate-y-1/2">
+                      <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                      </svg>
+                    </div>
+                    <input
+                      :type="showPassword ? 'text' : 'password'"
+                      x-model="formData.password"
+                      @input="errors.password = false"
+                      class="w-full pl-10 pr-10 py-3 modern-input rounded-lg text-sm"
+                                              :placeholder="t.min6Chars"
+                      :class="{'border-red-500': errors.password}"
+                    />
+                    <button
+                      type="button"
+                      @click="showPassword = !showPassword"
+                      class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      <svg x-show="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                      </svg>
+                      <svg x-show="showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"></path>
+                      </svg>
+                    </button>
+                  </div>
+                  <p x-show="errors.password" class="text-red-500 text-xs mt-1">Минимум 6 символов</p>
+                </div>
+
+                <!-- Согласие с условиями -->
+                <div class="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg form-section" style="--delay: 6;">
+                  <input
+                    type="checkbox"
+                    x-model="formData.agreeToTerms"
+                    @change="errors.agreeToTerms = false"
+                    class="mt-0.5 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    :class="{'border-red-500': errors.agreeToTerms}"
+                  />
+                  <label class="text-xs text-gray-600 leading-relaxed">
+                    <span x-text="t.agreeTerms"></span> 
+                    <a href="/privacy/" class="text-blue-600 hover:underline" x-text="t.privacyPolicy"></a> 
+                    <span x-text="t.and"></span> 
+                    <a href="/terms/" class="text-blue-600 hover:underline" x-text="t.userAgreement"></a>
+                    <span class="text-red-500">*</span>
+                  </label>
+                </div>
+                <p x-show="errors.agreeToTerms" class="text-red-500 text-xs" x-text="t.agreeToTerms"></p>
+
+                <!-- Кнопка регистрации -->
+                <button
+                  type="submit"
+                  :disabled="isSubmitting"
+                  class="w-full modern-button py-3 px-6 rounded-lg font-medium text-white disabled:opacity-50 disabled:cursor-not-allowed form-section"
+                  style="--delay: 7;"
+                >
+                  <span x-show="!isSubmitting" class="flex items-center justify-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    <span x-text="t.createAccountBtn"></span>
+                  </span>
+                  <span x-show="isSubmitting" class="flex items-center justify-center space-x-2">
+                    <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span x-text="t.creatingAccount"></span>
                   </span>
                 </button>
+              </form>
+
+              <!-- Ссылка на вход -->
+              <div class="text-center mt-8 pt-6 border-t border-gray-200 slide-up" style="--delay: 8;">
+                <p class="text-sm text-gray-600">
+                  <span x-text="t.alreadyHaveAccount"></span> 
+                  <a href="/accounts/login/" class="text-blue-600 hover:text-blue-700 font-medium">
+                    <span x-text="t.login"></span>
+                  </a>
+                </p>
               </div>
             </div>
-            
-            <!-- Password Input -->
-            <div class="space-y-2" x-show="codeVerified">
-              <label class="block text-sm font-medium text-gray-700 mb-2">Придумайте пароль</label>
-              <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
-                </div>
-                <input
-                  :type="showPassword ? 'text' : 'password'"
-                  x-model="formData.password"
-                  class="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                  placeholder="Минимум 6 символов"
-                  minlength="6"
-                  required
-                />
-                <button
-                  type="button"
-                  @click="showPassword = !showPassword"
-                  class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
-                >
-                  <svg x-show="!showPassword" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                  </svg>
-                  <svg x-show="showPassword" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
-                  </svg>
-                </button>
-              </div>
-              <p x-show="errors.password" class="text-red-500 text-sm">Пароль обязателен (минимум 6 символов)</p>
-              <p class="text-xs text-gray-500">Пароль будет использоваться для входа в систему</p>
-            </div>
-          </div>
-          
-          <!-- Navigation Buttons -->
-          <div class="flex justify-between">
-            <button
-              @click="goToPrevStep"
-              :disabled="isSubmitting"
-              class="px-6 py-2 text-blue-500 border border-blue-500 rounded-md hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Вернуться
-            </button>
-            <button 
-              @click="completeRegistration" 
-              :disabled="isSubmitting"
-              class="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
-            >
-              <span x-show="!isSubmitting">Завершить регистрацию</span>
-              <span x-show="isSubmitting" class="flex items-center space-x-2">
-                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <span>Загрузка...</span>
-              </span>
-            </button>
           </div>
         </div>
       </div>
     </main>
-    <!-- Footer -->
-    <footer class="bg-white border-t">
-      <div class="max-w-6xl mx-auto px-4 py-8">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          <div>
-            <div class="text-xl font-bold text-gray-900 mb-4">zappis</div>
-            <p class="text-gray-600 text-sm">
-              Сервис онлайн бронирования в сфере красоты и здоровья.
-            </p>
-          </div>
-          <div>
-            <ul class="space-y-2 text-sm text-gray-600">
-              <li><a href="#" class="hover:text-gray-900">Стать партнером</a></li>
-              <li><a href="#" class="hover:text-gray-900">Контакты</a></li>
-              <li><a href="#" class="hover:text-gray-900">Карта сайта</a></li>
-            </ul>
-          </div>
-          <div>
-            <ul class="space-y-2 text-sm text-gray-600">
-              <li><a href="#" class="hover:text-gray-900">Политика конфиденциальности</a></li>
-              <li><a href="#" class="hover:text-gray-900">Пользовательское соглашение</a></li>
-              <li><a href="#" class="hover:text-gray-900">Правила онлайн оплаты</a></li>
-            </ul>
-          </div>
-          <div>
-            <div class="text-sm text-gray-600 mb-4">Скачать приложение:</div>
-            <div class="flex space-x-2">
-              <div class="bg-gray-100 px-3 py-1 rounded text-xs">App Store</div>
-              <div class="bg-gray-100 px-3 py-1 rounded text-xs">Google Play</div>
-              <div class="bg-gray-100 px-3 py-1 rounded text-xs">AppGallery</div>
+
+    <!-- Минималистичный футер -->
+    <footer class="bg-white border-t border-gray-200">
+      <div class="max-w-7xl mx-auto px-6 py-6">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <div class="flex items-center space-x-2 mb-4 md:mb-0">
+            <div class="w-6 h-6 bg-blue-600 rounded flex items-center justify-center">
+              <span class="text-white font-bold text-xs">Z</span>
             </div>
+            <span class="text-lg font-bold text-gray-900">Zappis</span>
+          </div>
+          <div class="flex space-x-6 text-sm text-gray-600">
+            <a href="/privacy/" class="hover:text-gray-900 transition-colors" x-text="t.privacy"></a>
+            <a href="/terms/" class="hover:text-gray-900 transition-colors" x-text="t.terms"></a>
+            <a href="#contact" class="hover:text-gray-900 transition-colors" x-text="t.contacts"></a>
           </div>
         </div>
-        <div class="border-t mt-8 pt-4 flex justify-between items-center">
-          <div class="flex space-x-4">
-            <a href="#" class="text-green-500 hover:text-green-600">
-              <i data-lucide="message-circle" class="w-5 h-5"></i>
-            </a>
-            <a href="#" class="text-blue-500 hover:text-blue-600">
-              <i data-lucide="send" class="w-5 h-5"></i>
-            </a>
-          </div>
-          <div class="text-sm text-gray-600">
-            Сделано с <i data-lucide="heart" class="w-4 h-4 text-red-500 fill-current inline-block"></i> в Оше, командой Zappis
-          </div>
-        </div>
-        <div class="text-center text-xs text-gray-500 mt-4">
-          Все права защищены © Zappis <span x-text="new Date().getFullYear()"></span>
+        <div class="border-t border-gray-200 mt-4 pt-4 text-center">
+          <p class="text-gray-600 text-xs">
+            © 2024 Zappis. <span x-text="t.allRightsReserved"></span>
+          </p>
         </div>
       </div>
     </footer>
-    <!-- Модальное окно выбора города -->
-    <div x-show="showCityModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40" style="backdrop-filter: blur(2px);">
-      <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-lg relative animate-fade-in">
-        <button @click="showCityModal = false" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-        </button>
-        <h2 class="text-2xl font-semibold mb-4">Укажите свое местоположение</h2>
-        <div class="flex mb-6 border-b pb-2">
-          <button class="text-lg font-medium text-black border-b-2 border-black pb-2 px-2 mr-4" disabled>Кыргызстан</button>
-        </div>
-        <div class="mb-4">
-          <input type="text" x-model="citySearch" placeholder="Введите название города" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base" />
-        </div>
-        <div class="max-h-60 overflow-y-auto divide-y divide-gray-100">
-          <template x-for="city in filteredCities" :key="city.id">
-            <div @click="selectCity(city)" class="px-4 py-2 cursor-pointer hover:bg-blue-50 text-lg" :class="{'text-blue-600 font-semibold': city.id === formData.city}">
-              <span x-text="city.name"></span>
-            </div>
-          </template>
-          <div x-show="filteredCities.length === 0" class="text-gray-400 text-center py-4">Город не найден</div>
-        </div>
-      </div>
-    </div>
   </div>
+
   <script>
-    // CSRF helper
     function getCookie(name) {
       let cookieValue = null;
       if (document.cookie && document.cookie !== '') {
@@ -560,308 +517,251 @@
       }
       return cookieValue;
     }
+
     function registrationForm() {
       return {
-        currentStep: 1,
-        registrationId: null,
-        showModal: false,
-        resendTimer: 0,
-        resendStatus: 'ready',
+        language: 'ru', // По умолчанию русский
         isSubmitting: false,
-        showCityModal: false,
-        citySearch: '',
-        selectedCityName: 'Бишкек',
+        showPassword: false,
         formData: {
           name: '',
           phone: '',
-          phoneMasked: '',
-          country: 'Кыргызстан',
-          city: '',
           companyName: '',
           businessType: '',
-          businessSubtype: '',
-          specialistsCount: '1-5',
-          agreeToTerms: false,
-          showPassword: false
+          password: '',
+          agreeToTerms: false
         },
-        codeVerified: false,
-        codeChecking: false,
         errors: {
           name: false,
           phone: false,
-          city: false,
-          agreeToTerms: false,
           companyName: false,
           businessType: false,
-          businessSubtype: false,
-          code: false,
+          password: false,
+          agreeToTerms: false,
           api: ''
         },
-        codeInputs: ['', '', '', '', '', ''],
-        cities: [],
-        businessTypes: [],
-        businessSubtypes: [],
-        formatPhoneInput(event) {
-          let digits = event.target.value.replace(/\D/g, '').slice(0, 9);
+        
+        // Переводы
+        translations: {
+          ru: {
+            // Хедер
+            login: 'Войти',
+            // Заголовки
+            automateBusiness: 'Автоматизируйте ваш',
+            business: 'бизнес',
+            withZappis: 'с Zappis',
+            joinHundreds: 'Присоединяйтесь к сотням предпринимателей, которые уже используют Zappis для привлечения клиентов',
+            // Преимущества
+            freeTrial: 'Бесплатный пробный период',
+            freeTrialDesc: '14 дней полного доступа',
+            quickSetup: 'Быстрая настройка',
+            quickSetupDesc: 'Полная настройка за 15 минут',
+            support247: 'Поддержка 24/7',
+            support247Desc: 'Наша команда всегда готова помочь',
+            // Статистика
+            businesses: 'Бизнесов',
+            records: 'Записей',
+            satisfied: 'Довольных',
+            // Дополнительные преимущества
+            personalSite: 'Персональный сайт с онлайн-записью',
+            mobileApp: 'Мобильное приложение для клиентов',
+            whatsappIntegration: 'Интеграция с WhatsApp и Telegram',
+            analytics: 'Детальная аналитика и отчеты',
+            // Форма
+            createAccount: 'Создайте аккаунт',
+            startUsingFree: 'Начните использовать Zappis бесплатно',
+            name: 'Имя',
+            phone: 'Телефон',
+            company: 'Компания',
+            sphere: 'Сфера',
+            password: 'Пароль',
+            selectSphere: 'Выберите сферу',
+            min6Chars: 'Минимум 6 символов',
+            yourName: 'Ваше имя',
+            companyName: 'Название компании',
+            agreeTerms: 'Я соглашаюсь с',
+            privacyPolicy: 'Политикой конфиденциальности',
+            and: 'и',
+            userAgreement: 'Пользовательским соглашением',
+            createAccountBtn: 'Создать аккаунт',
+            creatingAccount: 'Создаем аккаунт...',
+            alreadyHaveAccount: 'Уже есть аккаунт?',
+            // Ошибки
+            enterName: 'Введите ваше имя',
+            enterPhone: 'Введите номер телефона',
+            enterCompany: 'Введите название компании',
+            selectBusinessType: 'Выберите сферу деятельности',
+            agreeToTerms: 'Необходимо согласие с условиями',
+            // Футер
+            privacy: 'Политика',
+            terms: 'Условия',
+            contacts: 'Контакты',
+            allRightsReserved: 'Все права защищены.'
+          },
+          ky: {
+            // Хедер
+            login: 'Кирүү',
+            // Заголовки
+            automateBusiness: 'Бизнесиңизди',
+            business: 'автоматташтырыңыз',
+            withZappis: 'Zappis менен',
+            joinHundreds: 'Zappis колдонуу менен кардарларды тартуу үчүн жүздөгөн ишкерлерге кошулуңуз',
+            // Преимущества
+            freeTrial: 'Акысыз сыноо мезгили',
+            freeTrialDesc: '14 күндүк толук мүмкүнчүлүк',
+            quickSetup: 'Тез орнотуу',
+            quickSetupDesc: '15 мүнөттө толук орнотуу',
+            support247: '24/7 колдоо',
+            support247Desc: 'Биздин команда ар дайым жардамга даяр',
+            // Статистика
+            businesses: 'Бизнес',
+            records: 'Жазма',
+            satisfied: 'Канттуу',
+            // Дополнительные преимущества
+            personalSite: 'Онлайн жазуу менен жеке сайт',
+            mobileApp: 'Кардарлар үчүн мобилдик колдонмо',
+            whatsappIntegration: 'WhatsApp жана Telegram менен интеграция',
+            analytics: 'Деталдуу аналитика жана отчеттор',
+            // Форма
+            createAccount: 'Эсеп түзүңүз',
+            startUsingFree: 'Zappis акысыз колдонууну баштаңыз',
+            name: 'Атыңыз',
+            phone: 'Телефон',
+            company: 'Компания',
+            sphere: 'Сфера',
+            password: 'Сырсөз',
+            selectSphere: 'Сфераны тандаңыз',
+            min6Chars: 'Минимум 6 белги',
+            yourName: 'Сиздин атыңыз',
+            companyName: 'Компаниянын аты',
+            agreeTerms: 'Мен шарттар менен макулмун',
+            privacyPolicy: 'Купуялык саясаты',
+            and: 'жана',
+            userAgreement: 'Колдонуучу келишими',
+            createAccountBtn: 'Эсеп түзүү',
+            creatingAccount: 'Эсеп түзүлүүдө...',
+            alreadyHaveAccount: 'Эсебиңиз барбы?',
+            // Ошибки
+            enterName: 'Атыңызды киргизиңиз',
+            enterPhone: 'Телефон номерин киргизиңиз',
+            enterCompany: 'Компаниянын атын киргизиңиз',
+            selectBusinessType: 'Ишкердик сферасын тандаңыз',
+            agreeToTerms: 'Шарттар менен макул болуу керек',
+            // Футер
+            privacy: 'Купуялык',
+            terms: 'Шарттар',
+            contacts: 'Байланыштар',
+            allRightsReserved: 'Бардык укуктар корголгон.'
+          }
+        },
+        
+        // Геттер для текущего языка
+        get t() {
+          return this.translations[this.language];
+        },
+
+        formatPhone(event) {
+          let value = event.target.value.replace(/\D/g, '').slice(0, 9);
           let formatted = '';
-          if (digits.length > 0) formatted += digits.slice(0, 3);
-          if (digits.length > 3) formatted += ' ' + digits.slice(3, 6);
-          if (digits.length > 6) formatted += ' ' + digits.slice(6, 9);
-          this.formData.phoneMasked = formatted;
-          this.formData.phone = digits;
-          this.errors.phone = digits.length < 9;
+          if (value.length > 0) formatted += value.slice(0, 3);
+          if (value.length > 3) formatted += ' ' + value.slice(3, 6);
+          if (value.length > 6) formatted += ' ' + value.slice(6, 9);
+          this.formData.phone = formatted;
+          this.errors.phone = value.length < 9;
         },
-        validateStep1() {
+
+        validateForm() {
           this.errors.name = !this.formData.name.trim();
-          this.errors.phone = this.formData.phone.length < 9;
-          this.errors.city = !this.formData.city;
-          return !this.errors.name && !this.errors.phone && !this.errors.city;
-        },
-        validateStep2() {
+          this.errors.phone = this.formData.phone.replace(/\s/g, '').length < 9;
           this.errors.companyName = !this.formData.companyName.trim();
           this.errors.businessType = !this.formData.businessType;
-          this.errors.businessSubtype = !this.formData.businessSubtype;
-          return !this.errors.companyName && !this.errors.businessType && !this.errors.businessSubtype;
+          this.errors.password = !this.formData.password || this.formData.password.length < 6;
+          this.errors.agreeToTerms = !this.formData.agreeToTerms;
+
+          return !Object.values(this.errors).some(error => error === true);
         },
-        async goToNextStep() {
+
+        async register() {
           this.errors.api = '';
-          if (this.currentStep === 1) {
-            if (this.validateStep1()) {
-              // Step 1 API
-              try {
-                const resp = await fetch('/accounts/register/step1/', {
-                  method: 'POST',
-                  headers: { 
-                    'Content-Type': 'application/json', 
-                    'Accept': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken')
-                  },
-                  body: JSON.stringify({
-                    full_name: this.formData.name,
-                    phone: this.formData.phone,
-                    country: this.formData.country,
-                    city: this.formData.city,
-                    agree_to_terms: this.formData.agreeToTerms
-                  })
-                });
-                const data = await resp.json();
-                if (!resp.ok) throw data;
-                this.registrationId = data.registration_id;
-                this.currentStep++;
-              } catch (err) {
-                this.errors.api = err.detail || 'Ошибка регистрации';
-              }
-            }
-          } else if (this.currentStep === 2) {
-            if (this.validateStep2()) {
-              // Step 2 API
-              try {
-                const resp = await fetch('/accounts/register/step2/', {
-                  method: 'POST',
-                  headers: { 
-                    'Content-Type': 'application/json', 
-                    'Accept': 'application/json',
-                    'X-CSRFToken': getCookie('csrftoken')
-                  },
-                  body: JSON.stringify({
-                    registration_id: this.registrationId,
-                    company_name: this.formData.companyName,
-                    business_type: this.formData.businessType,
-                    business_subtype: this.formData.businessSubtype,
-                    employees_count: this.formData.specialistsCount
-                  })
-                });
-                const data = await resp.json();
-                if (!resp.ok) throw data;
-                this.currentStep++;
-              } catch (err) {
-                this.errors.api = err.detail || 'Ошибка регистрации';
-              }
-            }
+          
+          if (!this.validateForm()) {
+            return;
           }
-        },
-        goToPrevStep() {
-          if (this.currentStep > 1) {
-            this.currentStep--;
-          }
-        },
-        async completeRegistration() {
-          this.errors.api = '';
+
           this.isSubmitting = true;
-          if (!this.formData.password || this.formData.password.length < 6) {
-            this.errors.password = true;
-            this.isSubmitting = false;
-            return;
-          }
-          this.errors.password = false;
+
           try {
-            const resp = await fetch('/accounts/register/step3/', {
+            const response = await fetch('/accounts/api/register/', {
               method: 'POST',
-              headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json',
+              headers: {
+                'Content-Type': 'application/json',
                 'X-CSRFToken': getCookie('csrftoken')
               },
               body: JSON.stringify({
-                registration_id: this.registrationId,
-                code: this.codeInputs.join(''),
-                password: this.formData.password
+                full_name: this.formData.name,
+                phone: this.formData.phone.replace(/\s/g, ''),
+                company_name: this.formData.companyName,
+                business_type: this.formData.businessType,
+                password: this.formData.password,
+                agree_to_terms: this.formData.agreeToTerms
               })
             });
-            const data = await resp.json();
-            if (!resp.ok) throw data;
-            // Сохраняем токен и редиректим на dashboard
-            localStorage.setItem('token', data.token);
-            window.location.href = '/dashboard/';
-          } catch (err) {
-            this.errors.api = err.detail || 'Ошибка подтверждения кода';
-            this.errors.code = true;
-          } finally {
-            this.isSubmitting = false;
-          }
-        },
-        handleCodeInput(event, idx) {
-          let val = event.target.value.replace(/\D/g, '');
-          if (!val) {
-            this.codeInputs[idx] = '';
-            return;
-          }
-          this.codeInputs[idx] = val[0];
-          event.target.value = val[0];
-          // Автоматически перейти к следующему полю, если не последнее
-          if (val && idx < 5) {
-            const next = event.target.parentElement.children[idx+1];
-            if (next) next.focus();
-          }
-          // Проверяем, если введены все 6 цифр
-          if (this.codeInputs.every(code => code !== '') && this.codeInputs.join('').length === 6) {
-            this.verifyCode();
-          }
-        },
-        async verifyCode() {
-          this.codeChecking = true;
-          this.errors.code = false;
-          this.errors.api = '';
-          
-          const code = this.codeInputs.join('');
-          
-          try {
-            const resp = await fetch('/accounts/verify-code/', {
-              method: 'POST',
-              headers: { 
-                'Content-Type': 'application/json', 
-                'Accept': 'application/json',
-                'X-CSRFToken': getCookie('csrftoken')
-              },
-              body: JSON.stringify({
-                registration_id: this.registrationId,
-                code: code
-              })
-            });
-            
-            if (resp.ok) {
-              this.codeVerified = true;
-              this.errors.code = false;
+
+            const data = await response.json();
+
+            if (response.ok) {
+              // Успешная регистрация
+              localStorage.setItem('token', data.token);
+              window.location.href = '/dashboard/';
             } else {
-              const data = await resp.json();
-              this.errors.code = true;
-              this.errors.api = data.detail || 'Неверный код';
-              this.codeVerified = false;
+              // Ошибка от сервера
+              this.errors.api = data.detail || (this.language === 'ru' ? 'Ошибка при регистрации. Попробуйте еще раз.' : 'Каттоо учурунда ката кетти. Кайра аракет кылыңыз.');
             }
-          } catch (err) {
-            this.errors.code = true;
-            this.errors.api = 'Ошибка проверки кода';
-            this.codeVerified = false;
+          } catch (error) {
+            this.errors.api = this.language === 'ru' ? 'Ошибка соединения. Проверьте интернет и попробуйте еще раз.' : 'Байланыш катасы. Интернетти текшерип, кайра аракет кылыңыз.';
           } finally {
-            this.codeChecking = false;
+            this.isSubmitting = false;
           }
         },
-        handleCodePaste(event) {
-          const paste = (event.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
-          if (paste.length === 6) {
-            for (let i = 0; i < 6; i++) {
-              this.codeInputs[i] = paste[i];
-              const input = event.target.parentElement.children[i];
-              if (input) input.value = paste[i];
-            }
-            event.preventDefault();
-            // Автофокус на последнем поле
-            const last = event.target.parentElement.children[5];
-            if (last) last.focus();
-          }
-        },
-        focusPrev(event, idx) {
-          if (event.key === 'Backspace' && event.target.value === '' && idx > 0) {
-            const prev = event.target.parentElement.children[idx-1];
-            if (prev) prev.focus();
-          }
-        },
-        focusNext(event, idx) {
-          if (event.key.match(/^[0-9]$/) && idx < 5 && event.target.value.length === 1) {
-            const next = event.target.parentElement.children[idx+1];
-            if (next) next.focus();
-          }
-        },
-        startResendTimer() {
-          if (this.resendStatus === 'waiting') return;
+
+        initForm() {
+          // Инициализация формы
+          console.log('Форма инициализирована');
           
-          // Отправляем запрос на повторную отправку кода
-          fetch('/accounts/resend-code/', {
-            method: 'POST',
-            headers: { 
-              'Content-Type': 'application/json', 
-              'Accept': 'application/json',
-              'X-CSRFToken': getCookie('csrftoken')
-            },
-            body: JSON.stringify({
-              registration_id: this.registrationId
-            })
-          })
-          .then(res => res.json())
-          .then(data => {
-            this.resendStatus = 'sent';
-            setTimeout(() => {
-              this.resendStatus = 'waiting';
-              this.resendTimer = 25;
-              const timer = setInterval(() => {
-                this.resendTimer--;
-                if (this.resendTimer <= 0) {
-                  clearInterval(timer);
-                  this.resendStatus = 'ready';
+          // Если типы бизнеса не загружены через Django, загружаем их через API
+          if (document.querySelector('select[name="business_type"] option').length <= 1) {
+            this.loadBusinessTypes();
+          }
+        },
+
+        async loadBusinessTypes() {
+          try {
+            const response = await fetch('/accounts/api/business-types/');
+            const data = await response.json();
+            
+            if (response.ok && data.business_types) {
+              const select = document.querySelector('select[x-model="formData.businessType"]');
+              if (select) {
+                // Очищаем существующие опции, кроме первой
+                while (select.children.length > 1) {
+                  select.removeChild(select.lastChild);
                 }
-              }, 1000);
-            }, 5000);
-          })
-          .catch(err => {
-            console.error('Ошибка повторной отправки кода:', err);
-            this.resendStatus = 'ready';
-          });
-        },
-        initForm(selectedCityId, selectedCityName, selectedCountry, citiesList) {
-          this.formData.city = selectedCityId;
-          this.selectedCityName = selectedCityName;
-          this.formData.country = selectedCountry;
-          this.cities = citiesList;
-          lucide.createIcons();
-        },
-        fetchBusinessSubtypes() {
-          if (!this.formData.businessType) { this.businessSubtypes = []; return; }
-          fetch(`/businesses/api/business-subtypes/?business_type_id=${this.formData.businessType}`)
-            .then(res => res.json())
-            .then(data => { this.businessSubtypes = data.subtypes; });
-        },
-        get filteredCities() {
-          if (!this.citySearch) return this.cities;
-          return this.cities.filter(c => c.name.toLowerCase().includes(this.citySearch.toLowerCase()));
-        },
-        selectCity(city) {
-          this.formData.city = city.id;
-          this.selectedCityName = city.name;
-          this.showCityModal = false;
+                
+                // Добавляем новые опции
+                data.business_types.forEach(type => {
+                  const option = document.createElement('option');
+                  option.value = type.id;
+                  option.textContent = type.name;
+                  select.appendChild(option);
+                });
+              }
+            }
+          } catch (error) {
+            console.error('Ошибка загрузки типов бизнеса:', error);
+          }
         }
       }
     }
   </script>
-  <script id="cities-data" type="application/json">{{ cities|json_script:"cities-data" }}</script>
 </body>
 </html>

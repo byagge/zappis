@@ -2,7 +2,7 @@ from django.urls import path
 from .views import Step1View, Step2View, Step3View
 from .views import RegisterPageView, VerifyCodeView, ProfileAPIView, ResendCodeView
 from django.views.generic import TemplateView
-from apps.accounts.views import SignUpPageView, UserSignUpAPIView
+from apps.accounts.views import SignUpPageView, UserSignUpAPIView, SimpleRegisterAPIView, BusinessTypesAPIView
 from .views import UserLanguageUpdateAPIView, CreateSessionAPIView
 from django.contrib.auth import views as auth_views
 
@@ -19,6 +19,8 @@ urlpatterns = [
     path('register/', TemplateView.as_view(template_name='accounts/signup.html'), name='register-page'),
     path('signup/', SignUpPageView.as_view(), name='signup_page'),
     path('api/signup/', UserSignUpAPIView.as_view(), name='signup_api'),
+    path('api/register/', SimpleRegisterAPIView.as_view(), name='simple-register-api'),
+    path('api/business-types/', BusinessTypesAPIView.as_view(), name='business-types-api'),
     path('api/create-session/', CreateSessionAPIView.as_view(), name='create-session'),
     path('profile/language/', UserLanguageUpdateAPIView.as_view(), name='user-language-update'),
 ]

@@ -17,6 +17,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 import requests
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
+import re
 
 class SignUpPageView(TemplateView):
     template_name = 'accounts/signup.html'
@@ -89,9 +90,15 @@ class RegisterPageView(TemplateView):
 
         cities = City.objects.filter(country='KG').order_by('name')
         cities_data = [{'id': city.id, 'name': city.name} for city in cities]
+        
+        # Получаем типы бизнеса из базы данных
+        business_types = BusinessType.objects.all().order_by('name')
+        business_types_data = [{'id': bt.id, 'name': bt.name} for bt in business_types]
+        
         context['selected_city'] = selected_city
         context['selected_country'] = selected_country
         context['cities'] = cities_data
+        context['business_types'] = business_types_data
         return context
 
 class Step1View(APIView):
@@ -288,3 +295,138 @@ class CreateSessionAPIView(APIView):
             
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+class SimpleRegisterAPIView(APIView):
+    """
+    Простой API для регистрации пользователей
+    """
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        try:
+            # Получаем данные из запроса
+            full_name = request.data.get('full_name')
+            phone = request.data.get('phone')
+            company_name = request.data.get('company_name')
+            business_type = request.data.get('business_type')
+            password = request.data.get('password')
+            agree_to_terms = request.data.get('agree_to_terms')
+
+            # Валидация обязательных полей
+            if not all([full_name, phone, company_name, business_type, password, agree_to_terms]):
+                return Response({
+                    'detail': 'Все поля обязательны для заполнения'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            if not agree_to_terms:
+                return Response({
+                    'detail': 'Необходимо согласие с условиями'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            # Нормализация телефона
+            phone_digits = re.sub(r'\D', '', phone)
+            if phone_digits.startswith('996'):
+                phone_digits = phone_digits[3:]
+            if len(phone_digits) != 9:
+                return Response({
+                    'detail': 'Неверный формат номера телефона'
+                }, status=status.HTTP_400_BAD_REQUEST)
+            
+            normalized_phone = f"+996{phone_digits}"
+
+            # Проверяем, не существует ли уже пользователь с таким телефоном
+            if User.objects.filter(phone_number=normalized_phone).exists():
+                return Response({
+                    'detail': 'Пользователь с таким номером телефона уже существует'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            # Получаем город по умолчанию (Бишкек)
+            default_city = City.objects.filter(country='KG').first()
+            if not default_city:
+                return Response({
+                    'detail': 'Ошибка конфигурации: город не найден'
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            # Получаем тип бизнеса
+            try:
+                business_type_obj = BusinessType.objects.get(id=business_type)
+            except BusinessType.DoesNotExist:
+                return Response({
+                    'detail': 'Неверный тип бизнеса'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            with transaction.atomic():
+                # Создаем пользователя
+                UserModel = get_user_model()
+                user = UserModel(
+                    full_name=full_name,
+                    phone_number=normalized_phone,
+                    city=default_city,
+                    country='Кыргызстан',
+                    role=UserModel.Role.ADMIN,
+                    is_phone_verified=True  # Пока отключаем верификацию
+                )
+                user.set_password(password)
+                user.save()
+
+                # Создаем бизнес
+                user_id_str = str(user.id)
+                if hasattr(user.id, 'hex'):
+                    user_id_short = user.id.hex[:8]
+                else:
+                    user_id_short = user_id_str[:8]
+
+                business = Business.objects.create(
+                    name=company_name,
+                    type=business_type_obj,
+                    city=default_city,
+                    country='Кыргызстан',
+                    owner=user,
+                    username=f'biz_{user_id_short}'
+                )
+
+                # Связываем пользователя с бизнесом
+                user.business = business
+                user.save()
+
+                # Создаем JWT токен
+                refresh = RefreshToken.for_user(user)
+
+                return Response({
+                    'token': str(refresh.access_token),
+                    'user': {
+                        'id': str(user.id),
+                        'full_name': user.full_name,
+                        'phone_number': user.phone_number,
+                        'business': {
+                            'id': business.id,
+                            'name': business.name
+                        }
+                    },
+                    'message': 'Регистрация успешно завершена'
+                }, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            return Response({
+                'detail': f'Ошибка при регистрации: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class BusinessTypesAPIView(APIView):
+    """
+    API для получения списка типов бизнеса
+    """
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, *args, **kwargs):
+        try:
+            business_types = BusinessType.objects.all().order_by('name')
+            data = [{'id': bt.id, 'name': bt.name} for bt in business_types]
+            
+            return Response({
+                'business_types': data
+            }, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            return Response({
+                'detail': f'Ошибка при получении типов бизнеса: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

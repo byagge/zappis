@@ -6,150 +6,385 @@
     <title>Условия пользования | Zappis</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         html { scroll-behavior: smooth; }
         body { font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; }
         .resso-scrollbar::-webkit-scrollbar { width: 8px; background: #f5f5f5; }
         .resso-scrollbar::-webkit-scrollbar-thumb { background: #e0e0e0; border-radius: 4px; }
         .tab-active { border-bottom: 2.5px solid #6366f1; color: #4338ca; background: #f8fafc; }
-        .tab-link { transition: color 0.2s; }
-        .tab-link:hover { color: #6366f1; }
+        .tab-link { transition: all 0.3s ease; }
+        .tab-link:hover { color: #6366f1; transform: translateY(-1px); }
         .privacy-banner { max-width: 420px; width: 100%; margin: 0 auto; display: block; }
+        
+        /* Enhanced animations and effects */
+        .fade-in { animation: fadeIn 0.6s ease-out; }
+        .slide-up { animation: slideUp 0.5s ease-out; }
+        .scale-in { animation: scaleIn 0.4s ease-out; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes scaleIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        
+        /* Enhanced hover effects */
+        .hover-lift { transition: all 0.3s ease; }
+        .hover-lift:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        
+        /* Gradient backgrounds */
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .gradient-text { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        /* Enhanced sidebar */
+        .sidebar-link { transition: all 0.3s ease; position: relative; }
+        .sidebar-link:hover { background: linear-gradient(90deg, #f0f4ff 0%, #e0e7ff 100%); transform: translateX(4px); }
+        .sidebar-link.active { background: linear-gradient(90deg, #e0e7ff 0%, #c7d2fe 100%); border-left: 3px solid #6366f1; }
+        
+        /* Enhanced sections */
+        .section-card { transition: all 0.3s ease; border: 1px solid #e2e8f0; }
+        .section-card:hover { border-color: #c7d2fe; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1); }
+        
+        /* Enhanced typography */
+        .text-gradient { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
         @media (min-width: 1024px) {
             aside.fixed {
                 position: fixed !important;
-                top: 136px !important;
-                height: calc(100vh - 136px) !important;
+                top: 152px !important;
+                height: calc(100vh - 152px) !important;
                 z-index: 40;
             }
             main .flex-1 {
                 margin-left: 20rem;
             }
-            /* nav.fixed больше не нужен, так как теперь фиксирован внешний div */
+        }
+        
+        /* Mobile improvements */
+        @media (max-width: 768px) {
+            .mobile-nav { overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; }
+            .mobile-nav::-webkit-scrollbar { display: none; }
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
-    <!-- Resso Header -->
-    <header class="bg-white border-b border-slate-200 px-8 py-5 flex items-center justify-between sticky top-0 z-30">
+<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 min-h-screen">
+    <!-- Enhanced Header -->
+    <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 px-8 py-8 flex items-center justify-between sticky top-0 z-30 shadow-sm">
         <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-lg flex items-center justify-center">
-                <span class="text-white font-bold text-xl">R</span>
+            <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 via-purple-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                <span class="text-white font-bold text-2xl">Z</span>
             </div>
-            <span class="text-2xl font-semibold text-slate-900">Zappis</span>
+            <span class="text-2xl font-bold text-slate-900">Zappis</span>
         </div>
-        <nav class="hidden md:flex items-center space-x-6">
-            <a href="index.html" class="text-slate-600 hover:text-indigo-600 transition-colors">Главная</a>
-            <a href="settings.html" class="text-slate-600 hover:text-indigo-600 transition-colors">Настройки</a>
-            <a href="#" class="text-indigo-700 font-semibold">Справочный центр</a>
+        <nav class="hidden md:flex items-center space-x-8">
+            <a href="index.html" class="text-slate-600 hover:text-indigo-600 transition-all duration-300 font-medium hover:scale-105">Главная</a>
+            <a href="settings.html" class="text-slate-600 hover:text-indigo-600 transition-all duration-300 font-medium hover:scale-105">Настройки</a>
+            <a href="#" class="text-indigo-700 font-semibold bg-indigo-50 px-4 py-2 rounded-lg hover:bg-indigo-100 transition-all duration-300">Справочный центр</a>
         </nav>
         <div class="flex items-center space-x-4">
-            <div class="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-semibold">M</div>
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center text-indigo-700 font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105">M</div>
         </div>
     </header>
-    <!-- Вкладки -->
-    <div class="fixed top-[72px] left-0 right-0 w-full bg-white border-b border-slate-100 z-30">
-        <nav class="max-w-7xl flex space-x-2 px-2 sm:px-4 md:px-8 mx-auto overflow-x-auto scrollbar-thin scrollbar-thumb-slate-200" style="min-width:0;">
-            <a href="/privacy/" class="px-4 py-3 tab-link text-slate-600 font-medium">Политика конфиденциальности</a>
-            <a href="/terms/" class="px-4 py-3 tab-link text-slate-600 font-medium">Условия использования</a>
-            <a href="/technologies/" class="px-4 py-3 tab-link text-slate-600 font-medium">Технологии</a>
-            <a href="/cookies/" class="px-4 py-3 tab-link text-slate-600 font-medium">Cookies</a>
-          </nav>
+    
+    <!-- Enhanced Tabs -->
+    <div class="fixed top-[88px] left-0 right-0 w-full bg-white/95 backdrop-blur-md border-b border-slate-200 z-30 shadow-sm">
+      <nav class="max-w-7xl flex space-x-1 px-2 sm:px-4 md:px-8 mx-auto overflow-x-auto mobile-nav" style="min-width:0;">
+        <a href="/privacy/" class="px-6 py-4 tab-link text-slate-600 font-medium hover:text-indigo-600 hover:bg-slate-50 rounded-t-lg">Политика конфиденциальности</a>
+        <a href="/terms/" class="px-6 py-4 tab-link text-indigo-700 font-semibold bg-indigo-50 rounded-t-lg border-b-2 border-indigo-500">Условия использования</a>
+        <a href="/technologies/" class="px-6 py-4 tab-link text-slate-600 font-medium hover:text-indigo-600 hover:bg-slate-50 rounded-t-lg">Технологии</a>
+        <a href="/cookies/" class="px-6 py-4 tab-link text-slate-600 font-medium hover:text-indigo-600 hover:bg-slate-50 rounded-t-lg">Cookies</a>
+      </nav>
     </div>
+    
     <main class="max-w-7xl mx-auto flex flex-col lg:flex-row pt-6 md:pt-10 pb-10 md:pb-20 px-2 sm:px-4 md:px-8">
-        <!-- Sidebar -->
-        <aside class="w-full lg:w-80 pr-0 lg:pr-8 border-r border-slate-100 resso-scrollbar overflow-y-auto h-auto lg:h-[calc(100vh-136px)] fixed z-40 hidden lg:block" style="top:136px; height:calc(100vh - 136px);">
-            <nav class="space-y-1 text-slate-700 text-base" id="terms-menu">
-                <a href="#intro" class="block py-2 px-2 rounded hover:bg-indigo-50 font-medium text-indigo-700">Введение</a>
-                <a href="#general" class="block py-2 px-2 rounded hover:bg-indigo-50">Общие положения</a>
-                <a href="#account" class="block py-2 px-2 rounded hover:bg-indigo-50">Регистрация и аккаунт</a>
-                <a href="#user-rights" class="block py-2 px-2 rounded hover:bg-indigo-50">Права и обязанности пользователя</a>
-                <a href="#service-rights" class="block py-2 px-2 rounded hover:bg-indigo-50">Права и обязанности сервиса</a>
-                <a href="#restrictions" class="block py-2 px-2 rounded hover:bg-indigo-50">Ограничения</a>
-                <a href="#liability" class="block py-2 px-2 rounded hover:bg-indigo-50">Ответственность</a>
-                <a href="#changes" class="block py-2 px-2 rounded hover:bg-indigo-50">Изменения условий</a>
-                <a href="#contacts" class="block py-2 px-2 rounded hover:bg-indigo-50">Контакты</a>
+        <!-- Enhanced Sidebar -->
+        <aside class="w-full lg:w-80 pr-0 lg:pr-8 border-r border-slate-200 resso-scrollbar overflow-y-auto h-auto lg:h-[calc(100vh-152px)] fixed z-40 hidden lg:block bg-white/50 backdrop-blur-sm" style="top:152px; height:calc(100vh - 152px);">
+            <nav class="space-y-2 text-slate-700 text-base p-4" id="terms-menu">
+                <a href="#intro" class="block py-3 px-4 rounded-xl sidebar-link active font-semibold text-indigo-700 bg-gradient-to-r from-indigo-50 to-purple-50">
+                    <i data-lucide="file-text" class="w-4 h-4 inline mr-3"></i>Введение
+                </a>
+                <a href="#general" class="block py-3 px-4 rounded-xl sidebar-link hover:bg-slate-50">
+                    <i data-lucide="book-open" class="w-4 h-4 inline mr-3"></i>Общие положения
+                </a>
+                <a href="#account" class="block py-3 px-4 rounded-xl sidebar-link hover:bg-slate-50">
+                    <i data-lucide="user-plus" class="w-4 h-4 inline mr-3"></i>Регистрация и аккаунт
+                </a>
+                <a href="#user-rights" class="block py-3 px-4 rounded-xl sidebar-link hover:bg-slate-50">
+                    <i data-lucide="user-check" class="w-4 h-4 inline mr-3"></i>Права и обязанности пользователя
+                </a>
+                <a href="#service-rights" class="block py-3 px-4 rounded-xl sidebar-link hover:bg-slate-50">
+                    <i data-lucide="shield" class="w-4 h-4 inline mr-3"></i>Права и обязанности сервиса
+                </a>
+                <a href="#restrictions" class="block py-3 px-4 rounded-xl sidebar-link hover:bg-slate-50">
+                    <i data-lucide="ban" class="w-4 h-4 inline mr-3"></i>Ограничения
+                </a>
+                <a href="#liability" class="block py-3 px-4 rounded-xl sidebar-link hover:bg-slate-50">
+                    <i data-lucide="alert-triangle" class="w-4 h-4 inline mr-3"></i>Ответственность
+                </a>
+                <a href="#changes" class="block py-3 px-4 rounded-xl sidebar-link hover:bg-slate-50">
+                    <i data-lucide="edit" class="w-4 h-4 inline mr-3"></i>Изменения условий
+                </a>
+                <a href="#contacts" class="block py-3 px-4 rounded-xl sidebar-link hover:bg-slate-50">
+                    <i data-lucide="mail" class="w-4 h-4 inline mr-3"></i>Контакты
+                </a>
             </nav>
         </aside>
-        <!-- Main Content -->
+        
+        <!-- Enhanced Main Content -->
         <section class="flex-1 pl-0 lg:pl-12">
-            <div class="flex flex-col items-center mb-6 md:mb-10 pt-10 md:pt-24">
-                <!-- Баннер условий пользования удалён -->
-                <h1 class="text-2xl md:text-4xl font-bold text-slate-900 mb-2 tracking-tight uppercase" id="intro">Условия использования Zappis</h1>
-                <p class="text-base md:text-lg text-slate-700 text-center max-w-2xl">Пожалуйста, внимательно ознакомьтесь с настоящими условиями использования перед началом работы с сервисом Zappis. Используя наш сервис, вы соглашаетесь соблюдать данные условия. Если вы не согласны с какими-либо положениями, пожалуйста, не используйте сервис.</p>
+            <div class="flex flex-col items-center mb-8 md:mb-12 pt-10 md:pt-24 fade-in">
+                <div class="w-20 h-20 bg-gradient-to-br from-indigo-500 via-purple-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 shadow-xl">
+                    <i data-lucide="file-text" class="w-10 h-10 text-white"></i>
+                </div>
+                <h1 class="text-3xl md:text-5xl font-bold text-slate-900 mb-4 tracking-tight text-center" id="intro">
+                    <span class="text-gradient">Условия использования</span> Zappis
+                </h1>
+                <p class="text-lg md:text-xl text-slate-700 text-center max-w-3xl leading-relaxed">
+                    Пожалуйста, внимательно ознакомьтесь с настоящими условиями использования перед началом работы с сервисом Zappis.
+                </p>
             </div>
-            <div class="space-y-8 md:space-y-12 bg-white rounded-2xl p-4 sm:p-6 md:p-12 border border-slate-100">
-                <section id="general">
-                    <h2 class="text-xl font-semibold text-slate-900 mb-3">Общие положения</h2>
-                    <ul class="list-disc pl-6 text-slate-700 space-y-1 mb-3">
-                        <li>Настоящие условия регулируют отношения между пользователем и сервисом Zappis по вопросам использования функционала, сервисов и контента платформы.</li>
-                        <li>Zappis предоставляет доступ к сервису на условиях, изложенных в настоящем документе, а также в иных политиках и правилах, опубликованных на сайте.</li>
-                        <li>Использование сервиса возможно только при полном и безоговорочном согласии пользователя с условиями.</li>
-                    </ul>
+            
+            <div class="space-y-8 md:space-y-12 bg-white/80 backdrop-blur-sm rounded-3xl p-6 sm:p-8 md:p-12 border border-slate-200/50 shadow-xl slide-up">
+                <!-- Enhanced sections with icons and better styling -->
+                <section id="general" class="section-card rounded-2xl p-6 hover-lift">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mr-4">
+                            <i data-lucide="book-open" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-slate-900">Общие положения</h2>
+                    </div>
+                    <div class="space-y-3 mb-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                <i data-lucide="check" class="w-3 h-3 text-blue-600"></i>
+                            </div>
+                            <p class="text-slate-700">Настоящие условия регулируют отношения между пользователем и сервисом Zappis по вопросам использования функционала, сервисов и контента платформы.</p>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                <i data-lucide="check" class="w-3 h-3 text-blue-600"></i>
+                            </div>
+                            <p class="text-slate-700">Zappis предоставляет доступ к сервису на условиях, изложенных в настоящем документе, а также в иных политиках и правилах, опубликованных на сайте.</p>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                <i data-lucide="check" class="w-3 h-3 text-blue-600"></i>
+                            </div>
+                            <p class="text-slate-700">Использование сервиса возможно только при полном и безоговорочном согласии пользователя с условиями.</p>
+                        </div>
+                    </div>
                 </section>
-                <section id="account">
-                    <h2 class="text-xl font-semibold text-slate-900 mb-3">Регистрация и аккаунт</h2>
-                    <ul class="list-disc pl-6 text-slate-700 space-y-1 mb-3">
-                        <li>Для доступа к отдельным функциям сервиса требуется регистрация и создание аккаунта.</li>
-                        <li>Пользователь обязуется предоставлять достоверную и актуальную информацию при регистрации и поддерживать её в актуальном состоянии.</li>
-                        <li>Пользователь несёт ответственность за сохранность своих учетных данных и не должен передавать их третьим лицам.</li>
-                        <li>Все действия, совершённые с использованием аккаунта пользователя, считаются совершёнными самим пользователем.</li>
-                        <li>В случае подозрения на несанкционированный доступ пользователь обязан немедленно уведомить службу поддержки Zappis.</li>
-                    </ul>
+
+                <section id="account" class="section-card rounded-2xl p-6 hover-lift">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mr-4">
+                            <i data-lucide="user-plus" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-slate-900">Регистрация и аккаунт</h2>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4 mb-4">
+                        <div class="bg-green-50 rounded-xl p-4 border border-green-200">
+                            <h3 class="font-semibold text-green-900 mb-2">Создание аккаунта</h3>
+                            <p class="text-green-700 text-sm">Для доступа к отдельным функциям сервиса требуется регистрация и создание аккаунта</p>
+                        </div>
+                        <div class="bg-green-50 rounded-xl p-4 border border-green-200">
+                            <h3 class="font-semibold text-green-900 mb-2">Достоверность данных</h3>
+                            <p class="text-green-700 text-sm">Пользователь обязуется предоставлять достоверную и актуальную информацию</p>
+                        </div>
+                        <div class="bg-green-50 rounded-xl p-4 border border-green-200">
+                            <h3 class="font-semibold text-green-900 mb-2">Безопасность</h3>
+                            <p class="text-green-700 text-sm">Пользователь несёт ответственность за сохранность своих учетных данных</p>
+                        </div>
+                        <div class="bg-green-50 rounded-xl p-4 border border-green-200">
+                            <h3 class="font-semibold text-green-900 mb-2">Ответственность</h3>
+                            <p class="text-green-700 text-sm">Все действия, совершённые с использованием аккаунта, считаются совершёнными самим пользователем</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 text-sm bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+                        <i data-lucide="alert-circle" class="w-4 h-4 inline mr-2"></i>
+                        В случае подозрения на несанкционированный доступ пользователь обязан немедленно уведомить службу поддержки Zappis.
+                    </p>
                 </section>
-                <section id="user-rights">
-                    <h2 class="text-xl font-semibold text-slate-900 mb-3">Права и обязанности пользователя</h2>
-                    <ul class="list-disc pl-6 text-slate-700 space-y-1 mb-3">
-                        <li>Пользователь вправе использовать сервис в рамках его функционала и в соответствии с настоящими условиями.</li>
-                        <li>Пользователь обязуется не использовать сервис для противоправных целей, не нарушать права третьих лиц и не размещать запрещённый контент.</li>
-                        <li>Пользователь несёт ответственность за все действия, совершённые с его аккаунта.</li>
-                        <li>Пользователь обязуется соблюдать авторские и иные права на контент, размещённый в сервисе.</li>
-                    </ul>
+
+                <section id="user-rights" class="section-card rounded-2xl p-6 hover-lift">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mr-4">
+                            <i data-lucide="user-check" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-slate-900">Права и обязанности пользователя</h2>
+                    </div>
+                    <div class="space-y-3 mb-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                <i data-lucide="check" class="w-3 h-3 text-purple-600"></i>
+                            </div>
+                            <p class="text-slate-700">Пользователь вправе использовать сервис в рамках его функционала и в соответствии с настоящими условиями.</p>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                <i data-lucide="check" class="w-3 h-3 text-purple-600"></i>
+                            </div>
+                            <p class="text-slate-700">Пользователь обязуется не использовать сервис для противоправных целей, не нарушать права третьих лиц и не размещать запрещённый контент.</p>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                <i data-lucide="check" class="w-3 h-3 text-purple-600"></i>
+                            </div>
+                            <p class="text-slate-700">Пользователь несёт ответственность за все действия, совершённые с его аккаунта.</p>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                <i data-lucide="check" class="w-3 h-3 text-purple-600"></i>
+                            </div>
+                            <p class="text-slate-700">Пользователь обязуется соблюдать авторские и иные права на контент, размещённый в сервисе.</p>
+                        </div>
+                    </div>
                 </section>
-                <section id="service-rights">
-                    <h2 class="text-xl font-semibold text-slate-900 mb-3">Права и обязанности сервиса</h2>
-                    <ul class="list-disc pl-6 text-slate-700 space-y-1 mb-3">
-                        <li>Zappis вправе в любой момент изменять функционал, интерфейс, правила и условия предоставления сервиса.</li>
-                        <li>Zappis вправе временно или навсегда ограничить доступ пользователя к сервису при нарушении условий или законодательства.</li>
-                        <li>Zappis обязуется обеспечивать работоспособность сервиса, но не гарантирует его бесперебойную и безошибочную работу.</li>
-                        <li>Zappis вправе удалять или блокировать любой контент, нарушающий условия или права третьих лиц.</li>
-                    </ul>
+
+                <section id="service-rights" class="section-card rounded-2xl p-6 hover-lift">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center mr-4">
+                            <i data-lucide="shield" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-slate-900">Права и обязанности сервиса</h2>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4 mb-4">
+                        <div class="bg-orange-50 rounded-xl p-4 border border-orange-200">
+                            <h3 class="font-semibold text-orange-900 mb-2">Изменение функционала</h3>
+                            <p class="text-orange-700 text-sm">Zappis вправе в любой момент изменять функционал, интерфейс, правила и условия</p>
+                        </div>
+                        <div class="bg-orange-50 rounded-xl p-4 border border-orange-200">
+                            <h3 class="font-semibold text-orange-900 mb-2">Ограничение доступа</h3>
+                            <p class="text-orange-700 text-sm">Zappis вправе ограничить доступ пользователя при нарушении условий</p>
+                        </div>
+                        <div class="bg-orange-50 rounded-xl p-4 border border-orange-200">
+                            <h3 class="font-semibold text-orange-900 mb-2">Работоспособность</h3>
+                            <p class="text-orange-700 text-sm">Zappis обязуется обеспечивать работоспособность сервиса</p>
+                        </div>
+                        <div class="bg-orange-50 rounded-xl p-4 border border-orange-200">
+                            <h3 class="font-semibold text-orange-900 mb-2">Модерация контента</h3>
+                            <p class="text-orange-700 text-sm">Zappis вправе удалять или блокировать нарушающий контент</p>
+                        </div>
+                    </div>
                 </section>
-                <section id="restrictions">
-                    <h2 class="text-xl font-semibold text-slate-900 mb-3">Ограничения</h2>
-                    <ul class="list-disc pl-6 text-slate-700 space-y-1 mb-3">
-                        <li>Запрещается использовать сервис для рассылки спама, мошенничества, распространения вредоносного ПО, нарушения авторских прав и иных противоправных действий.</li>
-                        <li>Запрещается пытаться получить несанкционированный доступ к сервису, данным других пользователей или инфраструктуре Zappis.</li>
-                        <li>Запрещается использовать автоматизированные скрипты, ботов и иные средства для сбора информации или вмешательства в работу сервиса.</li>
-                    </ul>
+
+                <section id="restrictions" class="section-card rounded-2xl p-6 hover-lift">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-pink-600 rounded-xl flex items-center justify-center mr-4">
+                            <i data-lucide="ban" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-slate-900">Ограничения</h2>
+                    </div>
+                    <div class="space-y-3 mb-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                <i data-lucide="x" class="w-3 h-3 text-red-600"></i>
+                            </div>
+                            <p class="text-slate-700">Запрещается использовать сервис для рассылки спама, мошенничества, распространения вредоносного ПО, нарушения авторских прав и иных противоправных действий.</p>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                <i data-lucide="x" class="w-3 h-3 text-red-600"></i>
+                            </div>
+                            <p class="text-slate-700">Запрещается пытаться получить несанкционированный доступ к сервису, данным других пользователей или инфраструктуре Zappis.</p>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                <i data-lucide="x" class="w-3 h-3 text-red-600"></i>
+                            </div>
+                            <p class="text-slate-700">Запрещается использовать автоматизированные скрипты, ботов и иные средства для сбора информации или вмешательства в работу сервиса.</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 text-sm bg-red-50 rounded-lg p-4 border-l-4 border-red-500">
+                        <i data-lucide="alert-triangle" class="w-4 h-4 inline mr-2"></i>
+                        <strong>Важно:</strong> Нарушение данных ограничений может привести к блокировке аккаунта и ограничению доступа к сервису.
+                    </p>
                 </section>
-                <section id="liability">
-                    <h2 class="text-xl font-semibold text-slate-900 mb-3">Ответственность</h2>
-                    <ul class="list-disc pl-6 text-slate-700 space-y-1 mb-3">
-                        <li>Пользователь несёт ответственность за все действия, совершённые с его аккаунта, а также за соблюдение законодательства при использовании сервиса.</li>
-                        <li>Zappis не несёт ответственности за временные сбои, потерю данных, вред, причинённый действиями третьих лиц, а также за контент, размещённый пользователями.</li>
-                        <li>В случае нарушения условий Zappis вправе ограничить или заблокировать доступ пользователя без предварительного уведомления.</li>
-                    </ul>
+
+                <section id="liability" class="section-card rounded-2xl p-6 hover-lift">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl flex items-center justify-center mr-4">
+                            <i data-lucide="alert-triangle" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-slate-900">Ответственность</h2>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4 mb-4">
+                        <div class="bg-yellow-50 rounded-xl p-4 border border-yellow-200">
+                            <h3 class="font-semibold text-yellow-900 mb-2">Ответственность пользователя</h3>
+                            <p class="text-yellow-700 text-sm">Пользователь несёт ответственность за все действия, совершённые с его аккаунта</p>
+                        </div>
+                        <div class="bg-yellow-50 rounded-xl p-4 border border-yellow-200">
+                            <h3 class="font-semibold text-yellow-900 mb-2">Ограничение ответственности</h3>
+                            <p class="text-yellow-700 text-sm">Zappis не несёт ответственности за временные сбои, потерю данных, вред от действий третьих лиц</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 text-sm bg-yellow-50 rounded-lg p-4 border-l-4 border-yellow-500">
+                        <i data-lucide="info" class="w-4 h-4 inline mr-2"></i>
+                        В случае нарушения условий Zappis вправе ограничить или заблокировать доступ пользователя без предварительного уведомления.
+                    </p>
                 </section>
-                <section id="changes">
-                    <h2 class="text-xl font-semibold text-slate-900 mb-3">Изменения условий</h2>
-                    <p class="text-slate-700 mb-2">Zappis оставляет за собой право вносить изменения в настоящие условия в любое время. Актуальная версия всегда доступна на сайте. Продолжая использовать сервис после изменений, пользователь соглашается с новыми условиями.</p>
+
+                <section id="changes" class="section-card rounded-2xl p-6 hover-lift">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-xl flex items-center justify-center mr-4">
+                            <i data-lucide="edit" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-slate-900">Изменения условий</h2>
+                    </div>
+                    <p class="text-slate-700 mb-4">Zappis оставляет за собой право вносить изменения в настоящие условия в любое время. Актуальная версия всегда доступна на сайте.</p>
+                    <div class="bg-teal-50 rounded-xl p-4 border border-teal-200">
+                        <h3 class="font-semibold text-teal-900 mb-2">Согласие с изменениями</h3>
+                        <p class="text-teal-700 text-sm">Продолжая использовать сервис после изменений, пользователь соглашается с новыми условиями.</p>
+                    </div>
                 </section>
-                <section id="contacts">
-                    <h2 class="text-xl font-semibold text-slate-900 mb-3">Контакты</h2>
-                    <p class="text-slate-700 mb-2">По всем вопросам, связанным с использованием сервиса, обращайтесь в службу поддержки:</p>
-                    <ul class="list-none pl-0 text-slate-700 space-y-1 mb-3">
-                        <li><b>Email:</b> <a href="mailto:support@zappis.app" class="text-indigo-600 underline">support@zappis.app</a></li>
-                    </ul>
+
+                <section id="contacts" class="section-card rounded-2xl p-6 hover-lift">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-xl flex items-center justify-center mr-4">
+                            <i data-lucide="mail" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-slate-900">Контакты</h2>
+                    </div>
+                    <p class="text-slate-700 mb-4">По всем вопросам, связанным с использованием сервиса, обращайтесь в службу поддержки:</p>
+                    <div class="bg-indigo-50 rounded-xl p-4 border border-indigo-200">
+                        <div class="flex items-center space-x-3">
+                            <i data-lucide="mail" class="w-5 h-5 text-indigo-600"></i>
+                            <span class="text-indigo-900 font-medium">Email:</span>
+                            <a href="mailto:support@zappis.app" class="text-indigo-600 underline font-medium hover:text-indigo-800">support@zappis.app</a>
+                        </div>
+                    </div>
                 </section>
             </div>
         </section>
     </main>
+    
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
-            // Плавная прокрутка для меню
-            document.querySelectorAll('#terms-menu a').forEach(link => {
+            
+            // Enhanced smooth scrolling with active state management
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('#terms-menu a');
+            
+            // Update active nav link on scroll
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= (sectionTop - 200)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${current}`) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+            
+            // Enhanced smooth scrolling for menu
+            navLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
                     const href = this.getAttribute('href');
                     if (href && href.startsWith('#')) {
@@ -160,6 +395,24 @@
                         }
                     }
                 });
+            });
+            
+            // Add intersection observer for animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in');
+                    }
+                });
+            }, observerOptions);
+            
+            document.querySelectorAll('.section-card').forEach(card => {
+                observer.observe(card);
             });
         });
     </script>

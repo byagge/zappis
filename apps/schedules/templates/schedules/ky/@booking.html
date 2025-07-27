@@ -57,10 +57,21 @@
             <span class="font-semibold text-gray-900 text-lg">Жазуулар</span>
             <span class="text-sm text-gray-500" x-text="filteredBookings.length + ' бүгүн'"></span>
         </div>
-        <button @click="showAddSheet = true" class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white shadow-lg hover:bg-blue-700 transition-colors focus:outline-none active:transform active:scale-95">
+        <button @click="showAddSheet = true" aria-label="Жазуу кошуу" class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white shadow-lg hover:bg-blue-700 transition-colors focus:outline-none active:transform active:scale-95">
             <i data-lucide="plus" class="w-6 h-6"></i>
         </button>
     </header>
+    <!-- Фильтр и поиск -->
+    <div class="bg-white border-b border-gray-100 px-4 py-2 flex items-center gap-2">
+        <select x-model="selectedMaster" class="border rounded-lg px-2 py-1 text-sm focus:ring-2 focus:ring-blue-500" aria-label="Мастер боюнча фильтр">
+            <option value="all">Бардык мастерлер</option>
+            <template x-for="master in masters" :key="master.id">
+                <option :value="master.id" x-text="master.name"></option>
+            </template>
+        </select>
+        <input type="text" x-model="searchQuery" @input="searchClients" placeholder="Кардарды издөө..." class="border rounded-lg px-2 py-1 text-sm flex-1 focus:ring-2 focus:ring-blue-500" aria-label="Кардарды издөө">
+        <button @click="goToday" class="ml-2 px-3 py-1 rounded-lg bg-gray-100 text-gray-700 hover:bg-blue-50 text-xs" aria-label="Бүгүн">Бүгүн</button>
+    </div>
 
     <!-- Date Navigation -->
     <div class="bg-white border-b border-gray-100">
@@ -90,9 +101,13 @@
     <!-- Booking List -->
     <main class="flex-1 overflow-y-auto scrollbar-hide pb-20">
         <template x-if="loading">
-            <div class="flex flex-col items-center justify-center h-64">
+            <div class="flex flex-col items-center justify-center h-64 w-full">
                 <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
                 <span class="mt-4 text-gray-600">Жазуулар жүктөлүүдө...</span>
+                <!-- Skeleton -->
+                <template x-for="i in 3" :key="i">
+                    <div class="animate-pulse bg-gray-200 rounded-xl h-20 w-full my-2"></div>
+                </template>
             </div>
         </template>
         
@@ -100,7 +115,8 @@
             <div class="flex flex-col items-center justify-center h-64 text-gray-400 px-6">
                 <i data-lucide="calendar" class="w-16 h-16 mb-4 text-gray-300"></i>
                 <div class="text-xl font-semibold mb-2 text-center">Бул күнгө жазуулар жок</div>
-                <div class="mb-4 text-center text-sm">Жазууларды десктоп версиясы аркылуу кошсоңуз болот</div>
+                <div class="mb-4 text-center text-sm">Жаңы жазуу кошуу же башка мастерди тандаңыз</div>
+                <button @click="refresh" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">Жаңыртуу</button>
             </div>
         </template>
 
@@ -114,7 +130,10 @@
                                 <i data-lucide="user" class="w-5 h-5"></i>
                             </div>
                             <div>
-                                <div class="font-semibold text-gray-900" x-text="booking.client_name || (booking.client && booking.client.name) || 'Кардар'"></div>
+                                <div class="font-semibold text-gray-900 flex items-center gap-2">
+                                    <span x-text="booking.client_name || (booking.client && booking.client.name) || 'Кардар'"></span>
+                                    <button @click.stop="copyPhone(booking)" class="ml-1 text-xs text-blue-500 hover:underline" aria-label="Телефонду көчүрүү">көчүрүү</button>
+                                </div>
                                 <div class="text-sm text-gray-500" x-text="booking.phone || (booking.client && booking.client.phone) || ''"></div>
                             </div>
                         </div>
@@ -307,6 +326,9 @@
 function mobileBooking() {
     return {
         bookings: [],
+        masters: [],
+        selectedMaster: 'all',
+        searchQuery: '',
         currentDate: new Date(),
         showAddSheet: false,
         showDetails: false,
@@ -317,16 +339,11 @@ function mobileBooking() {
             message: '',
             type: 'success'
         },
-
+        isCancelling: false,
         async init() {
-            // Инициализация иконок при старте
             this.initIcons();
-            await this.loadBookings();
-            
-            // Обновляем данные каждые 5 минут
+            await Promise.all([this.loadBookings(), this.loadMasters()]);
             setInterval(() => this.loadBookings(), 5 * 60 * 1000);
-            
-            // Наблюдаем за изменениями DOM для обновления иконок
             this.observeDOM();
         },
 
@@ -372,9 +389,38 @@ function mobileBooking() {
             }
         },
 
+        async loadMasters() {
+            try {
+                const res = await fetch('/employees/api/masters/');
+                if (!res.ok) throw new Error('Мастерлерди жүктөөдө ката кетти');
+                const data = await res.json();
+                this.masters = Array.isArray(data) ? data : (data.results || []);
+            } catch (e) {
+                this.masters = [];
+            }
+        },
+
+        refresh() { this.loadBookings(); },
+        goToday() { this.currentDate = new Date(); },
+        searchClients() {
+            this.searchQuery = this.searchQuery.trim();
+        },
+
         get filteredBookings() {
             const dateStr = this.currentDate.toISOString().slice(0,10);
-            return this.bookings.filter(b => b.date === dateStr);
+            let filtered = this.bookings.filter(b => b.date === dateStr);
+            if (this.selectedMaster !== 'all') {
+                filtered = filtered.filter(b => String(b.master_id || (b.master && b.master.id)) === String(this.selectedMaster));
+            }
+            if (this.searchQuery) {
+                const q = this.searchQuery.toLowerCase();
+                filtered = filtered.filter(b => {
+                    const name = (b.client_name || (b.client && b.client.name) || '').toLowerCase();
+                    const phone = (b.phone || (b.client && b.client.phone) || '').toLowerCase();
+                    return name.includes(q) || phone.includes(q);
+                });
+            }
+            return filtered;
         },
 
         get sortedBookings() {
@@ -487,13 +533,11 @@ function mobileBooking() {
 
         async cancelBooking(id) {
             if (!confirm('Жазууну жокко чыгарууга ишенесизби?')) return;
-            
+            this.isCancelling = true;
             try {
                 const res = await fetch(`/schedules/api/bookings/${id}/`, {
                     method: 'DELETE',
-                    headers: {
-                        'X-CSRFToken': this.getCsrfToken()
-                    }
+                    headers: { 'X-CSRFToken': this.getCsrfToken() }
                 });
                 
                 if (!res.ok) throw new Error('Жазууну жокко чыгарууда ката кетти');
@@ -503,7 +547,16 @@ function mobileBooking() {
                 this.showToast('Жазуу ийгиликтүү жокко чыгарылды', 'success');
             } catch (e) {
                 this.showToast('Жазууну жокко чыгарууда ката кетти', 'error');
+            } finally {
+                this.isCancelling = false;
             }
+        },
+
+        copyPhone(booking) {
+            const phone = booking.phone || (booking.client && booking.client.phone) || '';
+            if (!phone) return;
+            navigator.clipboard.writeText(phone);
+            this.showToast('Телефон көчүрүлдү', 'success');
         },
 
         getCsrfToken() {

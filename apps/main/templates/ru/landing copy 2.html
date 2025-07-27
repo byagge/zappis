@@ -1,0 +1,368 @@
+{% load i18n %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=1">
+  <title>Zappis — онлайн-запись и CRM для роста вашего бизнеса</title>
+  <meta name="description" content="Zappis увеличивает поток клиентов на 40 %: онлайн-запись, CRM, напоминания и аналитика в одном месте. 14 дней бесплатно!">
+  <link rel="canonical" href="https://zappis.app/">
+  <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/swiper@9/swiper-bundle.min.css" />
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --c-primary: #3b82f6;
+      --c-secondary: #6366f1;
+    }
+    body { font-family: 'Inter', sans-serif; }
+    .section { padding-top: 6rem; padding-bottom: 6rem; }
+    .btn-primary {
+      background: linear-gradient(90deg, var(--c-primary) 0%, var(--c-secondary) 100%);
+      color: #fff; font-weight: 600; border-radius: 0.75rem;
+      padding: 1rem 2rem; transition: transform .2s, box-shadow .2s;
+      box-shadow: 0 4px 24px rgba(59,130,246,.15);
+    }
+    .btn-primary:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 8px 32px rgba(59,130,246,.25); }
+    .gradient-text {
+      background: linear-gradient(90deg, var(--c-primary), var(--c-secondary));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .card { background: #fff; border-radius: 1.5rem; box-shadow: 0 8px 32px rgba(0,0,0,.04); padding: 2.5rem; }
+    .trust-logo { opacity: 0.6; filter: grayscale(1); transition: opacity .2s, filter .2s; }
+    .trust-logo:hover { opacity: 1; filter: none; }
+    /* Decorative hero blob */
+    .hero-blob {
+      position: absolute;
+      top: -100px; left: 50%;
+      transform: translateX(-50%);
+      width: 1100px; height: 1100px;
+      background: radial-gradient(circle at 50% 50%, var(--c-secondary) 0%, transparent 70%);
+      opacity: 0.15;
+      filter: blur(100px);
+      pointer-events: none;
+      z-index: -1;
+    }
+    /* CTA pulse */
+    @keyframes ctaPulse { 0% { transform: scale(1); box-shadow: 0 4px 24px rgba(59,130,246,.15);} 50% { transform: scale(1.04); box-shadow: 0 8px 32px rgba(59,130,246,.30);} 100% { transform: scale(1); box-shadow: 0 4px 24px rgba(59,130,246,.15);} }
+    .btn-primary.animate-pulse:hover { animation: ctaPulse 1.4s ease-in-out infinite; }
+      /* Mobile spacing tweaks */
+    @media (max-width: 640px) {
+      .section { padding-top: 4rem; padding-bottom: 4rem; }
+      .section > .max-w-6xl,
+      .section > .max-w-5xl,
+      .section > .max-w-4xl { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .card { padding: 1.5rem; }
+      footer .grid { gap: 2rem; }
+      footer nav { margin-bottom: 1.5rem; }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-indigo-50 to-white text-gray-900">
+  <!-- HERO -->
+  <section class="section pb-0 min-h-[80vh] flex flex-col justify-center items-center text-center relative overflow-hidden">
+    <div class="hero-blob"></div>
+    <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold leading-tight mb-6 max-w-3xl">
+      <span class="gradient-text">Zappis</span> — CRM и онлайн-запись, которые приводят вам новых клиентов, пока вы занимаетесь сервисом
+    </h1>
+    <p class="text-lg sm:text-2xl text-gray-700 max-w-2xl mb-8">Увеличьте выручку до <span class="font-bold text-blue-600">+40 % за первый месяц</span> благодаря онлайн-бронированию, автоматическим напоминаниям и продающей CRM.</p>
+    <div class="flex flex-col sm:flex-row gap-4 mb-6">
+      <a id="hero-cta" href="https://zappis.app/accounts/partners/register/" class="btn-primary animate-pulse inline-flex items-center gap-2">Начать рост бесплатно <i data-lucide="rocket" class="w-5 h-5"></i></a>
+      <a href="/demo/" class="inline-flex items-center gap-2 text-lg font-medium text-gray-700 hover:text-blue-600">Смотреть демо <i data-lucide="play-circle" class="w-5 h-5"></i></a>
+    </div>
+    <div class="text-base text-green-600 font-medium mt-4 flex items-center justify-center gap-2"><i data-lucide="shield-check" class="w-5 h-5"></i> 14 дней бесплатно — гарантия возврата денег</div>
+  </section>
+
+  <!-- TRUST BAR -->
+  <section class="section pt-4 pb-8 bg-white/60">
+    <div class="max-w-6xl mx-auto flex flex-wrap justify-center items-center gap-10">
+       <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google" class="h-8 trust-logo">
+       <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram" class="h-8 trust-logo">
+       <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="h-8 trust-logo">
+       <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram" class="h-8 trust-logo">
+       <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTXkjUnJUVyHQqQLGIUGTwocFEEI-d2gAuT4A&s" alt="Lalafo" class="h-8 trust-logo">
+    </div>
+  </section>
+
+  <!-- FEATURES GRID -->
+  <section class="section">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2 class="text-4xl font-extrabold text-center mb-12">Почему <span class="gradient-text">Zappis</span> лучше</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="card text-center">
+          <i data-lucide="zap" class="w-10 h-10 text-blue-600 mb-4 inline-block"></i>
+          <h3 class="text-xl font-semibold mb-2">Онлайн-запись 24/7</h3>
+          <p class="text-gray-500">Клиенты бронируют услуги с сайта, Google, Instagram, WhatsApp, Telegram и Lalafo без звонков.</p>
+        </div>
+        <div class="card text-center">
+          <i data-lucide="bell-ring" class="w-10 h-10 text-blue-600 mb-4 inline-block"></i>
+          <h3 class="text-xl font-semibold mb-2">Авто-напоминания</h3>
+          <p class="text-gray-500">SMS, WhatsApp и Telegram уведомления уменьшают no-show на 60 %.</p>
+        </div>
+        <div class="card text-center">
+          <i data-lucide="bar-chart-3" class="w-10 h-10 text-blue-600 mb-4 inline-block"></i>
+          <h3 class="text-xl font-semibold mb-2">Аналитика &amp; CRM</h3>
+          <p class="text-gray-500">Следите за выручкой, воронкой и LTV в одном понятном дашборде.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="section bg-white/50">
+    <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
+      <div>
+        <img src="https://i.ibb.co/dJpKxYdR/mockuper-1.png" alt="Dashboard screenshot" class="rounded-2xl w-[500px]">
+      </div>
+      <div>
+        <h2 class="text-4xl font-extrabold mb-6">3 шага к росту</h2>
+        <ul class="space-y-4 text-lg">
+          <li class="flex gap-4 items-start"><i data-lucide="user-plus" class="w-6 h-6 text-blue-600 mt-1"></i><span>Создайте аккаунт за 30 секунд.</span></li>
+          <li class="flex gap-4 items-start"><i data-lucide="settings" class="w-6 h-6 text-blue-600 mt-1"></i><span>Добавьте услуги и сотрудников.</span></li>
+          <li class="flex gap-4 items-start"><i data-lucide="bell-ring" class="w-6 h-6 text-blue-600 mt-1"></i><span>Получайте записи и напоминания автоматически.</span></li>
+        </ul>
+        <a href="https://zappis.app/accounts/partners/register/" class="btn-primary inline-flex items-center gap-2 mt-8">Начать бесплатно <i data-lucide="arrow-right" class="w-5 h-5"></i></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section class="section bg-white/60">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2 class="text-4xl font-extrabold text-center mb-12">Zappis в действии</h2>
+      <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide flex justify-center"><img src="https://i.ibb.co/dJpKxYdR/mockuper-1.png" alt="Zappis mobile" class="rounded-2xl w-[400px] shadow-lg"></div>
+          <div class="swiper-slide flex justify-center"><img src="https://i.ibb.co/dJpKxYdR/mockuper-1.png" alt="Zappis calendar" class="rounded-2xl w-[400px] shadow-lg"></div>
+          <div class="swiper-slide flex justify-center"><img src="https://i.ibb.co/dJpKxYdR/mockuper-1.png" alt="Zappis analytics" class="rounded-2xl w-[400px] shadow-lg"></div>
+          <div class="swiper-slide flex justify-center"><img src="https://i.ibb.co/dJpKxYdR/mockuper-1.png" alt="Zappis reminders" class="rounded-2xl w-[400px] shadow-lg"></div>
+        </div>
+        <div class="swiper-pagination mt-6"></div>
+        <!-- Desktop navigation arrows -->
+        <div class="swiper-button-prev hidden md:block"></div>
+        <div class="swiper-button-next hidden md:block"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BENEFITS TABLE -->
+  <section class="section">
+    <div class="max-w-6xl mx-auto px-4 text-center">
+      <h2 class="text-4xl font-extrabold mb-10">Что вы получаете</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 text-left">
+        <div class="flex gap-4 items-start">
+          <i data-lucide="shield-check" class="w-6 h-6 text-green-500 mt-1"></i>
+          <span class="text-lg">Безопасное хранение данных</span>
+        </div>
+        <div class="flex gap-4 items-start">
+          <i data-lucide="smartphone" class="w-6 h-6 text-green-500 mt-1"></i>
+          <span class="text-lg">Веб-приложение</span>
+        </div>
+        <div class="flex gap-4 items-start">
+          <i data-lucide="users" class="w-6 h-6 text-green-500 mt-1"></i>
+          <span class="text-lg">Неограниченное число клиентов</span>
+        </div>
+        <div class="flex gap-4 items-start">
+          <i data-lucide="clock" class="w-6 h-6 text-green-500 mt-1"></i>
+          <span class="text-lg">Календарь с напоминаниями</span>
+        </div>
+        <div class="flex gap-4 items-start">
+          <i data-lucide="credit-card" class="w-6 h-6 text-green-500 mt-1"></i>
+          <span class="text-lg">Учет сотрудников</span>
+        </div>
+        <div class="flex gap-4 items-start">
+          <i data-lucide="plug" class="w-6 h-6 text-green-500 mt-1"></i>
+          <span class="text-lg">Интеграции и API</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="section bg-white/60">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <h2 class="text-4xl font-extrabold mb-12">Отзывы клиентов</h2>
+
+      <div class="swiper testimonialSwiper">
+        <div class="swiper-wrapper">
+
+          <div class="swiper-slide flex justify-center">
+            <div class="card text-left bg-white rounded-2xl shadow-lg p-6 max-w-sm">
+              <p class="text-gray-700 mb-4">«Zappis помог нам увеличить поток клиентов на 40 % уже в первый месяц работы.»</p>
+              <div class="font-semibold">Айгерим, BeautyLab (Ош)</div>
+            </div>
+          </div>
+
+          <div class="swiper-slide flex justify-center">
+            <div class="card text-left bg-white rounded-2xl shadow-lg p-6 max-w-sm">
+              <p class="text-gray-700 mb-4">«SMS- и WhatsApp-напоминания снизили отмены записей на 60 %. Теперь клиенты всегда приходят вовремя.»</p>
+              <div class="font-semibold">Нурбек, Barber Shop (Ош)</div>
+            </div>
+          </div>
+
+          <div class="swiper-slide flex justify-center">
+            <div class="card text-left bg-white rounded-2xl shadow-lg p-6 max-w-sm">
+              <p class="text-gray-700 mb-4">«Очень удобно управлять расписанием мастеров с телефона, даже когда нахожусь на базаре.»</p>
+              <div class="font-semibold">Жанара, Nail Studio (Ош)</div>
+            </div>
+          </div>
+
+          <div class="swiper-slide flex justify-center">
+            <div class="card text-left bg-white rounded-2xl shadow-lg p-6 max-w-sm">
+              <p class="text-gray-700 mb-4">«После подключения Zappis мы получили новых клиентов из Google и Instagram без лишних звонков.»</p>
+              <div class="font-semibold">Бакыт, FitLife (Ош)</div>
+            </div>
+          </div>
+
+          <div class="swiper-slide flex justify-center">
+            <div class="card text-left bg-white rounded-2xl shadow-lg p-6 max-w-sm">
+              <p class="text-gray-700 mb-4">«Клиенты записываются через веб-сайт за пару кликов — стало меньше звонков и ошибок в расписании.»</p>
+              <div class="font-semibold">Гулиза, SpaRelax (Ош)</div>
+            </div>
+          </div>
+
+          <div class="swiper-slide flex justify-center">
+            <div class="card text-left bg-white rounded-2xl shadow-lg p-6 max-w-sm">
+              <p class="text-gray-700 mb-4">«Интеграция с Instagram принесла нам +25 % заказов на вынос без дополнительной рекламы.»</p>
+              <div class="font-semibold">Руслан, CoffeePoint (Ош)</div>
+            </div>
+          </div>
+
+        </div>
+        <div class="swiper-pagination mt-6"></div>
+        <div class="swiper-button-prev hidden md:block"></div>
+        <div class="swiper-button-next hidden md:block"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section">
+    <div class="max-w-4xl mx-auto px-4">
+      <h2 class="text-4xl font-extrabold text-center mb-10">Частые вопросы</h2>
+      <div x-data="{open:null}" class="space-y-4">
+        <template x-for="(item,idx) in [
+          {q:'Сколько стоит Zappis?',a:'Первые 14 дней Zappis полностью бесплатна. Далее — от 490 сомов в месяц.'},
+          {q:'Нужна ли карта для старта?',a:'Нет, регистрация проходит без банковской карты. Оплатите позже, если понравится.'},
+          {q:'Есть ли поддержка?',a:'Да, поддержка доступна 24/7 в Telegram-чате и WhatsApp.'},
+          {q:'Работает ли сервис в Кыргызстане?',a:'Да, Zappis работает в Кыргызстане, поддерживает сом и номера +996. Сделано с любовью 🖤 в Оше, Кыргызстан.'},
+          {q:'Можно ли подключить напоминания по WhatsApp?',a:'Да, Zappis отправляет напоминания через WhatsApp, SMS и Telegram-бота.'},
+          {q:'Есть ли мобильное приложение?',a:'Нативного приложения нет, но есть веб-приложение, которое можно установить на главный экран телефона.'},
+          {q:'Для кого подходит Zappis?',a:'Для репетиторов, мастеров, студий и всех, кто работает по записи. Автоматизация, напоминания, всё просто.'},
+          {q:'Можно ли использовать Zappis без сайта?',a:'Да, у вас будет персональная страница записи, которую можно отправлять клиентам.'},
+          {q:'Нужны ли технические навыки для использования?',a:'Нет. Интерфейс очень простой — разберётся каждый, даже без опыта. А также клиентам отправляем обучения и помогаем с осваиванием.'},
+          {q:'Какие способы оплаты доступны?',a:'Поддерживаются карты Кыргызстана, Visa, MasterCard и электронные кошельки.'},
+          {q:'Можно ли протестировать перед покупкой?',a:'Да, у вас есть 14 дней бесплатного доступа без ограничений и без карты.'},
+          {q:'Сколько клиентов можно вести в Zappis?',a:'Сколько угодно! Нет ограничений по количеству клиентов, записей и сотрудников.'},
+          {q:'Можно ли вести несколько специалистов?',a:'Да, вы можете добавить других мастеров и вести расписание для каждого отдельно.'},
+          {q:'Будут ли приходить уведомления о записях?',a:'Да, вы получаете уведомления о новых и отменённых записях в Telegram и по email.'},
+          {q:'Есть ли интеграция с Instagram?',a:'Да, вы можете разместить ссылку на запись прямо в шапке профиля Instagram или в сторис.'},
+          {q:'Можно ли настроить рабочие часы и выходные?',a:'Да, вы сами настраиваете расписание, перерывы, выходные и исключения для каждого дня.'},
+          {q:'Как записываются клиенты?',a:'Клиенты просто переходят по ссылке, выбирают услугу и время — без звонков и переписок.'},
+          {q:'Можно ли добавить предоплату?',a:'Да, вы можете включить частичную или полную предоплату при записи.'},
+          {q:'На каком языке интерфейс?',a:'Интерфейс доступен на русском и кыргызском языках. В будущем добавим английский язык.'},
+          {q:'Что, если клиент не пришёл?', a:'Вы можете включить напоминания и отметить `не пришёл`, чтобы видеть статистику посещений.'},
+          {q:'Можно ли использовать Zappis на компьютере?',a:'Да, веб-приложение адаптировано под любые устройства — ноутбук, планшет или смартфон.'}
+        ]" :key="idx">
+          <div class="border border-gray-200 rounded-xl p-6">
+            <div class="flex justify-between items-center cursor-pointer" @click="open = open===idx ? null : idx">
+              <span class="text-lg font-medium" x-text="item.q"></span>
+              <i data-lucide="chevron-down" class="w-5 h-5" :class="open===idx && 'transform rotate-180'"></i>
+            </div>
+            <div x-show="open===idx" x-transition class="pt-4 text-gray-600" x-text="item.a"></div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="section text-center bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-t-3xl">
+    <h2 class="text-4xl font-extrabold mb-4">Готовы увеличить поток клиентов?</h2>
+    <p class="text-xl mb-6">Создайте аккаунт за 30 секунд и получите 14 дней бесплатно.</p>
+    <a href="https://zappis.app/accounts/partners/register/" class="btn-primary inline-flex items-center gap-2">Начать сейчас <i data-lucide="arrow-right" class="w-5 h-5"></i></a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-gray-900 text-gray-300 pt-16 pb-12 border-t-4 border-blue-600">
+    <div class="max-w-6xl mx-auto px-4 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+      <div>
+        <img src="{% static 'logo.png' %}" alt="Zappis" class="h-12 mb-4">
+        <p class="text-sm mb-2">Сервис онлайн-записи №1 в Кыргызстане.</p>
+        <img src="https://i.ibb.co/R4tGNdWV/461997353-3864653147186106-3157651613760557666-n-removebg-preview.png" alt="Made in Kyrgyzstan" class="h-12 mt-4 bg-white rounded-lg shadow p-1">
+      </div>
+      <nav class="space-y-2 text-sm flex flex-col">
+        <div class="font-semibold text-white mb-2">Продукт</div>
+        <a href="https://zappis.app/features/" class="hover:text-blue-400 transition">Возможности</a>
+        <a href="https://zappis.app/pricing/" class="hover:text-blue-400 transition">Цены</a>
+        <a href="https://zappis.app/demo/" class="hover:text-blue-400 transition">Демо</a>
+      </nav>
+      <nav class="space-y-2 text-sm flex flex-col">
+        <div class="font-semibold text-white mb-2">Компания</div>
+        <a href="https://zappis.app/about/" class="hover:text-blue-400 transition">О нас</a>
+        <a href="https://zappis.app/blog/" class="hover:text-blue-400 transition">Блог</a>
+        <a href="https://zappis.app/contacts/" class="hover:text-blue-400 transition">Контакты</a>
+      </nav>
+      <nav class="space-y-2 text-sm flex flex-col">
+        <div class="font-semibold text-white mb-2">Помощь</div>
+        <a href="https://help.zappis.app/" class="hover:text-blue-400 transition">Центр поддержки</a>
+        <a href="https://zappis.app/privacy/" class="hover:text-blue-400 transition">Политика конфиденциальности</a>
+        <a href="https://zappis.app/terms/" class="hover:text-blue-400 transition">Условия использования</a>
+      </nav>
+    </div>
+    <div class="flex justify-center gap-6 mt-10">
+      <a href="https://t.me/ZappisSupportBot" class="hover:text-white transition"><i data-lucide="telegram" class="w-6 h-6"></i></a>
+      <a href="https://wa.me/996700123456" class="hover:text-white transition"><i data-lucide="phone" class="w-6 h-6"></i></a>
+      <a href="https://www.instagram.com/zappis.app" class="hover:text-white transition"><i data-lucide="instagram" class="w-6 h-6"></i></a>
+      <a href="mailto:support@zappis.app" class="hover:text-white transition"><i data-lucide="mail" class="w-6 h-6"></i></a>
+    </div>
+    <div class="mt-8 text-center text-xs text-gray-500">
+      © {% now "Y" %} Zappis. Все права защищены.<br>
+      Сделано с <i data-lucide="heart" class="w-4 h-4 inline-block text-red-500 fill-current stroke-none"></i> в Оше командой Monocode<br>
+      5&nbsp;% с каждой продажи мы переводим на&nbsp;благотворительность
+    </div>
+  </footer>
+
+<script src="https://unpkg.com/swiper@9/swiper-bundle.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    if (window.lucide) lucide.createIcons();
+    new Swiper('.mySwiper', {
+      loop: true,
+      autoplay: { delay: 3000, disableOnInteraction: false },
+      pagination: { el: '.mySwiper .swiper-pagination', clickable: true },
+      navigation: { nextEl: '.mySwiper .swiper-button-next', prevEl: '.mySwiper .swiper-button-prev' },
+      slidesPerView: 1,
+      spaceBetween: 30,
+      breakpoints: {
+        640: { slidesPerView: 1 },
+        1024: { slidesPerView: 2 }
+      }
+    });
+
+    new Swiper('.testimonialSwiper', {
+      
+      autoHeight: true,
+      loop: true,
+      slidesPerGroup: 1,
+      autoplay: { delay: 5000, disableOnInteraction: false },
+      pagination: { el: '.testimonialSwiper .swiper-pagination', clickable: true },
+      navigation: { nextEl: '.testimonialSwiper .swiper-button-next', prevEl: '.testimonialSwiper .swiper-button-prev' },
+      slidesPerView: 1,
+      spaceBetween: 30,
+      breakpoints: {
+        768: { slidesPerView: 2 },
+        1024: { slidesPerView: 3 }
+      }
+    });
+  });
+</script>
+</body>
+</html>

@@ -3,10 +3,82 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>400 - Некорректный запрос | Zappis</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=1">
+  <title>Zappis — 400 Плохой запрос</title>
+  <meta name="description" content="Zappis — онлайн-запись, CRM и автоматизация для бизнеса. Приводим клиентов без звонков. Сайт, CRM и записи в одном месте. Попробуйте бесплатно!">
+  <meta name="keywords" content="онлайн запись, автоматизация, CRM, бизнес, салон красоты, стоматология, фитнес, бронирование, клиенты, Zappis">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://zappis.app/">
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="color-scheme" content="light">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="format-detection" content="telephone=no">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:url" content="https://zappis.app/">
+  <meta property="og:title" content="Онлайн-запись и автоматизация для бизнеса — Zappis">
+  <meta property="og:description" content="Zappis — онлайн-запись, CRM и автоматизация для бизнеса. Приводим клиентов без звонков. Сайт, CRM и записи в одном месте.">
+  <meta property="og:image" content="{% static 'og-image.png' %}">
+  <meta property="og:site_name" content="Zappis">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Онлайн-запись и автоматизация для бизнеса — Zappis">
+  <meta name="twitter:description" content="Zappis — онлайн-запись, CRM и автоматизация для бизнеса. Приводим клиентов без звонков. Сайт, CRM и записи в одном месте.">
+  <meta name="twitter:image" content="https://zappis.app/static/og-image.png">
+  <meta name="twitter:site" content="@zappisapp">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+  <link rel="icon" type="image/png" sizes="96x96" href="{% static 'favicon-96x96.png' %}">
+  <link rel="icon" type="image/x-icon" sizes="32x32" href="{% static 'favicon-32x32.ico' %}">
+  <link rel="icon" type="image/x-icon" sizes="16x16" href="{% static 'favicon-16x16.ico' %}">
+  <link rel="icon" type="image/svg+xml" href="{% static 'favicon.svg' %}">
+  <meta name="msapplication-TileColor" content="#3b82f6">
+  <meta name="msapplication-TileImage" content="{% static 'mstile-144x144.png' %}">
+
+  <!-- Structured Data (Organization) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Zappis",
+    "url": "https://zappis.app/",
+    "logo": "https://zappis.app/static/og-image.png",
+    "sameAs": [
+      "https://t.me/ZappisSupportBot",
+      "https://wa.me/77022589768"
+    ],
+    "description": "Онлайн-запись, CRM и автоматизация для бизнеса. Приводим клиентов без звонков. Сайт, CRM и записи в одном месте."
+  }
+  </script>
+
+  
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+  (function(m,e,t,r,i,k,a){
+      m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+      m[i].l=1*new Date();
+      for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+      k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+  })(window, document,'script','https://mc.yandex.ru/metrika/tag.js', 'ym');
+
+  ym(103332996, 'init', {webvisor:true, clickmap:true, accurateTrackBounce:true, trackLinks:true});
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/103332996" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+
+
+
+
   <!-- Tailwind CSS CDN -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- Alpine.js CDN -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>

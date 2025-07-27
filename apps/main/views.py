@@ -313,3 +313,25 @@ def send_demo(request):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
         return JsonResponse({'status': 'ok'})
     return JsonResponse({'status': 'error'}, status=400)
+
+def faq_view(request):
+    """
+    Мультиязычный FAQ: определяет язык и рендерит нужный шаблон
+    """
+    lang = get_language_from_request(request)
+    context = {
+        'current_language': lang
+    }
+    template = f'{lang}/faq.html'
+    return render(request, template, context)
+
+def pricing_view(request):
+    """
+    Мультиязычная страница прайсинга: определяет язык и рендерит нужный шаблон
+    """
+    lang = get_language_from_request(request)
+    context = {
+        'current_language': lang
+    }
+    template = f'{lang}/pricing.html'
+    return render(request, template, context)
